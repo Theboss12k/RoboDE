@@ -1,0 +1,57 @@
+actuators:
+  arm_1_x:
+    type: prismatic
+    min: -0.1
+    max: 0.5
+    velocity: 0.5
+    acceleration: 1.0
+    unit: m
+  arm_1_y:
+    type: prismatic
+    min: -0.1
+    max: 0.1
+    velocity: 0.5
+    acceleration: 1.0
+    unit: m
+  arm_1_z:
+    type: prismatic
+    min: 0.0
+    max: 0.5
+    velocity: 0.5
+    acceleration: 1.0
+    unit: m
+  arm_1_finger:
+    type: prismatic
+    min: 0.0
+    max: 0.08
+    velocity: 0.15
+    acceleration: 0.5
+    unit: m
+  arm_2_x:
+    type: prismatic
+    min: -0.1
+    max: 0.5
+    velocity: 0.5
+    acceleration: 1.0
+    unit: m
+  arm_2_y:
+    type: prismatic
+    min: -0.1
+    max: 0.1
+    velocity: 0.5
+    acceleration: 1.0
+    unit: m
+  arm_2_z:
+    type: prismatic
+    min: 0.0
+    max: 0.5
+    velocity: 0.5
+    acceleration: 1.0
+    unit: m
+  arm_2_finger:
+    type: prismatic
+    min: 0.0
+    max: 0.08
+    velocity: 0.15
+    acceleration: 0.5
+    unit: m

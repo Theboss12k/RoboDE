@@ -1,0 +1,60 @@
+{
+  "id": "wave",
+  "project_id": "apple_transfer",
+  "name": "Wave",
+  "goal": "Wave",
+  "tasks": [
+    {
+      "id": "right",
+      "name": "Turn right",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "base_yaw",
+        "value": 0.35,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "left",
+      "name": "Turn left",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "right"
+      ],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "base_yaw",
+        "value": -0.35,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "centre",
+      "name": "Return to centre",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "left"
+      ],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "base_yaw",
+        "value": 0.0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "verify",
+      "name": "Verify final joint feedback",
+      "operation": "verify",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "centre"
+      ]
+    }
+  ]
+}

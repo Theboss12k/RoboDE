@@ -1,0 +1,55 @@
+frame: world
+units: m
+objects:
+- id: apple
+  name: Apple
+  kind: object
+  position:
+    x: 0.34
+    y: -0.16
+    z: 0.065
+  size:
+    x: 0.065
+    y: 0.065
+    z: 0.065
+  mass_kg: 0.08
+  mesh: null
+- id: basket
+  name: Basket
+  kind: region
+  position:
+    x: 0.27
+    y: 0.27
+    z: 0.08
+  size:
+    x: 0.18
+    y: 0.18
+    z: 0.14
+  mass_kg: 0
+  mesh: null
+- id: apple2
+  name: Apple 2
+  kind: object
+  position:
+    x: 0.34
+    y: 1.1400000000000001
+    z: 0.065
+  size:
+    x: 0.065
+    y: 0.065
+    z: 0.065
+  mass_kg: 0.08
+  mesh: null
+- id: basket2
+  name: Basket 2
+  kind: region
+  position:
+    x: 0.27
+    y: 1.57
+    z: 0.08
+  size:
+    x: 0.18
+    y: 0.18
+    z: 0.14
+  mass_kg: 0
+  mesh: null

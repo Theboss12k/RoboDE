@@ -1,0 +1,7 @@
+schema_version: '1.0'
+instance: {id: arm_01, name: Atlas / Arm 01}
+robot_model: {id: demo_arm, version: 1.0.0}
+initial_configuration:
+  actuator_positions: {base_yaw: 0.0, shoulder: 1.0, elbow: -1.8, wrist: 0.8, gripper: 0.08}
+  position_unit: per_actuator
+  actuator_units: {base_yaw: rad, shoulder: rad, elbow: rad, wrist: rad, gripper: m}

@@ -1,0 +1,39 @@
+.welcome-content { min-height: 100dvh; }
+.welcome-content:focus { outline: none; }
+.welcome-screen {
+  position: fixed; inset: 0; z-index: 10000;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  overflow: hidden; padding: 32px 24px; isolation: isolate;
+  background: var(--ui-canvas); color: var(--ui-text);
+  animation: welcome-appear 240ms ease-out both;
+}
+.welcome-glow {
+  position: absolute; z-index: -1; width: min(760px, 120vw); aspect-ratio: 1;
+  border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, #90baff13 0%, #90baff06 38%, transparent 68%);
+}
+.welcome-card { display: flex; flex-direction: column; align-items: center; text-align: center; max-width: 440px; animation: welcome-rise 650ms cubic-bezier(.2,.8,.2,1) both; }
+.welcome-logo { display: flex; align-items: center; justify-content: center; width: 96px; height: 72px; margin-bottom: 25px; }
+.welcome-logo .robot-brand-logo { height: 52px; width: auto; }
+.welcome-product { color: var(--ui-muted); font-size: 11px; font-weight: 600; letter-spacing: .22em; line-height: 1.6; }
+.welcome-card h1 { display: block; margin: 16px 0 16px; font-size: clamp(64px, 10vw, 94px); line-height: 1; font-weight: 550; letter-spacing: -.065em; }
+.welcome-card h1 span { color: var(--ui-accent); }
+.welcome-card p { margin: 0; color: var(--ui-muted); font-size: 15px; line-height: 1.7; }
+.welcome-card .welcome-continue { display: inline-flex; align-items: center; justify-content: center; gap: 20px; min-height: 44px; padding: 10px 20px; margin-top: 32px; border: 1px solid var(--ui-border); border-radius: 24px; color: var(--ui-text); background: var(--ui-surface); font-size: 13px; font-weight: 500; cursor: pointer; transition: border-color 160ms, background 160ms; }
+.welcome-card .welcome-continue:hover { border-color: var(--ui-accent); background: var(--ui-raised); }
+.welcome-caption { position: absolute; bottom: max(30px, env(safe-area-inset-bottom)); padding: 0 20px; text-align: center; color: var(--ui-muted); font-size: 11px; letter-spacing: .05em; }
+.welcome-leaving { animation: welcome-depart 320ms ease-in both; }
+@keyframes welcome-appear { from { opacity: 0; } to { opacity: 1; } }
+@keyframes welcome-rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes welcome-depart { from { opacity: 1; } to { opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .welcome-screen, .welcome-card { animation: none; }
+  .welcome-card .welcome-continue { transition: none; }
+}
+@media (max-height: 480px) {
+  .welcome-logo { height: 40px; margin-bottom: 8px; }
+  .welcome-logo .robot-brand-logo { height: 32px; }
+  .welcome-card h1 { font-size: 52px; margin: 8px 0; }
+  .welcome-card .welcome-continue { margin-top: 12px; }
+  .welcome-caption { position: static; margin-top: 16px; }
+}

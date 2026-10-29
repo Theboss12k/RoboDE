@@ -1,0 +1,14 @@
+.git
+.venv
+**/node_modules
+**/dist
+**/__pycache__
+**/*.pyc
+**/*.egg-info
+**/.env
+artifacts
+test-results
+**/test-results
+playwright-report
+SERVER_CLIENT/server/robot_system/runtime
+SERVER_CLIENT/server/projects

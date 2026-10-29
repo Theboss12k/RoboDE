@@ -1,0 +1,30 @@
+{
+  "id": "joint_control",
+  "project_id": "apple_transfer",
+  "name": "Set elbow position",
+  "goal": "Set elbow position",
+  "tasks": [
+    {
+      "id": "set_elbow",
+      "name": "Set elbow to -1.6 rad",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "elbow",
+        "value": -1.6,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "verify",
+      "name": "Verify elbow feedback",
+      "operation": "verify",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "set_elbow"
+      ]
+    }
+  ]
+}

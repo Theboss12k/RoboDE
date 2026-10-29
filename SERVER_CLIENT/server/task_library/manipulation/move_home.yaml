@@ -1,0 +1,20 @@
+id: move_home
+version: 2.0.0
+required_capabilities: [move_home]
+parameters: [robot_id]
+preconditions: [fresh_simulated_state, valid_model, validated_trajectory]
+postconditions: [measured_joints_within_tolerance]
+implementation: services.planning.templates.expand_template
+tasks:
+  - repeat: actuators
+    id: $home_task_id
+    name: $home_task_name
+    operation: command
+    command:
+      type: SET_ACTUATOR
+      target: $actuator
+      value: $initial_value
+      unit: $actuator_unit
+  - id: verify
+    name: Verify joint state
+    operation: verify

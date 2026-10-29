@@ -1,0 +1,7 @@
+id: ros2
+available: false
+environment: hardware
+category: physical
+control_schemes: [trajectory_execution]
+capabilities: []
+unavailable_reason: No verified ROS 2 controller or hardware execution policy is installed.

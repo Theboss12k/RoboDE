@@ -1,0 +1,46 @@
+{
+  "id": "multi_effector_pose",
+  "project_id": "dual_tools",
+  "name": "Move the second tool to a pose",
+  "goal": "Move the second tool to a pose",
+  "tasks": [
+    {
+      "id": "move_tool_2",
+      "name": "Move arm 2 gripper",
+      "operation": "command",
+      "robot_id": "gantry_01",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "arm_2_gripper",
+        "position": [
+          0.25,
+          0.4,
+          0.4
+        ],
+        "orientation_rpy": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "position_unit": "m",
+        "orientation_unit": "rad",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "open_tool_2",
+      "name": "Open arm 2 gripper halfway",
+      "operation": "command",
+      "robot_id": "gantry_01",
+      "dependencies": [
+        "move_tool_2"
+      ],
+      "command": {
+        "type": "SET_COMPONENT",
+        "target": "arm_2_gripper",
+        "value": 50.0,
+        "unit": "percent"
+      }
+    }
+  ]
+}

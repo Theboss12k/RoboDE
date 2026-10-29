@@ -1,0 +1,7 @@
+id: vendor
+available: false
+environment: hardware
+category: physical
+control_schemes: [joint_position]
+capabilities: []
+unavailable_reason: This fictional model has no vendor SDK or physical hardware adapter.

@@ -1,0 +1,20 @@
+schema_version: '1.0'
+id: dual_arm_cell
+name: Multi-robot example
+description: "Project \u2192 Plans \u2192 Tasks using standardized commands."
+robots:
+- robots/arm_01/instance.yaml
+- robots/arm_02/instance.yaml
+environment: environment/world.yaml
+simulation:
+  adapter: mock
+default_prompt: Pick up the apple and place it in the basket.
+default_goals:
+- id: pick_a
+  robot_id: arm_01
+  prompt: Pick up the apple and place it in the basket.
+  dependencies: []
+- id: pick_b
+  robot_id: arm_02
+  prompt: Pick up the apple 2 and place it in the basket 2.
+  dependencies: []

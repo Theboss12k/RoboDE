@@ -1,0 +1,25 @@
+{
+  "id": "llm_tasks",
+  "project_id": "apple_transfer",
+  "name": "Draft and summarize with an LLM",
+  "goal": "Draft and summarize with an LLM",
+  "tasks": [
+    {
+      "id": "describe",
+      "name": "Describe the task",
+      "operation": "llm",
+      "llm_input": "Explain a simulated apple pick-and-place task.",
+      "llm_system_prompt": "Use task terminology and plain language. Do not emit robot commands."
+    },
+    {
+      "id": "summarize",
+      "name": "Summarize the description",
+      "operation": "llm",
+      "dependencies": [
+        "describe"
+      ],
+      "llm_input": "Summarize this description: {{tasks.describe.answer}}",
+      "llm_system_prompt": "Return one concise sentence. Do not emit robot commands."
+    }
+  ]
+}

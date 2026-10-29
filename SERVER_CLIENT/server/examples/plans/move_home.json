@@ -1,0 +1,90 @@
+{
+  "id": "move_home",
+  "project_id": "apple_transfer",
+  "name": "Return to saved initial joints",
+  "goal": "Move home.",
+  "tasks": [
+    {
+      "id": "home_base_yaw",
+      "name": "Set base_yaw to initial position",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "base_yaw",
+        "value": 0.0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "home_shoulder",
+      "name": "Set shoulder to initial position",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "home_base_yaw"
+      ],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "shoulder",
+        "value": 1.0,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "home_elbow",
+      "name": "Set elbow to initial position",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "home_shoulder"
+      ],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "elbow",
+        "value": -1.8,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "home_wrist",
+      "name": "Set wrist to initial position",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "home_elbow"
+      ],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "wrist",
+        "value": 0.8,
+        "unit": "rad"
+      }
+    },
+    {
+      "id": "home_gripper",
+      "name": "Set gripper to initial position",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "home_wrist"
+      ],
+      "command": {
+        "type": "SET_ACTUATOR",
+        "target": "gripper",
+        "value": 0.08,
+        "unit": "m"
+      }
+    },
+    {
+      "id": "verify",
+      "name": "Verify joint state",
+      "operation": "verify",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "home_gripper"
+      ]
+    }
+  ]
+}

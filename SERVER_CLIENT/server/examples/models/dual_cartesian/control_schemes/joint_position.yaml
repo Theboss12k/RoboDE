@@ -1,0 +1,5 @@
+id: joint_position
+inputs: actuator_positions
+units: per_actuator
+acknowledgement: accepted_after_limit_validation
+completion: measured_position_within_tolerance

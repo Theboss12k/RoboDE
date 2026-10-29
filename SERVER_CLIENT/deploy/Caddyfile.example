@@ -1,0 +1,4 @@
+# Replace with your real hostname and point its DNS at the server.
+robot.example.com {
+    reverse_proxy 127.0.0.1:8081
+}

@@ -1,0 +1,5 @@
+id: trajectory_execution
+inputs: time_parameterized_joint_positions
+units: per_actuator_and_seconds
+acknowledgement: accepted_after_trajectory_validation
+completion: final_feedback_and_postcondition_verification

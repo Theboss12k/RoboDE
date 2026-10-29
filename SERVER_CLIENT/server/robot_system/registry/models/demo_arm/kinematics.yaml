@@ -1,0 +1,10 @@
+solver: analytic_yaw_two_link_v1
+world_frame: world
+units: m
+links: {base_height: 0.16, upper_arm: 0.32, forearm: 0.28}
+joints:
+  - {actuator: base_yaw, parent: world, child: base, axis: z, type: revolute}
+  - {actuator: shoulder, parent: base, child: upper_arm, axis: y, type: revolute}
+  - {actuator: elbow, parent: upper_arm, child: forearm, axis: y, type: revolute}
+  - {actuator: wrist, parent: forearm, child: tool, axis: y, type: revolute}
+  - {actuator: gripper, parent: tool, child: fingers, axis: x, type: prismatic}

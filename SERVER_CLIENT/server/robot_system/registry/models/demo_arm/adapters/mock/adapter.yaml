@@ -1,0 +1,7 @@
+id: mock
+available: true
+environment: simulation
+category: virtual
+implementation: robot_system.registry.models.demo_arm.adapters.mock.adapter.MockAdapter
+control_schemes: [joint_position, trajectory_execution]
+capabilities: [pick_place, move_home]

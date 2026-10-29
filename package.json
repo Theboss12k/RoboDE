@@ -1,0 +1,54 @@
+{
+  "name": "robot-ide",
+  "version": "0.4.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "SERVER_CLIENT/client",
+    "BUSINESS_APP",
+    "ELECTRON_APP"
+  ],
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:web": "node scripts/dev.mjs --web",
+    "build": "npm run build --workspace SERVER_CLIENT/client",
+    "start": "node scripts/dev.mjs --built",
+    "test": "node scripts/python.mjs -m pytest",
+    "test:e2e": "playwright test",
+    "typecheck": "npm run typecheck --workspace SERVER_CLIENT/client",
+    "setup": "node scripts/setup.mjs",
+    "setup:server": "node scripts/setup.mjs --server",
+    "scenario": "node scripts/python.mjs -m simulation.scenario_runner.run",
+    "server:build": "npm run build --workspace SERVER_CLIENT/client",
+    "server:start": "node scripts/dev.mjs --server --built",
+    "server:dev": "node scripts/dev.mjs --web",
+    "server:stop": "node scripts/server-control.mjs stop",
+    "server:status": "node scripts/server-control.mjs status",
+    "electron:dev": "node scripts/dev.mjs",
+    "electron:start": "node scripts/dev.mjs --built",
+    "business:dev": "npm run dev --workspace BUSINESS_APP",
+    "business:build": "npm run build --workspace BUSINESS_APP",
+    "business:start": "node scripts/python.mjs -m BUSINESS_APP.server",
+    "business:test": "playwright test --config BUSINESS_APP/playwright.config.ts",
+    "business:phone": "node scripts/python.mjs -m scripts.phone_access start",
+    "business:phone:stop": "node scripts/python.mjs -m scripts.phone_access stop",
+    "business:phone:status": "node scripts/python.mjs -m scripts.phone_access status",
+    "server:test": "playwright test --config SERVER_CLIENT/playwright.config.ts",
+    "electron:test": "playwright test --config ELECTRON_APP/playwright.config.ts",
+    "cloud:start": "node scripts/python.mjs -m scripts.cloud_session start",
+    "cloud:status": "node scripts/python.mjs -m scripts.cloud_session status",
+    "installers:build": "node scripts/python.mjs installers/build.py"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.64.1"
+  },
+  "overrides": {
+    "dompurify": "3.4.17"
+  },
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "allowScripts": {
+    "fsevents": false
+  }
+}

@@ -1,0 +1,20 @@
+[Unit]
+Description=Robot Workspace NuRec reconstruction worker
+After=network-online.target robot-ide-idle-guard.service
+Wants=network-online.target
+Requires=robot-ide-idle-guard.service
+
+[Service]
+Type=exec
+User=robotworker
+WorkingDirectory=/opt/Robot_IDE/SERVER_CLIENT/server
+EnvironmentFile=/etc/robot-ide/workers.env
+# The 3dgrut/CUDA environment must be installed separately, following NVIDIA.
+ExecStart=/opt/3dgrut-env/bin/python -m integrations.nurec.service
+Restart=on-failure
+RestartSec=15
+KillMode=control-group
+TimeoutStopSec=15
+
+[Install]
+WantedBy=multi-user.target

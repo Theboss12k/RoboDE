@@ -1,0 +1,32 @@
+schema_version: '1.0'
+instance:
+  id: gantry_01
+  name: Two-tool Cartesian stage
+robot_model:
+  id: dual_cartesian
+  version: 1.0.0
+base_pose:
+  x: 0.0
+  y: 0.0
+  z: 0.0
+  yaw: 0.0
+initial_configuration:
+  actuator_positions:
+    arm_1_x: 0.0
+    arm_1_y: 0.0
+    arm_1_z: 0.0
+    arm_1_finger: 0.08
+    arm_2_x: 0.0
+    arm_2_y: 0.0
+    arm_2_z: 0.0
+    arm_2_finger: 0.08
+  position_unit: per_actuator
+  actuator_units:
+    arm_1_x: m
+    arm_1_y: m
+    arm_1_z: m
+    arm_1_finger: m
+    arm_2_x: m
+    arm_2_y: m
+    arm_2_z: m
+    arm_2_finger: m

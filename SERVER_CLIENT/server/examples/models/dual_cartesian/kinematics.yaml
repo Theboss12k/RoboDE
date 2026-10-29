@@ -1,0 +1,75 @@
+solver: serial_chain_dls_v1
+world_frame: world
+units: m
+links:
+  tool: 0.01
+joints:
+- actuator: arm_1_x
+  parent: world
+  child: arm_1_x_link
+  axis: x
+  type: prismatic
+  origin:
+    xyz:
+    - 0.0
+    - -0.4
+    - 0.2
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+- actuator: arm_1_y
+  parent: arm_1_x_link
+  child: arm_1_y_link
+  axis: y
+  type: prismatic
+- actuator: arm_1_z
+  parent: arm_1_y_link
+  child: arm_1_z_link
+  axis: z
+  type: prismatic
+- actuator: arm_2_x
+  parent: world
+  child: arm_2_x_link
+  axis: x
+  type: prismatic
+  origin:
+    xyz:
+    - 0.0
+    - 0.4
+    - 0.2
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+- actuator: arm_2_y
+  parent: arm_2_x_link
+  child: arm_2_y_link
+  axis: y
+  type: prismatic
+- actuator: arm_2_z
+  parent: arm_2_y_link
+  child: arm_2_z_link
+  axis: z
+  type: prismatic
+end_effectors:
+  arm_1_gripper:
+    link: arm_1_z_link
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.0
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0
+  arm_2_gripper:
+    link: arm_2_z_link
+    xyz:
+    - 0.0
+    - 0.0
+    - 0.0
+    rpy:
+    - 0.0
+    - 0.0
+    - 0.0

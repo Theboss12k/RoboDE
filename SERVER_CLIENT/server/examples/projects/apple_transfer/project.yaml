@@ -1,0 +1,15 @@
+schema_version: '1.0'
+id: apple_transfer
+name: Apple transfer example
+description: "Project \u2192 Plans \u2192 Tasks using standardized commands."
+robots:
+- robots/arm_01/instance.yaml
+environment: environment/world.yaml
+simulation:
+  adapter: mock
+default_prompt: Pick up the apple and place it in the basket.
+default_goals:
+- id: pick_a
+  robot_id: arm_01
+  prompt: Pick up the apple and place it in the basket.
+  dependencies: []

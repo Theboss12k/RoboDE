@@ -1,0 +1,45 @@
+$schema: https://json-schema.org/draft/2020-12/schema
+type: object
+additionalProperties: false
+required: [schema_version, instance, robot_model, initial_configuration]
+properties:
+  control_adapter:
+    type: object
+    additionalProperties: false
+    required: [adapter_id, category]
+    properties:
+      adapter_id: {type: string, minLength: 1}
+      category: {enum: [physical, virtual]}
+      adapter_hash: {type: [string, 'null']}
+  base_pose:
+    type: object
+    additionalProperties: false
+    required: [x, y, z, yaw]
+    properties:
+      x: {type: number}
+      y: {type: number}
+      z: {type: number, minimum: 0}
+      yaw: {type: number}
+  schema_version: {const: '1.0'}
+  instance:
+    type: object
+    additionalProperties: false
+    required: [id, name]
+    properties:
+      id: {type: string, pattern: '^[a-z][a-z0-9_]*$'}
+      name: {type: string, minLength: 1}
+  robot_model:
+    type: object
+    additionalProperties: false
+    required: [id, version]
+    properties:
+      id: {type: string}
+      version: {type: string}
+  initial_configuration:
+    type: object
+    additionalProperties: false
+    required: [position_unit, actuator_positions]
+    properties:
+      position_unit: {enum: [rad, m, per_actuator]}
+      actuator_units: {type: object, minProperties: 1, additionalProperties: {enum: [rad, m]}}
+      actuator_positions: {type: object, minProperties: 1, additionalProperties: {type: number}}

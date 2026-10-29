@@ -1,0 +1,10 @@
+schema_version: '1.0'
+id: dual_tools
+name: Two named tools example
+description: Named effectors and pose IK in one reusable robot.
+robots:
+- robots/gantry_01/instance.yaml
+environment: environment/world.yaml
+simulation:
+  adapter: mock
+default_prompt: Move tool 2 to its configured target.

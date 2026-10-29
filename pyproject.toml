@@ -1,0 +1,10 @@
+[project]
+name = "robot-ide-runtime"
+version = "0.4.0"
+requires-python = ">=3.11"
+description = "Validated, simulation-first robotics task runtime"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["SERVER_CLIENT/server", "."]
+asyncio_mode = "auto"

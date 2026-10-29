@@ -1,0 +1,31 @@
+/* One visual vocabulary for the Electron IDE, browser IDE and Business App. */
+:root {
+  --ui-canvas: #080b10;
+  --ui-surface: #111722;
+  --ui-raised: #182131;
+  --ui-input: #0b111b;
+  --ui-border: #2d394c;
+  --ui-text: #d9e0eb;
+  --ui-muted: #a3b0c3;
+  --ui-accent: #90baff;
+  --ui-accent-ink: #0a1525;
+  --ui-danger: #ffb4ad;
+  --ui-danger-bg: #301c24;
+  --ui-warning: #f4d08b;
+  --ui-warning-bg: #2c261a;
+  --ui-success: #9cdbb5;
+  --ui-success-bg: #152a24;
+  font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color-scheme: dark;
+  background: var(--ui-canvas);
+  color: var(--ui-text);
+}
+button svg { flex: 0 0 auto; vertical-align: middle; }
+input, select, textarea { min-width: 0; }
+button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible, a:focus-visible, summary:focus-visible {
+  outline: 2px solid var(--ui-accent); outline-offset: 3px;
+}
+.ui-feedback, .feedback-host { overflow-wrap: anywhere; }
+.cloud-session-note { padding:9px 22px; color:var(--ui-muted); background:var(--ui-surface); border-bottom:1px solid var(--ui-border); font-size:12px; line-height:1.5; }
+.cloud-app-links a { display:inline-flex; align-items:center; padding:9px 12px; text-decoration:none; border-radius:6px; }
+.cloud-app-links small { flex-basis:100%; color:var(--ui-muted); }

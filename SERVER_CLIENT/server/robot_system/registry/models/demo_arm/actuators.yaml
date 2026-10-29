@@ -1,0 +1,6 @@
+actuators:
+  base_yaw: {type: revolute, min: -3.14, max: 3.14, velocity: 1.5, acceleration: 3.0, unit: rad}
+  shoulder: {type: revolute, min: -1.5, max: 2.8, velocity: 1.2, acceleration: 2.5, unit: rad}
+  elbow: {type: revolute, min: -2.7, max: 2.7, velocity: 1.5, acceleration: 3.0, unit: rad}
+  wrist: {type: revolute, min: -3.14, max: 3.14, velocity: 1.8, acceleration: 4.0, unit: rad}
+  gripper: {type: prismatic, min: 0.0, max: 0.08, velocity: 0.08, acceleration: 0.3, unit: m}

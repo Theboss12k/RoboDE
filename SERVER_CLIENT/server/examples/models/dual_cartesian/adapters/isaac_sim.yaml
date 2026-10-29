@@ -1,0 +1,11 @@
+id: isaac_sim
+available: false
+environment: simulation
+category: virtual
+implementation: robot_system.registry.models.demo_arm.adapters.isaac_sim.adapter.IsaacCell
+control_schemes:
+- trajectory_execution
+capabilities:
+- move_home
+requires_worker: true
+unavailable_reason: Deploy and validate matching native USD assets before use

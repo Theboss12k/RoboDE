@@ -1,0 +1,19 @@
+schema_version: '1.0'
+id: demo_arm
+name: Atlas Demo Arm
+manufacturer: Robot IDE
+family: Educational preview
+type: manipulator
+version: 1.0.0
+description: Fictional 4-axis arm with a gripper. Illustrative dimensions and limits, for local preview and educational USD simulation. No hardware certification.
+kinematics: kinematics.yaml
+actuators: actuators.yaml
+capabilities: capabilities.yaml
+control_schemes:
+  joint_position: control_schemes/joint_position.yaml
+  trajectory_execution: control_schemes/trajectory_execution.yaml
+adapters:
+  mock: adapters/mock/adapter.yaml
+  isaac_sim: adapters/isaac_sim/adapter.yaml
+  ros2: adapters/ros2/adapter.yaml
+  vendor: adapters/vendor/adapter.yaml

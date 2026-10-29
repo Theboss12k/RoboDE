@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<!-- Fictional SI-unit gantry for URDF import and kinematic preview. No hardware certification.
+     Acceleration limits are intentionally absent: configure 0.8 m/s² for each joint in the review. -->
+<robot name="Bench gantry">
+  <link name="base_link"/>
+  <link name="x_carriage"/>
+  <link name="y_carriage"/>
+  <link name="z_carriage"/>
+  <link name="tool_tip"/>
+  <joint name="slide_x" type="prismatic">
+    <parent link="base_link"/><child link="x_carriage"/>
+    <origin xyz="0 0 0.2" rpy="0 0 0"/><axis xyz="1 0 0"/>
+    <limit lower="-0.5" upper="0.5" effort="20" velocity="0.3"/>
+  </joint>
+  <joint name="slide_y" type="prismatic">
+    <parent link="x_carriage"/><child link="y_carriage"/>
+    <axis xyz="0 -1 0"/><limit lower="-0.5" upper="0.5" effort="20" velocity="0.3"/>
+  </joint>
+  <joint name="slide_z" type="prismatic">
+    <parent link="y_carriage"/><child link="z_carriage"/>
+    <axis xyz="0 0 1"/><limit lower="0" upper="0.5" effort="20" velocity="0.3"/>
+  </joint>
+  <joint name="tool_mount" type="fixed">
+    <parent link="z_carriage"/><child link="tool_tip"/><origin xyz="0 0 0.08"/>
+  </joint>
+</robot>

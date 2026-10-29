@@ -1,0 +1,26 @@
+.feedback-host { width: 100%; min-width: 0; flex-basis: 100%; grid-column: 1 / -1; scroll-margin: 18px; }
+.has-action-feedback { flex-wrap: wrap; }
+.ui-feedback.ui-feedback {
+  position: static; display: flex; align-items: flex-start; gap: 10px;
+  width: 100%; min-width: 0; flex-shrink: 0; padding: 12px 14px; margin: 12px 0;
+  color: var(--ui-danger); background: var(--ui-danger-bg); border: 1px solid #71404a;
+  border-radius: 8px; font-size: 12px; line-height: 1.6; text-align: left;
+}
+.ui-feedback > svg { margin-top: 2px; flex: 0 0 18px; }
+.ui-feedback .feedback-text { flex: 1; min-width: 0; white-space: pre-wrap; }
+.ui-feedback .feedback-text details { margin: 8px 0 0; }
+.ui-feedback .feedback-text pre { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 180px; overflow: auto; font-size: 11px; }
+.ui-feedback.ui-feedback > button { display: inline-flex; align-items: center; justify-content: center; min-width: 32px; min-height: 32px; margin: -5px -5px -5px 0; padding: 6px; color: inherit; border-radius: 6px; }
+.ui-feedback[data-kind="warning"] { color: var(--ui-warning); background: var(--ui-warning-bg); border-color: #75623d; }
+.ui-feedback[data-kind="info"] { color: var(--ui-accent); background: #172438; border-color: #365373; }
+.ui-feedback[data-kind="success"] { color: var(--ui-success); background: var(--ui-success-bg); border-color: #385e4c; }
+@media (pointer: coarse) { .ui-feedback.ui-feedback > button { min-width: 44px; min-height: 44px; } }
+.ide-v3 .ui-feedback.ui-feedback, .feedback-host .ui-feedback.ui-feedback { margin:12px 0; max-width:100%; }
+.ui-feedback.ui-feedback[data-kind="warning"] { color:var(--ui-warning); background:var(--ui-warning-bg); border-color:#75623d; }
+.ui-feedback.ui-feedback[data-kind="info"] { color:var(--ui-accent); background:#172438; border-color:#365373; }
+.ui-feedback.ui-feedback[data-kind="success"] { color:var(--ui-success); background:var(--ui-success-bg); border-color:#385e4c; }
+/* Legacy IDE alert selectors must not change the shared severity palette. */
+:is(.ide-v3,.business-shell) .ui-feedback.ui-feedback[data-kind="error"] { color:var(--ui-danger); background:var(--ui-danger-bg); border-color:#71404a; }
+:is(.ide-v3,.business-shell) .ui-feedback.ui-feedback[data-kind="warning"] { color:var(--ui-warning); background:var(--ui-warning-bg); border-color:#75623d; }
+:is(.ide-v3,.business-shell) .ui-feedback.ui-feedback[data-kind="success"] { color:var(--ui-success); background:var(--ui-success-bg); border-color:#385e4c; }
+:is(.ide-v3,.business-shell) .ui-feedback.ui-feedback[data-kind="info"] { color:var(--ui-accent); background:#172438; border-color:#365373; }

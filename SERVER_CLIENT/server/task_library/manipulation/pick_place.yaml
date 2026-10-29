@@ -1,0 +1,71 @@
+id: pick_place
+version: 2.0.0
+required_capabilities: [pick_place]
+parameters: [robot_id, object_id, target_id]
+preconditions: [fresh_simulated_state, valid_model, reachable_poses, validated_trajectory, object_within_payload]
+postconditions: [object_inside_target, gripper_empty]
+implementation: services.planning.templates.expand_template
+tasks:
+  - id: approach
+    name: Approach object
+    operation: command
+    command:
+      type: MOVE_END_EFFECTOR
+      target: $end_effector
+      position: [$object_x, $object_y, $clearance_z]
+      position_unit: m
+      frame: $world_frame
+  - id: descend
+    name: Align gripper
+    operation: command
+    command:
+      type: MOVE_END_EFFECTOR
+      target: $end_effector
+      position: [$object_x, $object_y, $object_z]
+      position_unit: m
+      frame: $world_frame
+  - id: grasp
+    name: $grasp_name
+    operation: grasp
+  - id: lift
+    name: Lift clear
+    operation: command
+    command:
+      type: MOVE_END_EFFECTOR
+      target: $end_effector
+      position: [$object_x, $object_y, $clearance_z]
+      position_unit: m
+      frame: $world_frame
+  - id: transfer
+    name: $transfer_name
+    operation: command
+    command:
+      type: MOVE_END_EFFECTOR
+      target: $end_effector
+      position: [$target_x, $target_y, $clearance_z]
+      position_unit: m
+      frame: $world_frame
+  - id: lower
+    name: Lower into target
+    operation: command
+    command:
+      type: MOVE_END_EFFECTOR
+      target: $end_effector
+      position: [$target_x, $target_y, $target_z]
+      position_unit: m
+      frame: $world_frame
+  - id: release
+    name: Release object
+    operation: release
+  - id: retreat
+    name: Retreat from target
+    operation: command
+    command:
+      type: MOVE_END_EFFECTOR
+      target: $end_effector
+      position: [$target_x, $target_y, $clearance_z]
+      position_unit: m
+      frame: $world_frame
+  - id: verify
+    name: Verify placement
+    operation: verify

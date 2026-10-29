@@ -1,0 +1,17 @@
+[Unit]
+Description=Robot IDE shared React interface and local calculation server
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=robotide
+WorkingDirectory=/opt/Robot_IDE
+Environment=ROBOT_IDE_HOST=127.0.0.1
+ExecStart=/usr/bin/node scripts/dev.mjs --server --built
+Restart=on-failure
+RestartSec=5
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

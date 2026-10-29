@@ -1,0 +1,19 @@
+[Unit]
+Description=Robot IDE managed Isaac Sim GPU worker
+After=network-online.target robot-ide-idle-guard.service
+Wants=network-online.target
+Requires=robot-ide-idle-guard.service
+
+[Service]
+Type=exec
+User=robotworker
+WorkingDirectory=/opt/Robot_IDE/SERVER_CLIENT/server
+EnvironmentFile=/etc/robot-ide/workers.env
+ExecStart=/opt/isaacsim/python.sh -m simulation.isaac_sim.serve --project-scene --host 127.0.0.1 --port 9100
+Restart=on-failure
+RestartSec=15
+KillMode=control-group
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target

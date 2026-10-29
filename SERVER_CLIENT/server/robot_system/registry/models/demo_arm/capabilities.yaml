@@ -1,0 +1,6 @@
+operations: [pick_place, move_home]
+sensors: [simulated_joint_feedback, simulated_object_pose]
+end_effector: parallel_gripper
+payload_kg: 0.25
+scope: educational_simulation_only
+unsupported: [throw, catch, navigation, physical_execution]

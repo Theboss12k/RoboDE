@@ -1,0 +1,171 @@
+{
+  "id": "apple_transfer",
+  "project_id": "apple_transfer",
+  "name": "Pick and place the apple",
+  "goal": "Pick up the apple and place it in the basket.",
+  "tasks": [
+    {
+      "id": "approach",
+      "name": "Approach object",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [],
+      "object_id": "apple",
+      "target_id": "basket",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.34,
+          -0.16,
+          0.26
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "descend",
+      "name": "Align gripper",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "approach"
+      ],
+      "object_id": "apple",
+      "target_id": "basket",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.34,
+          -0.16,
+          0.065
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "grasp",
+      "name": "Grasp apple",
+      "operation": "grasp",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "descend"
+      ],
+      "object_id": "apple",
+      "target_id": "basket"
+    },
+    {
+      "id": "lift",
+      "name": "Lift clear",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "grasp"
+      ],
+      "object_id": "apple",
+      "target_id": "basket",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.34,
+          -0.16,
+          0.26
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "transfer",
+      "name": "Transfer to basket",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "lift"
+      ],
+      "object_id": "apple",
+      "target_id": "basket",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.27,
+          0.27,
+          0.26
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "lower",
+      "name": "Lower into target",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "transfer"
+      ],
+      "object_id": "apple",
+      "target_id": "basket",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.27,
+          0.27,
+          0.08
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "release",
+      "name": "Release object",
+      "operation": "release",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "lower"
+      ],
+      "object_id": "apple",
+      "target_id": "basket"
+    },
+    {
+      "id": "retreat",
+      "name": "Retreat from target",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "release"
+      ],
+      "object_id": "apple",
+      "target_id": "basket",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.27,
+          0.27,
+          0.26
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "verify",
+      "name": "Verify placement",
+      "operation": "verify",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "retreat"
+      ],
+      "object_id": "apple",
+      "target_id": "basket"
+    }
+  ]
+}

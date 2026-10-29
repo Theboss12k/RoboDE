@@ -1,0 +1,36 @@
+{
+  "id": "gripper_control",
+  "project_id": "apple_transfer",
+  "name": "Set gripper opening",
+  "goal": "Set gripper opening",
+  "tasks": [
+    {
+      "id": "open_half",
+      "name": "Open gripper to 50 percent",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [],
+      "command": {
+        "type": "SET_COMPONENT",
+        "target": "parallel_gripper",
+        "value": 50.0,
+        "unit": "percent"
+      }
+    },
+    {
+      "id": "open_full",
+      "name": "Open gripper fully",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "open_half"
+      ],
+      "command": {
+        "type": "SET_COMPONENT",
+        "target": "parallel_gripper",
+        "value": 100.0,
+        "unit": "percent"
+      }
+    }
+  ]
+}

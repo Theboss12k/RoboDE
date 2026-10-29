@@ -1,0 +1,15 @@
+[Unit]
+Description=Stop Robot IDE GPU VM after ten minutes without GPU work
+After=network.target
+
+[Service]
+Type=exec
+WorkingDirectory=/opt/Robot_IDE/SERVER_CLIENT/server
+ExecStart=/opt/Robot_IDE/.venv/bin/python -m integrations.gcp.idle_guard --idle-seconds 600
+Restart=on-failure
+RestartSec=5
+# Root is needed for systemctl poweroff. Keep the repository operator-owned.
+User=root
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,19 @@
+operations:
+- move_home
+sensors:
+- simulated_joint_feedback
+end_effector: arm_1_gripper
+payload_kg: 0.0
+scope: educational_simulation_only
+unsupported:
+- grasp
+- physical_execution
+components:
+  arm_1_gripper:
+    actuator: arm_1_finger
+    closed: 0.0
+    open: 0.08
+  arm_2_gripper:
+    actuator: arm_2_finger
+    closed: 0.0
+    open: 0.08

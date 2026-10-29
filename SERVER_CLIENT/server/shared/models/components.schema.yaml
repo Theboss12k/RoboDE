@@ -1,0 +1,246 @@
+actuators:
+  type: object
+  additionalProperties: false
+  required:
+  - actuators
+  properties:
+    actuators:
+      type: object
+      minProperties: 1
+      additionalProperties:
+        type: object
+        additionalProperties: false
+        required:
+        - type
+        - min
+        - max
+        - velocity
+        - acceleration
+        - unit
+        properties:
+          type:
+            enum:
+            - revolute
+            - prismatic
+          min:
+            type: number
+          max:
+            type: number
+          velocity:
+            type: number
+            exclusiveMinimum: 0
+          acceleration:
+            type: number
+            exclusiveMinimum: 0
+          unit:
+            enum:
+            - rad
+            - m
+kinematics:
+  type: object
+  required:
+  - solver
+  - world_frame
+  - units
+  - links
+  - joints
+  properties:
+    solver:
+      type: string
+      minLength: 1
+    world_frame:
+      type: string
+      minLength: 1
+    units:
+      const: m
+    links:
+      type: object
+      minProperties: 1
+      additionalProperties:
+        type: number
+        exclusiveMinimum: 0
+    joints:
+      type: array
+      minItems: 1
+      items:
+        type: object
+        required:
+        - parent
+        - child
+        - type
+        properties:
+          actuator:
+            type: string
+          parent:
+            type: string
+          child:
+            type: string
+          axis:
+            enum:
+            - x
+            - y
+            - z
+          type:
+            enum:
+            - revolute
+            - prismatic
+            - fixed
+          axis_vector:
+            type: array
+            minItems: 3
+            maxItems: 3
+            items:
+              type: number
+          origin:
+            type: object
+            additionalProperties: false
+            properties:
+              xyz: &id001
+                type: array
+                minItems: 3
+                maxItems: 3
+                items:
+                  type: number
+              rpy: *id001
+        allOf:
+        - if:
+            properties:
+              type:
+                enum:
+                - revolute
+                - prismatic
+          then:
+            required:
+            - actuator
+            - axis
+    end_effectors:
+      type: object
+      minProperties: 1
+      additionalProperties:
+        type: object
+        required:
+        - link
+        additionalProperties: false
+        properties:
+          link:
+            type: string
+          xyz: *id001
+          rpy: *id001
+capabilities:
+  type: object
+  required:
+  - operations
+  - sensors
+  - end_effector
+  - payload_kg
+  - scope
+  - unsupported
+  properties:
+    operations:
+      type: array
+      uniqueItems: true
+      items:
+        type: string
+    sensors:
+      type: array
+      uniqueItems: true
+      items:
+        type: string
+    end_effector:
+      type: string
+    payload_kg:
+      type: number
+      minimum: 0
+    scope:
+      type: string
+    unsupported:
+      type: array
+      items:
+        type: string
+    components:
+      type: object
+      additionalProperties:
+        type: object
+        required:
+        - actuator
+        - closed
+        - open
+        additionalProperties: false
+        properties:
+          actuator:
+            type: string
+          closed:
+            type: number
+          open:
+            type: number
+adapter:
+  type: object
+  required:
+  - id
+  - available
+  - environment
+  - category
+  - control_schemes
+  - capabilities
+  properties:
+    id:
+      type: string
+    available:
+      type: boolean
+    environment:
+      enum:
+      - simulation
+      - hardware
+    category:
+      enum:
+      - physical
+      - virtual
+    validation_status:
+      type: string
+    controls:
+      type: object
+    provenance:
+      type: object
+    control_schemes:
+      type: array
+      minItems: 1
+      uniqueItems: true
+      items:
+        type: string
+    capabilities:
+      type: array
+      uniqueItems: true
+      items:
+        type: string
+    implementation:
+      type: string
+    unavailable_reason:
+      type: string
+      minLength: 1
+  allOf:
+  - if:
+      properties:
+        available:
+          const: false
+    then:
+      required:
+      - unavailable_reason
+control_scheme:
+  type: object
+  required:
+  - id
+  - inputs
+  - units
+  - acknowledgement
+  - completion
+  properties:
+    id:
+      type: string
+    inputs:
+      type: string
+    units:
+      type: string
+    acknowledgement:
+      type: string
+    completion:
+      type: string

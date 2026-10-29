@@ -1,0 +1,8 @@
+id: isaac_sim
+available: true
+environment: simulation
+category: virtual
+implementation: robot_system.registry.models.demo_arm.adapters.isaac_sim.adapter.IsaacCell
+control_schemes: [trajectory_execution]
+capabilities: [pick_place, move_home]
+requires_worker: true

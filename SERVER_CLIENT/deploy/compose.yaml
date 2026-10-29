@@ -1,0 +1,15 @@
+services:
+  robot-ide:
+    build:
+      context: ../..
+      dockerfile: SERVER_CLIENT/deploy/Dockerfile
+    ports:
+      - "8081:8081"
+    environment:
+      ROBOT_IDE_HOST: "0.0.0.0"
+      ROBOT_IDE_ACCESS_CODE: "${ROBOT_IDE_ACCESS_CODE:-}"
+    volumes:
+      - ../server/projects:/opt/robot-ide/SERVER_CLIENT/server/projects
+      - ../server/robot_system/runtime:/opt/robot-ide/SERVER_CLIENT/server/robot_system/runtime
+    restart: unless-stopped
+    stop_grace_period: 30s

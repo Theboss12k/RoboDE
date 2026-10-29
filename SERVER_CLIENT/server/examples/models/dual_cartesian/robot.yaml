@@ -1,0 +1,18 @@
+id: dual_cartesian
+name: Two-tool Cartesian example
+manufacturer: Robot IDE
+family: Educational examples
+type: cartesian
+version: 1.0.0
+description: Fictional independent XYZ stages with fixed tool orientation and component
+  opening. No contact/grasp model or hardware driver.
+schema_version: '1.0'
+kinematics: kinematics.yaml
+actuators: actuators.yaml
+capabilities: capabilities.yaml
+control_schemes:
+  joint_position: control_schemes/joint_position.yaml
+  trajectory_execution: control_schemes/trajectory_execution.yaml
+adapters:
+  mock: adapters/mock.yaml
+  isaac_sim: adapters/isaac_sim.yaml

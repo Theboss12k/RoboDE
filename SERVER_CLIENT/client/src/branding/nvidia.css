@@ -1,0 +1,54 @@
+/* Preserve the mark's proportions and align its box with adjacent labels. */
+.nvidia-logo {
+  display: inline-block;
+  flex: 0 0 auto;
+  width: auto;
+  height: 16px;
+  aspect-ratio: 108.472 / 20;
+  vertical-align: middle;
+}
+
+.nvidia-tool-heading {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  min-width: 0;
+  line-height: 1.4;
+  vertical-align: middle;
+  white-space: normal;
+}
+
+.nvidia-tool-heading h3 {
+  margin: 0;
+}
+
+button .nvidia-logo {
+  height: 14px;
+}
+
+.statusbar .nvidia-logo {
+  height: 12px;
+}
+
+/* A native summary marker aligns to the text baseline rather than the logo. */
+summary:has(> .nvidia-tool-heading) {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+}
+
+summary:has(> .nvidia-tool-heading)::-webkit-details-marker {
+  display: none;
+}
+
+summary:has(> .nvidia-tool-heading)::before {
+  content: "▸";
+  flex: 0 0 auto;
+  line-height: 1;
+}
+
+details[open] > summary:has(> .nvidia-tool-heading)::before {
+  transform: rotate(90deg);
+}

@@ -1,0 +1,79 @@
+{
+  "id": "lift_apple",
+  "project_id": "apple_transfer",
+  "name": "Lift apple by 30 cm",
+  "goal": "Move the apple 30 cm above its current position and keep holding it.",
+  "tasks": [
+    {
+      "id": "approach",
+      "name": "Approach object",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [],
+      "object_id": "apple",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.34,
+          -0.16,
+          0.26
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "descend",
+      "name": "Align gripper",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "approach"
+      ],
+      "object_id": "apple",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.34,
+          -0.16,
+          0.065
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    },
+    {
+      "id": "grasp",
+      "name": "Grasp apple",
+      "operation": "grasp",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "descend"
+      ],
+      "object_id": "apple"
+    },
+    {
+      "id": "lift",
+      "name": "Lift apple by 30 cm",
+      "operation": "command",
+      "robot_id": "arm_01",
+      "dependencies": [
+        "grasp"
+      ],
+      "object_id": "apple",
+      "command": {
+        "type": "MOVE_END_EFFECTOR",
+        "target": "parallel_gripper",
+        "position": [
+          0.34,
+          -0.16,
+          0.365
+        ],
+        "position_unit": "m",
+        "frame": "world"
+      }
+    }
+  ]
+}

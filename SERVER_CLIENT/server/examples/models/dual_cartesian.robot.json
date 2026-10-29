@@ -1,0 +1,233 @@
+{
+  "robot": {
+    "id": "dual_cartesian",
+    "name": "Two-tool Cartesian example",
+    "manufacturer": "Robot IDE",
+    "family": "Educational examples",
+    "type": "cartesian",
+    "version": "1.0.0",
+    "description": "Fictional independent XYZ stages with fixed tool orientation and component opening. No contact/grasp model or hardware driver."
+  },
+  "actuators": {
+    "actuators": {
+      "arm_1_x": {
+        "type": "prismatic",
+        "min": -0.1,
+        "max": 0.5,
+        "velocity": 0.5,
+        "acceleration": 1.0,
+        "unit": "m"
+      },
+      "arm_1_y": {
+        "type": "prismatic",
+        "min": -0.1,
+        "max": 0.1,
+        "velocity": 0.5,
+        "acceleration": 1.0,
+        "unit": "m"
+      },
+      "arm_1_z": {
+        "type": "prismatic",
+        "min": 0.0,
+        "max": 0.5,
+        "velocity": 0.5,
+        "acceleration": 1.0,
+        "unit": "m"
+      },
+      "arm_1_finger": {
+        "type": "prismatic",
+        "min": 0.0,
+        "max": 0.08,
+        "velocity": 0.15,
+        "acceleration": 0.5,
+        "unit": "m"
+      },
+      "arm_2_x": {
+        "type": "prismatic",
+        "min": -0.1,
+        "max": 0.5,
+        "velocity": 0.5,
+        "acceleration": 1.0,
+        "unit": "m"
+      },
+      "arm_2_y": {
+        "type": "prismatic",
+        "min": -0.1,
+        "max": 0.1,
+        "velocity": 0.5,
+        "acceleration": 1.0,
+        "unit": "m"
+      },
+      "arm_2_z": {
+        "type": "prismatic",
+        "min": 0.0,
+        "max": 0.5,
+        "velocity": 0.5,
+        "acceleration": 1.0,
+        "unit": "m"
+      },
+      "arm_2_finger": {
+        "type": "prismatic",
+        "min": 0.0,
+        "max": 0.08,
+        "velocity": 0.15,
+        "acceleration": 0.5,
+        "unit": "m"
+      }
+    }
+  },
+  "kinematics": {
+    "solver": "serial_chain_dls_v1",
+    "world_frame": "world",
+    "units": "m",
+    "links": {
+      "tool": 0.01
+    },
+    "joints": [
+      {
+        "actuator": "arm_1_x",
+        "parent": "world",
+        "child": "arm_1_x_link",
+        "axis": "x",
+        "type": "prismatic",
+        "origin": {
+          "xyz": [
+            0.0,
+            -0.4,
+            0.2
+          ],
+          "rpy": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      {
+        "actuator": "arm_1_y",
+        "parent": "arm_1_x_link",
+        "child": "arm_1_y_link",
+        "axis": "y",
+        "type": "prismatic"
+      },
+      {
+        "actuator": "arm_1_z",
+        "parent": "arm_1_y_link",
+        "child": "arm_1_z_link",
+        "axis": "z",
+        "type": "prismatic"
+      },
+      {
+        "actuator": "arm_2_x",
+        "parent": "world",
+        "child": "arm_2_x_link",
+        "axis": "x",
+        "type": "prismatic",
+        "origin": {
+          "xyz": [
+            0.0,
+            0.4,
+            0.2
+          ],
+          "rpy": [
+            0.0,
+            0.0,
+            0.0
+          ]
+        }
+      },
+      {
+        "actuator": "arm_2_y",
+        "parent": "arm_2_x_link",
+        "child": "arm_2_y_link",
+        "axis": "y",
+        "type": "prismatic"
+      },
+      {
+        "actuator": "arm_2_z",
+        "parent": "arm_2_y_link",
+        "child": "arm_2_z_link",
+        "axis": "z",
+        "type": "prismatic"
+      }
+    ],
+    "end_effectors": {
+      "arm_1_gripper": {
+        "link": "arm_1_z_link",
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      },
+      "arm_2_gripper": {
+        "link": "arm_2_z_link",
+        "xyz": [
+          0.0,
+          0.0,
+          0.0
+        ],
+        "rpy": [
+          0.0,
+          0.0,
+          0.0
+        ]
+      }
+    }
+  },
+  "capabilities": {
+    "operations": [
+      "move_home"
+    ],
+    "sensors": [
+      "simulated_joint_feedback"
+    ],
+    "end_effector": "arm_1_gripper",
+    "payload_kg": 0.0,
+    "scope": "educational_simulation_only",
+    "unsupported": [
+      "grasp",
+      "physical_execution"
+    ],
+    "components": {
+      "arm_1_gripper": {
+        "actuator": "arm_1_finger",
+        "closed": 0.0,
+        "open": 0.08
+      },
+      "arm_2_gripper": {
+        "actuator": "arm_2_finger",
+        "closed": 0.0,
+        "open": 0.08
+      }
+    }
+  },
+  "initial_configuration": {
+    "actuator_positions": {
+      "arm_1_x": 0.0,
+      "arm_1_y": 0.0,
+      "arm_1_z": 0.0,
+      "arm_1_finger": 0.08,
+      "arm_2_x": 0.0,
+      "arm_2_y": 0.0,
+      "arm_2_z": 0.0,
+      "arm_2_finger": 0.08
+    },
+    "position_unit": "per_actuator",
+    "actuator_units": {
+      "arm_1_x": "m",
+      "arm_1_y": "m",
+      "arm_1_z": "m",
+      "arm_1_finger": "m",
+      "arm_2_x": "m",
+      "arm_2_y": "m",
+      "arm_2_z": "m",
+      "arm_2_finger": "m"
+    }
+  }
+}
