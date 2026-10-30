@@ -1,0 +1,38 @@
+/* RoboDE for NVIDIA: NVIDIA green accents. Scoped to the edition so the standard build is unchanged. */
+[data-edition="nvidia"] {
+  --ui-accent: #76b900;
+  --ui-accent-ink: #0b1400;
+  --lime: #76b900;
+  --nv-green: #76b900;
+  --nv-green-hover: #8fd400;
+  --nv-selected: #1b2810;
+  --nv-selected-border: #4f7a12;
+}
+[data-edition="nvidia"] .ide-v3 .primary { background: var(--nv-green); border-color: var(--nv-green); color: var(--ui-accent-ink); }
+[data-edition="nvidia"] .ide-v3 .primary:hover:not(:disabled) { background: var(--nv-green-hover); border-color: var(--nv-green-hover); color: var(--ui-accent-ink); box-shadow: 0 0 0 3px #76b90022; }
+[data-edition="nvidia"] .ide-v3 :focus-visible { outline-color: var(--nv-green); }
+[data-edition="nvidia"] .ide-v3 input[type="checkbox"], [data-edition="nvidia"] .ide-v3 input[type="radio"] { accent-color: var(--nv-green); }
+[data-edition="nvidia"] .ide-v3 .view-tabs > button.active { color: #d8f5a8; border-bottom-color: var(--nv-green); background: var(--nv-selected); }
+[data-edition="nvidia"] .ide-v3 .workspace-switcher > button.active { background: var(--nv-selected); border-color: var(--nv-selected-border); color: #d8f5a8; }
+[data-edition="nvidia"] .ide-v3 :is(.plan-tree-heading.selected, .atomic-task.selected, .instance-list > button.selected) { background: var(--nv-selected); border-left-color: var(--nv-green); box-shadow: inset 3px 0 var(--nv-green); }
+[data-edition="nvidia"] .ide-v3 .atomic-task:hover:not(:disabled) { border-color: var(--nv-selected-border); background: var(--nv-selected); }
+[data-edition="nvidia"] :is(.ai-model-list button.selected, .robot-setup-stages .active button, .mapping-table tr.selected td) { border-color: var(--nv-green); background: var(--nv-selected); }
+[data-edition="nvidia"] .robot-setup-stages .done span { background: #3c5c10; }
+[data-edition="nvidia"] .mode-switch button.active { background: #2d4410; color: #e3f7c2; }
+[data-edition="nvidia"] .titlebar { border-bottom: 2px solid var(--nv-green); }
+[data-edition="nvidia"] .brand-mark { color: var(--nv-green); }
+.edition-tag { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; color: #c8f08a; border: 1px solid #4f7a12; border-radius: 999px; padding: 2px 9px; white-space: nowrap; }
+.edition-tag svg { height: 12px; width: auto; }
+.first-boot { width: min(760px, calc(100vw - 32px)); max-height: calc(100vh - 48px); overflow: auto; display: grid; gap: 14px; }
+.first-boot .choice-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+.first-boot .choice-grid button { display: grid; justify-items: start; gap: 4px; text-align: left; min-height: 72px; }
+.first-boot .choice-grid button[aria-pressed="true"] { border-color: var(--ui-accent); background: #ffffff0a; }
+.first-boot .choice-grid small { color: var(--ui-muted); line-height: 1.5; }
+.first-boot ol.setup-progress { display: flex; gap: 6px; list-style: none; padding: 0; margin: 0; flex-wrap: wrap; }
+.first-boot ol.setup-progress li { font-size: 11px; border: 1px solid var(--ui-border); border-radius: 999px; padding: 3px 10px; color: var(--ui-muted); }
+.first-boot ol.setup-progress li.active { border-color: var(--ui-accent); color: var(--ui-text); }
+.ide-v3 .modal.first-boot, .modal.first-boot { width: min(760px, calc(100vw - 32px)); max-width: 760px; }
+.first-boot .choice-grid button { height: auto; white-space: normal; padding: 12px 14px; align-content: start; }
+.first-boot .choice-grid button strong { display: inline-flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.first-boot h2 { display: flex; align-items: center; gap: 10px; }
+.first-boot h2 svg { height: 18px; width: auto; }

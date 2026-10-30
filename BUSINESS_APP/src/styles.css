@@ -1501,3 +1501,7 @@ progress::-moz-progress-bar { background: var(--ui-accent); border-radius: 10px;
 .install-dialog button{min-height:44px;display:inline-flex;align-items:center;gap:8px}
 .install-dialog li{margin:10px 0}.install-note{color:var(--ui-text-muted,#9eacc0)}
 @media(max-width:520px){.app-header{height:auto;min-height:76px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;gap:12px}.header-actions{flex-wrap:wrap;gap:8px}.install-dialog{padding:20px}}
+.ai-choice { margin-top: 12px; }
+.ai-choice summary { cursor: pointer; font-weight: 600; }
+.ai-choice label { display: grid; gap: 6px; margin-top: 10px; font-size: 14px; }
+.ai-choice select { min-height: 44px; border-radius: 10px; padding: 0 10px; max-width: 100%; }

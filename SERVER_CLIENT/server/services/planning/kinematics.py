@@ -49,12 +49,12 @@ def link_points(model: dict, q: dict[str, float]) -> list[tuple[float, float, fl
     return [(base["x"] + c*x-s*y, base["y"] + s*x+c*y, base["z"]+z) for x,y,z in points]
 
 
-def forward(model: dict, q: dict[str, float]) -> Pose:
+def forward(model: dict, q: dict[str, float], target: str | None = None) -> Pose:
     if model['kinematics']['solver']=='serial_chain_dls_v1':
         from services.planning.serial_ik import effector_frame
         names=list(model['kinematics']['end_effectors'])
-        if len(names)!=1:raise ValueError('Select a named end effector for a multi-effector robot')
-        t=effector_frame(model,q,names[0]);return Pose(x=t[0][3],y=t[1][3],z=t[2][3])
+        if target is None and len(names)!=1:raise ValueError('Select a named end effector for a multi-effector robot')
+        t=effector_frame(model,q,target or names[0]);return Pose(x=t[0][3],y=t[1][3],z=t[2][3])
     x, y, z = link_points(model, q)[-1]
     return Pose(x=x, y=y, z=z)
 

@@ -15,6 +15,16 @@ def components(model):
     return configured
 
 
+def tool_component(model,tool_id):
+    """Select the reviewed component for a tool; never guess across multiple tools."""
+    available=components(model)
+    definition=model['kinematics'].get('end_effectors',{}).get(tool_id,{})
+    selected=available.get(definition.get('component_id',tool_id))
+    if selected:return selected
+    if len(available)==1 and len(effectors(model))==1:return next(iter(available.values()))
+    raise ValueError('Select an explicit gripper component for end effector '+str(tool_id))
+
+
 def effectors(model):
     if model['kinematics']['solver']=='serial_chain_dls_v1':return list(model['kinematics'].get('end_effectors',{}))
     if supports_model(model):return [model['capabilities']['end_effector']]

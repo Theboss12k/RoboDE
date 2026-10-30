@@ -1,0 +1,41 @@
+{
+  "cookies": [],
+  "origins": [
+    {
+      "origin": "http://127.0.0.1:5173",
+      "localStorage": [
+        {
+          "name": "robode.interface-mode",
+          "value": "expert"
+        }
+      ]
+    },
+    {
+      "origin": "http://127.0.0.1:8082",
+      "localStorage": [
+        {
+          "name": "robode.interface-mode",
+          "value": "expert"
+        }
+      ]
+    },
+    {
+      "origin": "http://localhost:5173",
+      "localStorage": [
+        {
+          "name": "robode.interface-mode",
+          "value": "expert"
+        }
+      ]
+    },
+    {
+      "origin": "http://localhost:8082",
+      "localStorage": [
+        {
+          "name": "robode.interface-mode",
+          "value": "expert"
+        }
+      ]
+    }
+  ]
+}

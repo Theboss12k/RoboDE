@@ -1,2 +1,3 @@
+import { fileURLToPath } from 'node:url';
 import {defineConfig} from '@playwright/test';
-export default defineConfig({testDir:'./tests',outputDir:'../test-results/server',workers:1,timeout:45000,use:{baseURL:'http://127.0.0.1:8082',viewport:{width:1512,height:982},screenshot:'only-on-failure',trace:'retain-on-failure'},webServer:{command:'node scripts/python.mjs -m scripts.hosted_test_server',url:'http://127.0.0.1:8082/login',cwd:'..',reuseExistingServer:false,timeout:30000}});
+export default defineConfig({testDir:'./tests',outputDir:'../test-results/server',workers:1,timeout:45000,use:{storageState:fileURLToPath(new URL('../tests/expert-mode.json', import.meta.url)),baseURL:'http://127.0.0.1:8082',viewport:{width:1512,height:982},screenshot:'only-on-failure',trace:'retain-on-failure'},webServer:{command:'node scripts/python.mjs -m scripts.hosted_test_server',url:'http://127.0.0.1:8082/login',cwd:'..',reuseExistingServer:false,timeout:30000}});

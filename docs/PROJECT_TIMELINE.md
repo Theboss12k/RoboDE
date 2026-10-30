@@ -1,6 +1,6 @@
 # RoboDE project timeline, feature updates and bug-fix history
 
-Updated **29 October 2026, India time**. Product formerly called **Robot IDE / Robot_IDE**; the business frontend is now **RoboDE Workspace**.
+Updated **30 October 2026, India time**. Product formerly called **Robot IDE / Robot_IDE**; the business frontend is now **RoboDE Workspace**.
 
 This file consolidates the provided chat, the current implementation, and retained validation reports. It follows the conversation's order for undated work and uses calendar dates only where a dated report or explicit chat evidence exists. It omits passwords, tokens, private access codes and private deployment URLs.
 
@@ -426,3 +426,109 @@ Private `artifacts/` logs referenced by historical reports remain local evidence
 **Request:** Push the completed project and installers to `Theboss12k/RoboDE`.
 
 **Prepared:** Initial source snapshot of all three applications, runtime, examples, installer builders and tests. Saved project folders and every machine runtime file are excluded from Git. Fresh source checkouts seed the canonical examples once, preserving existing saved projects; tests read canonical examples directly. Installer packages are kept as release assets rather than source history. Runtime verification passes 291 tests after the clean-checkout/data separation change. GitHub publication status is reported separately by the actual push/release result.
+
+## 30 October 2026 — Robotics v2, local development
+
+- Added versioned driver bundles and separate reviewed URDF-to-driver bindings, resumable setup, actuator mappings/aliases, mobility/tool configuration and simulated driver-code testing.
+- Added separate task decomposition and command binding, clarification states, manual typed calls and global LLM role selection; VLM input fails closed when missing or stale.
+- Added a Linux MoveIt/Nav2 container and local launcher. Verified native gantry planning/IK, unreachable-target rejection, primitive collision checking, conservative swept checking and a differential-drive Nav2 path locally.
+- Added exact-revision physical approval/arming and onsite device/watchdog contracts. Hardware qualification remains separate from simulation readiness. No real-device validation is claimed.
+- Connected the shared IDE and Business planning surfaces. Preserved the legacy library behind an explicit compatibility section.
+- Fixed prerequisite deletion silently dropping dependencies, preflight partial driver writes, joint-vector peer preservation, stale-scene compile races, nearest-sample motion selection and semantic grasp attachment occurring before gripper closure.
+- Added fictional stationary, differential-drive and mobile-manipulator import fixtures; verified both mobile-manipulator planning priorities. Native jobs now clean up process groups.
+- Added measured odometry checks and attachment/object-pose postconditions for physical runs; added a rigid-body-following grasp observation path for native Isaac, pending GPU validation.
+- Fixed task-tree selection resetting a newly selected view and added the complete browser setup-to-publication test.
+- Regression/build/browser evidence is tracked in `ROBOTICS_V2_LOCAL.md`. This entry describes local work; it is not a cloud release or hardware certification.
+
+## 30 October 2026 — Simplified Planner and Converter flow, local update
+
+- Consolidated normal plan authoring around one instruction and adjacent Generate plan, Validate plan and Run simulation controls.
+- Generate plan now automatically runs the Planner, then the Converter, and leaves tasks and actuator calls editable. Clarifications pause conversion; conversion errors stay with their tasks.
+- Exposed global Planner and Converter selectors in Simple mode. Robot setup uses the Converter; model/provider support and Expert overrides remain available.
+- Added optional robot scope for new generation without changing existing assignments. Kept Project → multiple Plans → multiple Tasks and immutable execution history.
+- Added direct robot-control shortcuts, compact authoring layout and a shorter tutorial. Closed compatibility authoring by default. Preserved Isaac live connection and recorded playback/recording.
+- Fixed instruction edits retaining outdated calls and simultaneous instruction/manual-command edits accidentally being reconverted. Marked old validation reports outdated after changes.
+- Validation evidence and scope: [simplified planning workflow](SIMPLE_PLANNING_20261030.md). This is local work; no cloud release or native GPU/hardware validation is claimed.
+
+## 30 October 2026 — Independent Nebius adapter and local model evaluation
+
+- Added a named **Nebius Token Factory** option to the shared desktop/normal web IDE’s AI Models configuration. It packages a standalone `invoke(input, system_prompt)` function and runs it in the existing independent Python worker; it has no simulator, robot-adapter or edition dependency.
+- Kept model discovery, credentials, Planner and Converter selection global and reusable. Added structured-output request hints for function workers, preserving the two-argument contract. The existing NVIDIA first-boot setup now uses the same provider module.
+- Added `AGENTS.md` requiring future functional changes and validation outcomes to update this document. This timeline is the maintained main change log.
+- Connected the local desktop/normal web and Business companion to the same standard local runtime (8775); normal browser remains on 8091 and Business on 8083. Existing project data and access codes are preserved.
+- Completed a fresh local comparison: six new plan scenarios plus documentation-to-adapter generation for each of Nemotron Mini 4B, Nemotron 3 Nano 4B Q4 and Phi-4 14B, followed by two isolated Converter tasks per model. Operated actual Electron, normal web and Business interfaces in disposable workspaces. Earlier GCP results remain historical and are not reused as new passes.
+- Results: Phi-4 passed 4/6 plan cases, 1/1 generated-adapter case and 2/2 Converter cases; Mini passed 0/6, 1/1 and 1/2; Nano passed 0/6, 0/1 and 1/2. Recommend Phi-4 for both roles with review, retaining its ambiguity and Cartesian Planner failures. Saved provider defaults were not changed. Exact instructions, raw final answers, calls, timings, errors and limitations are in [the local comparison](LLM_MODEL_COMPARISON_20261030.md) and [its JSON evidence](evaluations/local-llms-20261030.json).
+- Added repeatable local evaluation harnesses, including explicit Converter-only checks, final-state/FK verification, isolated bootstrap storage and prompt-free inference evidence. An inadvertently overlapping first Nano launch was terminated and excluded; the subsequent serial run supplies its scores. Provider format/schema constraints were not requested by the tested native function, so results apply to that configuration.
+- Provider verification: 68 focused tests and 3 targeted browser scenarios passed; full runtime suite 353 passed with 4 native opt-in skips. No live Nebius inference is claimed because no key is configured. Mini and Nano weights were downloaded locally; Nano required the separate official Ollama 0.40.13 evaluator. The installed Ollama 0.12.3 runtime was preserved. No cloud GPU VM, native Isaac or physical robot was used.
+- Fixed missing Monaco service registration exposed when switching Simple/Expert robot setup. Registered editor services before language initialization. Initial web suite: 32 passed/1 failed; targeted post-fix recheck: 3 passed; full post-fix web suite: 33 passed. Electron: 4 passed; Business: 11 passed. TypeScript and production IDE/Business builds passed; the IDE build retains a large-chunk advisory. These fixture-driven application checks are separate from real model scores.
+- Final provider recheck: 14 passed. Syntax checks and the revised disposable-server startup/shutdown smoke check passed. Stopped temporary evaluation API/gateways and Ollama listener, retaining downloaded weights/evidence, the original Ollama service and user applications. No changes were pushed or deployed.
+
+## 30 October 2026 — Gemini connection preparation
+
+- Prepared **Google Gemini · evaluation** using the existing global OpenAI-compatible LLM adapter in both local workspaces: normal desktop/web/Business and the separate NVIDIA IDE. Used Google's documented API root, `GEMINI_API_KEY` environment option, JSON-output support and current Flash candidate. No application source change or simulator-specific adapter was needed.
+- Verified both configurations were saved and their existing defaults preserved. Planner/Converter selections were not changed. Connection setup and secure key entry are documented in [LLM_ADAPTERS.md](LLM_ADAPTERS.md#google-gemini).
+- Checked the previously installed Ollama cloud reference `gemini-3-pro-preview:latest`: HTTP 404/model not found. No Google API key is saved in either workspace or set in the inspected environment. Live Gemini planning/Converter comparison is pending key entry in the UI; no quality score, successful Gemini inference, hardware testing or cloud VM launch is claimed.
+- Browser smoke check passed: the NVIDIA IDE opens the saved Gemini profile with the expected API root/model and a visible password-style API key field. Screenshot retained locally under `artifacts/gemini-20261030/`; documentation diff checks passed. No model/default changes were made by this UI check.
+
+## 30 October 2026 — Explicit Gemini and NVIDIA API connectors
+
+- Added named **Google Gemini** and **NVIDIA API · Nemotron** provider choices to shared AI Models configuration, separate from local Ollama and Nebius Token Factory. Both use the standard independent function worker and a downloadable provider-neutral module; they have no robot/simulator/edition dependencies.
+- Added provider-specific discovery/key requirements and server environment variables. Unconfigured profiles show **API key needed**. Existing generic profiles at these providers' documented hosts are recognized by name.
+- Switching providers clears entered credentials when the endpoint changes. Customizing a hosted function keeps its endpoint/model instead of replacing its address with localhost. Existing default and role selections are retained.
+- Restored compatibility for existing generic OpenAI/Nebius profiles after the runtime suite exposed an inference regression; explicit generic choices at other endpoints retain their original behavior. Long hosted model IDs now wrap within connector cards.
+- Configured named Gemini/NVIDIA profiles in both running local workspaces and restarted their backends. Read-only browser checks verified both connectors in Simple mode, editable saved profiles, API-key-needed status, NVIDIA logo proportions, no page errors and unchanged default selection. Screenshots are under `artifacts/hosted-connectors-20261030/`.
+- Verification: 58 focused backend tests passed; final full runtime suite **360 passed, 4 native opt-in skips**. Full shared browser suite **36 passed**; targeted recheck **5 passed** including clearing a saved key when switching endpoints and preserving hosted settings during customization. Production build and TypeScript checks passed; existing build size advisory and test deprecation/duplicate-ZIP fixture warnings remain. Card-wrapping recheck is being finalized.
+- User requested configuration only. No live hosted inference, new credentials request, physical/Isaac validation, cloud/GPU startup or deployment was performed. Existing local Ollama benchmark scores do not measure NVIDIA-hosted API models. Setup and provider distinctions are documented in [LLM_ADAPTERS.md](LLM_ADAPTERS.md#nvidia-hosted-api-and-nemotron).
+
+## 30 October 2026 — Separate Planner LLM and Task LLM, OpenRouter Nemotron and GCP Isaac demo
+
+- Renamed the two AI roles to **Planner LLM** (goal → tasks) and **Task LLM** (task → robot commands; formerly Converter) and made them independently selectable everywhere: global AI Models settings, per plan (`PUT /plan-definitions/{id}/roles`, shown beside Generate plan), per Business App command (`planner_adapter_id`/`task_adapter_id`, recorded as `ai_models` on the job; new `GET /api/business/ai-models`) and NVIDIA first-boot setup (optional Task LLM model on the same connection). Electron uses the shared client.
+- Hardened two-stage planning after cross-model testing: planner output is reduced to intent (`intent_only`); Task LLM calls are completed/normalized (`complete_call`: unit aliases, stray keys, single-target MOVE/GRASP, frame from catalog, position text); the MOVE catalog no longer advertises `base_frame` or orientation for the analytic solver; `"error": null` is not a failure; one formatting-repair retry for malformed JSON. A trial plan-wide context for the Task LLM confused small models and was reverted.
+- Added an OpenRouter (OpenAI-compatible) connection for hosted Nemotron 3 models; the key lives only in the git-ignored server `.env` and the VM's protected environment file. The account ran out of credit and hit the free daily limit, so Ultra/Super were not evaluated at scale.
+- Combination results on the cloud Isaac project: Nemotron 3.5 Bolt (GCP Ollama) was the most reliable Planner LLM, producing correct nine-step transfer tasks from a step-style instruction. No tested Task LLM (Bolt, Nano 4B variants, OpenRouter Nemotron 3 Nano 30B) produced a fully valid end-to-end plan automatically; Nano 30B binding was additionally blocked by an open "Scene changed while planning/binding" 409 (fingerprint includes worker/AI metadata).
+- GCP: L4 capacity was unavailable in asia-south1, so the Isaac VM was copied by snapshot to `robot-ide-isaac-cloud-sg` (asia-southeast1-b, pd-standard, same 2-hour STOP limit, OS Login). Recorded the server IDE hosted on that VM driving native Isaac Sim (Bolt Planner / Nano 30B Task roles shown): live run with execution feedback (`SIMULATION_PASSED`, postconditions passed), the run's recorded result, and a native Isaac camera MP4 (1280x720, 10 fps, 30.6 s) exported through RoboDE and played back. The executed plan was the existing validated transfer plan, not one converted automatically by the Task LLM. Artifacts: `artifacts/gcp-isaac-demo-20261030/`.
+- Recording findings: native recording at 1280x720/15 fps failed at startup because the 4-frame encoder queue filled before ffmpeg read; 720p/10 fps worked. The plan timeline scrubs the predicted trajectory only. Both are open.
+- Verification: full runtime suite **369 passed, 4 native opt-in skips**; server browser suite 36 passed before the final `two_stage` refinements; TypeScript and builds passed. Temporary loopback recording gateway, keep-alive and SSH tunnel were removed; all GCP VMs were stopped. Nothing committed, pushed or deployed beyond the cloud VM update.
+
+## 30 October 2026 — Live Isaac Sim control demo and pointer-visible recordings
+
+- Recorded a second GCP-hosted server IDE demo of real-time native Isaac Sim control (`artifacts/gcp-isaac-controls-20261030/`): Environment → **Control robots in Isaac Sim** → Connected project simulator, dragging joint sliders and gripper +/- for arm_01 (base, shoulder, elbow, wrist, gripper and return home) and arm_02 (base and wrist wave). Every command was confirmed against measured Isaac articulation feedback before the next. A native Isaac camera MP4 (1280x720, 10 fps, 255 s) was recorded during control and shown afterwards at 2× speed.
+- RoboDE's collision check refused one scripted arm_02 move ("Link intersects table at sample 30") and stopped that control session; the demo uses collision-free moves instead. No application code changed.
+- Re-recorded the plan demo with a visible pointer (new run `SIMULATION_PASSED`, 38.6 s native MP4). The pointer, click ripples and the playback overlay are added by the recording scripts only; the IDE itself still offers saved recordings as MP4 downloads.
+- Compact H.264 MP4 copies were made with a scratch `imageio-ffmpeg` install. The temporary loopback gateway, keep-alive and SSH tunnel were removed and the Singapore VM was stopped again. Nothing committed or pushed.
+
+## 30 October 2026 — Installers rebuilt with today's changes
+
+- Rebuilt the 0.4.0 installer set (`dist/releases/0.4.0-installers/`) from the current code: Desktop for Windows x64, Linux x64 and macOS arm64/x64 (ZIP and DMG), Server for Windows/Linux x64, and the Business connector. The packages now include separate Planner LLM/Task LLM selection, the two-stage planning fixes, NVIDIA first-boot Task LLM setup, Business per-command models and today's hosted LLM connectors. The version number is unchanged (0.4.0).
+- Kept the previous build as `dist/releases/0.4.0-installers-20261029/`. Removed the old `validation.json` from the new set because it recorded the previous build's hashes and install test.
+- Checks: all package and DMG SHA-256 files verified; each IDE package contains the new server and UI code; no `.env`, runtime folder, API key or private key material in any package; installer unit tests 10 passed. A fresh install/startup run on a target OS was not repeated for this build, and the GitHub v0.4.0 release assets were not replaced.
+
+## 30 October 2026 — Repository cleanup and push preparation
+
+**Scope:** Shared source repository for the browser IDE, Electron and Business App.
+Replaced the root README with setup, first-workflow, deployment and development
+instructions; added a documentation index, contributor notes and a script map.
+Consolidated Git exclusions for private state and generated files, aligned Docker
+context exclusions and added an LF policy for text files and launch scripts.
+Existing feature work, saved workspaces, recordings and release archives are preserved.
+
+**Bug fix:** A browser workflow check exposed a first-open development reload when
+Vite discovered the lazy Monaco editor's new imports. The reload returned Plans
+to its Tasks tab. The shared IDE now prebundles these imports at startup. The
+complete 32-test IDE browser suite passes after clearing the Vite dependency cache.
+
+**Cleanup:** Removed one macOS metadata file and 37 disposable source cache
+directories. Installed dependencies, private runtime data, release archives and
+recordings were retained.
+
+**Checks:** 369 backend tests passed; four opt-in native-worker tests skipped.
+Browser checks passed: shared IDE 32/32 (fresh Vite cache), hosted server 36/36,
+Business App 11/11 and Electron 4/4. Shared IDE TypeScript checking and both
+production builds passed; the IDE build was repeated after the Vite change.
+Python dependency consistency, workspace lockfile metadata, README npm commands,
+local Markdown links, expected private/generated exclusions and `git diff --check`
+passed. Credential-pattern scans found only deliberate test fixtures. Existing
+non-blocking dependency deprecations and the Monaco bundle-size warning remain.
+
+**Limits:** No fresh dependency installation, Docker build, native robotics/GPU
+acceptance or physical hardware check was performed. No commit or push was made.

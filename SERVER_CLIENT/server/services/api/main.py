@@ -16,6 +16,7 @@ from services.api.storage import Storage, fingerprint
 from services.api.model_library import model_library_router
 from services.api.llm import llm_router
 from services.api.isaac import isaac_router
+from services.api.setup import setup_router
 from services.api.plans import plans_router
 from services.api.assets import assets_router, validate_asset_refs
 from services.api.adapters import adapters_router
@@ -89,6 +90,7 @@ def create_app(storage: Storage | None = None, speed: float = 1.0):
         await controller.close()
         await controller.local_isaac.close()
         await controller.gpu.close()
+        await controller.nebius.close()
 
     app = FastAPI(title="RoboDE Runtime", version="0.4.0", lifespan=lifespan)
     app.state.controller = controller
@@ -96,6 +98,7 @@ def create_app(storage: Storage | None = None, speed: float = 1.0):
     from services.api.recordings import recordings_router
     app.include_router(recordings_router(controller))
     app.include_router(isaac_router(store,controller,controls))
+    app.include_router(setup_router(store,controller,controls))
     app.include_router(plans_router(store,controller))
     app.include_router(assets_router(store,controller))
     app.include_router(adapters_router(adapters,controls,controller))
@@ -104,6 +107,10 @@ def create_app(storage: Storage | None = None, speed: float = 1.0):
     app.include_router(configuration_router(store,controller,controls))
     app.include_router(llm_router(controller.llm,controller,controls))
     app.include_router(model_library_router(store,controller,controls))
+    from services.api.robotics import robotics_router
+    app.include_router(robotics_router(store,controller,controls))
+    from services.api.physical import physical_router
+    app.include_router(physical_router(store,controller,controls))
     app.state.llm = controller.llm
     app.state.controls = controls
     app.state.adapters = adapters
@@ -140,7 +147,8 @@ def create_app(storage: Storage | None = None, speed: float = 1.0):
 
     @app.get("/api/health")
     async def health():
-        return {"status": "ok", "version": "0.4.0", "instance_id":os.getenv("ROBOT_IDE_INSTANCE_ID"), "provider": get_provider(controller.llm).name,
+        from services.api.edition import edition
+        return {"status": "ok", "version": "0.4.0", "edition": edition(), "instance_id":os.getenv("ROBOT_IDE_INSTANCE_ID"), "provider": get_provider(controller.llm).name,
                 "simulation": "Local kinematic preview", "hardware_enabled": False,
                 "cloud_session":os.getenv('ROBOT_IDE_DEPLOYMENT')=='cloud',
                 "isaac_sim_connected": any(s.remote is not None for s in controller.sessions.values())}
@@ -164,12 +172,13 @@ def create_app(storage: Storage | None = None, speed: float = 1.0):
     async def create_project(data: ProjectRequest):
         if not data.name.strip():
             raise ValueError("Project name cannot be blank")
-        return store.create_project(data.name.strip(), data.source)
+        from services.api.setup import preferred_simulator
+        return store.create_project(data.name.strip(), data.source, simulator=preferred_simulator(store))
 
     @app.get("/api/projects/{project_id}")
     async def project(project_id: str):
         from services.api.isaac import worker_configuration
-        configured=store.load_project(project_id)[0].get('simulation',{}).get('adapter')=='isaac_sim' and (controller.gpu.enabled() or worker_configuration(store)['deployment']=='local') and project_id not in controller.sessions
+        configured=store.load_project(project_id)[0].get('simulation',{}).get('adapter')=='isaac_sim' and (controller.gpu.enabled() or worker_configuration(store)['deployment'] in {'local','nebius'}) and project_id not in controller.sessions
         if project_id in controller.offline or configured:
             session,states = controller.offline.get(project_id) or controller.configured_preview(project_id)
             project,instances,models,_ = store.load_project(project_id)

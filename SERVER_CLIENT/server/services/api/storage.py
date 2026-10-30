@@ -76,6 +76,19 @@ class Storage:
             from services.planning.kinematics import supports_model
             model["planning_supported"] = supports_model(model)
             instance = load_instance(instance_path, model)
+            binding_id=instance.get('control_adapter',{}).get('binding_id')
+            if binding_id:
+                from services.adapters.bindings import BindingRegistry, enrich_model
+                from services.adapters.drivers import DriverRegistry
+                registry=BindingRegistry(self,DriverRegistry(self,None));pinned=instance['control_adapter'].get('binding_hash')
+                binding=registry.get_revision(binding_id,pinned)
+                stale=None
+                try:
+                    current=registry.get(binding_id)
+                    if current['hash']!=pinned:stale='A newer mapping exists. Select and test its reviewed revision.'
+                except ValueError as error:stale=str(error)
+                model=enrich_model(model,binding)
+                if stale:model['binding_stale']=stale
             instances.append(instance)
             models.append(model)
         world = read_yaml(component(folder, project["environment"]))
@@ -91,7 +104,7 @@ class Storage:
     def list_projects(self):
         return [read_yaml(p) for p in sorted(self.projects.glob("*/project.yaml"))]
 
-    def create_project(self, name: str, source="apple_transfer"):
+    def create_project(self, name: str, source="apple_transfer", simulator: str | None = None):
         # New project references the BOT registry, with its own instance and world.
         import shutil
         slug = re.sub(r"[^a-z0-9]+", "_", name.lower()).strip("_")[:45] or "project"
@@ -112,6 +125,8 @@ class Storage:
             asset_record(self, source, asset_id)
             shutil.copytree(asset_folder(self, source, asset_id), asset_folder(self, slug, asset_id))
         project.update(id=slug, name=name)
+        if simulator:
+            project['simulation'] = {**project.get('simulation', {}), 'adapter': simulator}
         (folder / "project.yaml").write_text(yaml.safe_dump(project, sort_keys=False))
         return project
 
@@ -128,7 +143,7 @@ class Storage:
             raise ValueError("Compiled revisions are immutable; compile a new revision")
         atomic_json(folder / "plan.json", plan.model_dump(mode="json"))
         atomic_json(folder / "snapshot.json", snapshot)
-        (folder / "generated.py").write_text(plan.code)
+        (folder / ("commands.json" if plan.motion_manifest.get("schema_version")==2 else "generated.py")).write_text(plan.code)
         definition = self.get_definition(plan.project_id, plan.definition_id)
         definition.latest_revision_id = plan.id
         self.save_definition(definition)
@@ -187,11 +202,18 @@ class Storage:
 
     def get_definition(self, project_id, definition_id):
         self.migrate_plans(project_id)
-        return PlanDefinition.model_validate_json((self.project_folder(project_id) / "plans" / safe_id(definition_id) / "definition.json").read_text())
+        path=self.project_folder(project_id) / 'plans' / safe_id(definition_id) / 'definition.json'
+        value=PlanDefinition.model_validate_json(path.read_text())
+        if 'schema_version' not in json.loads(path.read_text()):
+            backup=self.project_folder(project_id)/'migration_backups/v2'/safe_id(definition_id)/'definition.json'
+            if not backup.exists():
+                backup.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(path,backup)
+            self.save_definition(value)
+        return value
 
     def list_definitions(self, project_id):
         self.migrate_plans(project_id)
-        return [PlanDefinition.model_validate_json(p.read_text()) for p in sorted(
+        return [self.get_definition(project_id,p.parent.name) for p in sorted(
             (self.project_folder(project_id) / "plans").glob("*/definition.json"), key=lambda p:p.stat().st_mtime, reverse=True)]
 
     def delete_definition(self, project_id, definition_id):

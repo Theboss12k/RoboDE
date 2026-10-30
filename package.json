@@ -11,8 +11,10 @@
   "scripts": {
     "dev": "node scripts/dev.mjs",
     "dev:web": "node scripts/dev.mjs --web",
+    "dev:nvidia": "node scripts/dev.mjs --web --edition=nvidia",
     "build": "npm run build --workspace SERVER_CLIENT/client",
     "start": "node scripts/dev.mjs --built",
+    "start:nvidia": "node scripts/dev.mjs --built --edition=nvidia",
     "test": "node scripts/python.mjs -m pytest",
     "test:e2e": "playwright test",
     "typecheck": "npm run typecheck --workspace SERVER_CLIENT/client",
@@ -21,6 +23,7 @@
     "scenario": "node scripts/python.mjs -m simulation.scenario_runner.run",
     "server:build": "npm run build --workspace SERVER_CLIENT/client",
     "server:start": "node scripts/dev.mjs --server --built",
+    "server:start:nvidia": "node scripts/dev.mjs --server --built --edition=nvidia",
     "server:dev": "node scripts/dev.mjs --web",
     "server:stop": "node scripts/server-control.mjs stop",
     "server:status": "node scripts/server-control.mjs status",

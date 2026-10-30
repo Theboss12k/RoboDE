@@ -1,0 +1,24 @@
+{
+  "urdf_import": "passed",
+  "driver_generated_code_tests": "passed",
+  "mapping": "passed",
+  "move": {
+    "target": "tool",
+    "position": [
+      0.1,
+      0.05,
+      0.4
+    ],
+    "frame": "world"
+  },
+  "native_engine": "MoveIt2/OMPL",
+  "final_joint_positions": {
+    "slide_x": 0.09999999999999987,
+    "slide_y": -0.04999999999999981,
+    "slide_z": 0.03500000000000007
+  },
+  "physical_check": "passed",
+  "hardware_contacted": false,
+  "native_isaac_gpu_tested": false,
+  "environment_obj_import": "passed"
+}

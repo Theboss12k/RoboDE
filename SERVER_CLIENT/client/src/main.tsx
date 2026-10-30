@@ -1,10 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App";
+import { ModeProvider } from "./mode";
 import Welcome from "./ui/Welcome";
 import "./styles.css";
 import "./ui/theme.css";
 import "./ui/workspace.css";
+import "./ui/robotics.css";
+import "./ui/nvidia.css";
 import {installBrandIcon} from "./branding/RobotLogo";
 installBrandIcon();
 document.documentElement.classList.toggle(
@@ -13,6 +16,6 @@ document.documentElement.classList.toggle(
 );
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <Welcome><App /></Welcome>
+    <ModeProvider><Welcome><App /></Welcome></ModeProvider>
   </React.StrictMode>,
 );

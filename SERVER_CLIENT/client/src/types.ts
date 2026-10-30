@@ -1,3 +1,6 @@
+export type FunctionCall = { function: string; arguments: Record<string, unknown> };
+export type RoleSettings = { setup_adapter_id?: string | null; planner_adapter_id?: string | null; binding_adapter_id?: string | null; vision_enabled: boolean };
+export type ValidationReport = { status: "passed" | "failed" | "incomplete"; coverage: string[]; findings: {code: string; message: string; task_id?: string; robot_id?: string; position?: number[]; time?: number}[]; hardware_validated: boolean };
 export type Pose = { x: number; y: number; z: number };
 export type WorldObject = {
   id: string;
@@ -38,6 +41,7 @@ export type Check = {
   message: string;
 };
 export type Frame = {
+  base_poses?: Record<string, {x:number;y:number;z:number;yaw:number}>;
   robot_positions: Record<string, Record<string, number>>;
   active_steps: Record<string, string>;
   held_objects: Record<string, string | null>;
@@ -48,6 +52,8 @@ export type Frame = {
   held_object: string | null;
 };
 export type Plan = {
+  validation_report?: ValidationReport | null;
+  motion_manifest?: Record<string, unknown>;
   definition_id: string | null;
   definition_version: number | null;
   atomic_tasks: TaskDefinition[];
@@ -80,6 +86,7 @@ export type Plan = {
   created_at: string;
 };
 export type Run = {
+  mode?: "simulation" | "physical";
   robot_states: Record<string, RobotState>;
   step_statuses: Record<string, string>;
   task_statuses: Record<string, string>;
@@ -116,7 +123,7 @@ export type Project = {
   default_prompt: string;
 };
 export type Instance = {
-  control_adapter?: {adapter_id:string; category:"physical"|"virtual"; adapter_hash?:string|null};
+  control_adapter?: {binding_id?:string|null; binding_hash?:string|null;adapter_id:string; category:"physical"|"virtual"; adapter_hash?:string|null};
   base_pose?: { x: number; y: number; z: number; yaw: number };
   instance: { id: string; name: string };
   robot_model: { id: string; version: string };
@@ -126,6 +133,10 @@ export type Instance = {
   };
 };
 export type Model = {
+  binding_stale?: boolean;
+  urdf_joint_metadata?: {name:string;mimic?:{joint:string;multiplier:number;offset:number}|null}[];
+  geometry?: {link:string;kind:string;shape:string;parameters:Record<string, unknown>;origin:{xyz:number[];rpy:number[]}}[];
+  mesh_manifest?: {uri:string;status:string;sha256?:string;path?:string}[];
   planning_supported?: boolean;
   imported?: boolean;
   source_import?: { format: string; filename: string; sha256: string; warnings: string[] };
@@ -242,6 +253,14 @@ export type StandardCommand = {
   frame?: string | null;
 };
 export type TaskDefinition = {
+  intent?: string;
+  function_calls?: FunctionCall[];
+  binding_status?: "legacy" | "unresolved" | "resolved";
+  authored_by?: "user" | "planner" | "legacy";
+  binding_error?: string | null;
+  duration_seconds?: number | null;
+  repeat_count?: number;
+  completion_condition?: string;
   placement?: "inside" | "on_surface";
   command?: StandardCommand | null;
   llm_adapter_id?: string | null;
@@ -258,6 +277,12 @@ export type TaskDefinition = {
   target_id: string | null;
 };
 export type PlanDefinition = {
+  allowed_robot_ids?: string[];
+  planning_status?: string;
+  clarification_questions?: string[];
+  planning_error?: string | null;
+  role_settings?: RoleSettings;
+  inference_evidence?: {stage:"planner"|"binder";task_id?:string|null;model?:string|null;provider_host?:string|null;duration_seconds?:number|null;usage?:Record<string,number>}[];
   id: string;
   project_id: string;
   name: string;
@@ -337,6 +362,9 @@ export type ModelAsset = {
 };
 
 export type LLMAdapter = {
+  connection_type?: "ollama" | "openai" | "nebius" | "gemini" | "nvidia" | "custom" | null;
+  supports_vision?: boolean;
+  structured_outputs?: boolean;
   id: string;
   name: string;
   protocol: "chat_completions" | "python_function";
@@ -409,3 +437,6 @@ export type CommandTest = {
   finished_at: string | null;
   trace: { step: number; feedback: ControlSession["feedback"] }[];
 };
+
+export type EffectiveModel = { adapter_id: string | null; name: string | null; model: string | null; source: string; missing: boolean };
+export type EffectiveModels = { default_id: string | null; planner: EffectiveModel; binder: EffectiveModel; tasks: Record<string, EffectiveModel>; custom: boolean; explanations: string[] };

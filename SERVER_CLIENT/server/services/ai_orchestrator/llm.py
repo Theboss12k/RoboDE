@@ -11,16 +11,25 @@ import httpx
 from pydantic import Field
 from shared.models.domain import Contract
 from services.api.storage import atomic_json, safe_id
+from shared.models.robotics import SceneImage
+
+
+class TruncatedAnswer(ValueError):
+    pass
 
 
 def json_answer(answer: str):
-    """Accept JSON or one leading JSON fence with optional trailing review prose."""
-    text = answer.strip()
-    fence = re.fullmatch(r'```(?:json)?\s*\n([\s\S]*?)\n```((?:(?!```)[\s\S])*)', text, flags=re.IGNORECASE)
+    """Accept JSON or exactly one JSON fence, optionally introduced by a line of prose and followed by review prose.
+
+    Reasoning models (e.g. Nemotron) may prefix one complete <think> block; an unclosed one is truncation."""
+    text = re.sub(r'^\s*<think>[\s\S]*?</think>', '', answer, count=1).strip()
+    fence = re.fullmatch(r'(?:[^`{\[]*\n)?```(?:json)?\s*\n([\s\S]*?)\n```((?:(?!```)[\s\S])*)', text, flags=re.IGNORECASE)
     return json.loads(fence[1] if fence else text)
 
 
 class ProviderConfiguration(Contract):
+    connection_type: Literal['ollama', 'openai', 'nebius', 'gemini', 'nvidia', 'custom'] | None = None
+    structured_outputs: bool = False
     name: str = Field(min_length=1, max_length=100)
     protocol: Literal['chat_completions', 'python_function'] = 'chat_completions'
     source_code: str = Field(default='', max_length=60000)
@@ -32,11 +41,57 @@ class ProviderConfiguration(Contract):
     api_key_env: str = Field(default='', pattern=r'^(?:[A-Za-z_][A-Za-z0-9_]*)?$')
     api_key: str | None = Field(default=None, max_length=8000)
     clear_api_key: bool = False
+    supports_vision: bool = False
 
 
 class Invocation(Contract):
     input: str = Field(min_length=1, max_length=64000)
     system_prompt: str = Field(default='', max_length=32000)
+    images: list[SceneImage] = Field(default_factory=list, max_length=2)
+
+
+def connection_type(configuration):
+    """Explicit choice, or inferred for profiles saved before connection types existed."""
+    if configuration.get('connection_type') not in {None, 'openai'}:
+        return configuration['connection_type']
+    if configuration.get('protocol') == 'python_function':
+        return configuration.get('connection_type') or 'custom'
+    url = urlsplit(configuration.get('base_url', ''))
+    hosted = {'generativelanguage.googleapis.com': 'gemini', 'integrate.api.nvidia.com': 'nvidia'}
+    if url.hostname in hosted:
+        return hosted[url.hostname]
+    if configuration.get('connection_type'):
+        return configuration['connection_type']
+    return 'ollama' if url.port == 11434 or 'ollama' in (url.hostname or '') else 'openai'
+
+
+def checked_url(base_url):
+    url = urlsplit(base_url.strip())
+    if url.scheme not in {'http','https'} or not url.hostname or url.username or url.password or url.query or url.fragment:
+        raise ValueError('Base URL must be an HTTP(S) API root without credentials, query or fragment')
+    return base_url.strip().rstrip('/')
+
+
+async def discover_models(kind, base_url, key=''):
+    """List the models a backend reports. Read-only: never pulls, loads or replaces a model."""
+    root = checked_url(base_url)
+    from .presets import HOSTED_PROVIDERS
+    if kind in HOSTED_PROVIDERS and not key:
+        name, environment, _ = HOSTED_PROVIDERS[kind]
+        raise ValueError(f'Enter your {name} API key, or configure {environment} on the RoboDE server')
+    try:
+        async with httpx.AsyncClient(timeout=10, follow_redirects=False) as client:
+            if kind == 'ollama':
+                response = await client.get(re.sub(r'/v1$', '', root)+'/api/tags')
+                response.raise_for_status()
+                return sorted({m['name'] for m in response.json().get('models', []) if isinstance(m, dict) and m.get('name')})
+            response = await client.get(root+'/models', headers={'Authorization':f'Bearer {key}'} if key else {})
+            response.raise_for_status()
+            return sorted({m['id'] for m in response.json().get('data', []) if isinstance(m, dict) and m.get('id')})
+    except httpx.HTTPStatusError as error:
+        raise ValueError(f'The connection answered HTTP {error.response.status_code}; check the URL and API key') from error
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError) as error:
+        raise ValueError('Could not reach this connection or read its model list') from error
 
 
 class LLMRegistry:
@@ -81,17 +136,16 @@ class LLMRegistry:
         return dict(result)
 
     def save(self, configuration, adapter_id=None):
+        from .presets import provider_preset
+        configuration = provider_preset(configuration)
         if configuration.protocol == 'python_function':
             from .code_adapter import validate_source
-            validate_source(configuration.source_code)
+            validate_source(configuration.source_code, vision=configuration.supports_vision)
         value = configuration.model_dump(exclude={'api_key','clear_api_key'})
         value['name'], value['model'] = value['name'].strip(), value['model'].strip()
-        url = urlsplit(value['base_url'].strip())
-        if url.scheme not in {'http','https'} or not url.hostname or url.username or url.password or url.query or url.fragment:
-            raise ValueError('Base URL must be an HTTP(S) API root without credentials, query or fragment')
         if not value['name'] or not value['model']:
             raise ValueError('Adapter name and model cannot be blank')
-        value['base_url'] = value['base_url'].strip().rstrip('/')
+        value['base_url'] = checked_url(value['base_url'])
         data = self.all(private=True)
         old = self.resolve(adapter_id) if adapter_id else None
         if old and 'system_prompt' not in configuration.model_fields_set:
@@ -125,40 +179,84 @@ class LLMRegistry:
             secrets = json.loads(self.secrets.read_text()); secrets.pop(adapter_id,None)
             atomic_json(self.secrets,secrets); self.secrets.chmod(0o600)
 
+    def key(self, adapter_id):
+        configuration = self.resolve(adapter_id)
+        secrets = json.loads(self.secrets.read_text()) if self.secrets.exists() else {}
+        return secrets.get(configuration['id']) or os.getenv(configuration.get('api_key_env') or '', '')
+
+    async def status(self, adapter_id):
+        """Whether the profile's model is currently offered; unavailable profiles stay configured."""
+        configuration = self.resolve(adapter_id)
+        kind = connection_type(configuration)
+        if kind == 'custom':
+            return {'available': None, 'connection_type': kind, 'models': [],
+                    'message': 'Custom functions cannot list models. Use Test model to check this profile.'}
+        try:
+            models = await discover_models(kind, configuration['base_url'], self.key(adapter_id))
+        except ValueError as error:
+            return {'available': False, 'connection_type': kind, 'models': [], 'message': str(error)}
+        if not models:
+            return {'available': None, 'connection_type': kind, 'models': [],
+                    'message': 'This connection does not list its models. Use Test model to check this profile.'}
+        if configuration['model'] in models:
+            return {'available': True, 'connection_type': kind, 'models': models, 'message': 'Model available on this connection'}
+        return {'available': False, 'connection_type': kind, 'models': models,
+                'message': f"{configuration['model']} is not offered by this connection. The profile is kept; choose another model or make it available on the backend."}
+
     def snapshot(self):
         # Include public versions globally, keeping project fingerprints comparable in the UI.
         return self.all()
 
-    def adapter(self, adapter_id=None):
+    def adapter(self, adapter_id=None, response_schema=None, json_object=False):
         """Return the function contract used by drafting, SDK generation and run tasks."""
         configuration = self.resolve(adapter_id)
-        async def invoke(input: str, system_prompt: str = '') -> dict:
-            invocation = Invocation(input=input, system_prompt=system_prompt)
+        async def invoke(input: str, system_prompt: str = '', images=None) -> dict:
+            invocation = Invocation(input=input, system_prompt=system_prompt, images=images or [])
+            if invocation.images and not configuration.get('supports_vision'):
+                raise ValueError('VLM mode requires a vision-capable LLM adapter; select one or explicitly disable VLM')
             secret_data = json.loads(self.secrets.read_text()) if self.secrets.exists() else {}
             key = secret_data.get(configuration['id']) or os.getenv(configuration['api_key_env'], '')
             headers = {'Authorization':f'Bearer {key}'} if key else {}
             system = '\n\n'.join(p for p in (configuration.get('system_prompt', ''), invocation.system_prompt) if p)
             messages = ([{'role':'system','content':system}] if system else []) + [{'role':'user','content':invocation.input}]
+            if invocation.images:
+                messages[-1]['content']=[{'type':'text','text':invocation.input},*[{'type':'image_url','image_url':{'url':f'data:{im.mime_type};base64,{im.data_base64}'}} for im in invocation.images]]
             started = time.monotonic()
             try:
+                finish_reason = None
                 if configuration['protocol'] == 'python_function':
                     from .code_adapter import invoke_code
-                    answer = await invoke_code(configuration, invocation.input, system, key)
+                    answer = await invoke_code(configuration, invocation.input, system, key, [im.model_dump() for im in invocation.images],
+                                               response_schema=response_schema, json_object=json_object)
                     body = {}
                 else:
                     async with httpx.AsyncClient(timeout=configuration['timeout_seconds'], follow_redirects=False) as client:
-                        response = await client.post(configuration['base_url']+'/chat/completions',headers=headers,
-                            json={'model':configuration['model'],'temperature':0,'max_tokens':configuration['max_tokens'],'messages':messages})
+                        payload={'model':configuration['model'],'temperature':0,'max_tokens':configuration['max_tokens'],'messages':messages}
+                        if response_schema and configuration.get('structured_outputs'):
+                            payload['response_format']={'type':'json_schema','json_schema':{'name':'robode_response','schema':response_schema,'strict':False}}
+                        elif json_object and configuration.get('structured_outputs'):
+                            # Nested planner schemas use $defs, which some local grammar converters reject; plain JSON mode is portable.
+                            payload['response_format']={'type':'json_object'}
+                        response = await client.post(configuration['base_url']+'/chat/completions',headers=headers,json=payload)
                         response.raise_for_status()
                         body = response.json()
-                    answer = body['choices'][0]['message']['content']
+                    choice = body['choices'][0]
+                    answer, finish_reason = choice['message']['content'], choice.get('finish_reason')
+                    if finish_reason == 'length':
+                        raise TruncatedAnswer('Output reached the token limit')
                 if not isinstance(answer,str) or not answer.strip() or len(answer)>120000:
                     raise ValueError('Empty or oversized answer')
+                if re.match(r'\s*<think>', answer) and '</think>' not in answer:
+                    raise TruncatedAnswer('Reasoning never reached a final answer')
                 usage = body.get('usage')
                 usage = {k:v for k,v in usage.items() if isinstance(v,(int,float)) and math.isfinite(v)} if isinstance(usage,dict) else {}
                 return {'answer':answer,'adapter_id':configuration['id'],'adapter_version':configuration['version'],
-                    'model':configuration['model'],'duration_seconds':round(time.monotonic()-started,3),'usage':usage}
+                    'model':configuration['model'],'provider_host':urlsplit(configuration['base_url']).hostname,
+                    'finish_reason':finish_reason,'duration_seconds':round(time.monotonic()-started,3),'usage':usage}
             except (httpx.HTTPError,ValueError,KeyError,TypeError,IndexError,OSError) as error:
                 # Never expose response bodies or authorization headers in errors.
-                raise ValueError(f"LLM adapter {configuration['name']}: request failed or returned an invalid answer; check endpoint, model, credentials and timeout") from error
+                reason = ('output reached its token limit; no partial answer was used. Increase max tokens or shorten the request'
+                          if isinstance(error, TruncatedAnswer) else
+                          'request failed or returned an invalid answer; check endpoint, model, credentials and timeout')
+                raise ValueError(f"LLM adapter {configuration['name']}: {reason}") from error
         return invoke

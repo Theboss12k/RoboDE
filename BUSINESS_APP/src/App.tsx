@@ -21,7 +21,7 @@ import {
   Hand,
 } from "lucide-react";
 import { api, post, route } from "./api";
-import type { Asset, Command, Progress, Project, Workspace } from "./types";
+import type { AIModelChoice, Asset, Command, Progress, Project, Workspace } from "./types";
 import FloorPlan from "./FloorPlan";
 import Rooms from "./Rooms";
 import GpuStart from "./GpuStart";
@@ -41,6 +41,12 @@ export default function App() {
     [search, setSearch] = useState(""),
     [selected, setSelected] = useState(""),
     [view, setView] = useState<"3d" | "map">("3d");
+  const [clarifications,setClarifications]=useState<Record<string,string>>({});
+  // Planner LLM and Task LLM for the next command; empty values use the workspace settings.
+  const [ai, setAI] = useState<AIModelChoice | null>(null),
+    [planner, setPlanner] = useState(""),
+    [taskModel, setTaskModel] = useState("");
+  useEffect(() => { void api<AIModelChoice>("/ai-models").then(setAI).catch(() => setAI(null)); }, []);
   const [command, setCommand] = useState<Command | null>(null),
     [run, setRun] = useState<Progress | null>(null);
   const [busy, setBusy] = useState(""),
@@ -98,6 +104,11 @@ export default function App() {
       alive = false;
     };
   }, [projectId]);
+  useEffect(()=>{
+    if(!command?.physical_status||command.run_id||!projectId)return;
+    const timer=setInterval(()=>void api<Command>(route(projectId)+"/commands/"+command.id).then(setCommand).catch(e=>setError(e.message)),1000);
+    return()=>clearInterval(timer)
+  },[projectId,command?.id,command?.run_id,command?.physical_status]);
   useEffect(() => {
     if (!command?.run_id || !projectId) return;
     let alive = true;
@@ -194,6 +205,9 @@ export default function App() {
             ? "Needs attention"
             : active
               ? "Working"
+              : command?.status === "needs_clarification" ? "A little more detail needed"
+              : command?.status === "unsupported" ? "This request is not supported"
+              : command?.status === "unresolved" || command?.status === "validation_failed" ? "Operator review needed"
               : command && !command.run_id
                 ? "Ready for review"
                 : "Ready";
@@ -485,7 +499,7 @@ export default function App() {
                     setCommand(null);
                     const result = await post<Command>(
                       route(projectId) + "/commands",
-                      { instruction: input, request_id: randomId() },
+                      { instruction: input, request_id: randomId(), planner_adapter_id: planner || null, task_adapter_id: taskModel || null },
                     );
                     setCommand(result);
                     setNotice("Review the proposed tasks before starting.");
@@ -545,6 +559,21 @@ export default function App() {
                     : "Voice is unavailable in this browser. Type, or use your device keyboard’s microphone."}
                 </p>
               </form>
+              {ai && ai.models.length > 0 && (
+                <details className="ai-choice">
+                  <summary>AI models for this command</summary>
+                  {([["Planner LLM", planner, setPlanner, ai.planner_adapter_id], ["Task LLM", taskModel, setTaskModel, ai.task_adapter_id]] as const).map(([label, value, set, fallback]) => (
+                    <label key={label}>
+                      {label}
+                      <select aria-label={label} value={value} disabled={!!busy || active} onChange={(e) => set(e.target.value)}>
+                        <option value="">Workspace setting · {ai.models.find((m) => m.id === fallback)?.model ?? "none"}</option>
+                        {ai.models.map((m) => <option key={m.id} value={m.id}>{m.name} · {m.model}</option>)}
+                      </select>
+                    </label>
+                  ))}
+                  <p className="muted">The Planner LLM splits your command into tasks. The Task LLM turns each task into robot actions.</p>
+                </details>
+              )}
               <details className="guided-command">
                 <summary>Prefer to choose from a list?</summary>
                 <div className="guided-fields">
@@ -608,6 +637,7 @@ export default function App() {
                   {notice}
                 </p>
               )}
+              {workspace.active_run&&<button className="stop-command full-width" disabled={!!busy} onClick={()=>void work("Requesting Stop…",async()=>{await post(route(projectId)+"/stop");setNotice("Stop requested. Waiting for confirmed stopped feedback.")})}>Stop workspace execution</button>}
               {!command && (
                 <div className="how-it-works">
                   <h3>A little direction goes a long way.</h3>
@@ -635,6 +665,12 @@ export default function App() {
                   </div>
                   <p className="command-text">“{command.instruction}”</p>
                   <p className="muted">Assigned to {command.robot_name}</p>
+                  {command.ai_models&&<p className="muted">Planned by {command.ai_models.planner ?? "no model"} · tasks converted by {command.ai_models.task ?? "no model"}</p>}
+                  {command.planning_error&&<p className="error-note" role="alert">{command.planning_error}</p>}
+                  {command.clarification_questions?.map(question=><label className="field" key={question}>{question}<input aria-label={question} value={clarifications[question]??""} onChange={e=>setClarifications({...clarifications,[question]:e.target.value})}/></label>)}
+                  {command.status==="needs_clarification"&&<button className="primary full-width" disabled={!!busy||command.clarification_questions?.some(q=>!clarifications[q]?.trim())} onClick={()=>void work("Updating the plan…",async()=>setCommand(await post(route(projectId)+"/commands/"+command.id+"/clarify",{answers:clarifications})))}>Continue with these details</button>}
+                  {command.validation_report&&<p className={command.validation_report.status==="passed"?"muted":"error-note"} role="status">Motion check: {command.validation_report.status}. {command.validation_report.status==="incomplete"?"Preview is available; a physical run needs the IDE operator to complete the checks.":""}</p>}
+                  {command.checks.filter(c=>c.status!=="passed").map((c,i)=><p className="error-note" key={i}>{c.message}</p>)}
                   <ol className="task-checklist">
                     {command.steps.map((s, i) => (
                       <li
@@ -682,11 +718,12 @@ export default function App() {
                       )}
                     </>
                   )}
+                  {command.validation_report?.status==="passed"&&!command.run_id&&<button className="secondary full-width" disabled={!!busy||command.physical_status==="awaiting_ide_approval"} onClick={()=>void work("Requesting operator approval…",async()=>setCommand(await post(route(projectId)+"/commands/"+command.id+"/request-physical")))}>{command.physical_status==="awaiting_ide_approval"?"Waiting for IDE operator approval":"Request a physical run"}</button>}
                   {!command.run_id ? (
                     <button
                       className="primary full-width"
                       disabled={
-                        !!busy || !workspace.connected || !!workspace.active_run
+                        !!busy || !workspace.connected || !!workspace.active_run || command.status!=="ready"
                       }
                       onClick={() =>
                         void work("Starting simulation…", async () =>

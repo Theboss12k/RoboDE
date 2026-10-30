@@ -27,8 +27,8 @@ for(const viewport of [{width:1100,height:720},{width:1512,height:982},{width:19
     const dialog=page.getByRole('dialog',{name:'Global configuration',exact:true});
     await expect(dialog).toBeInViewport();
     expect(await dialog.evaluate(el=>el.scrollWidth<=el.clientWidth+1)).toBe(true);
-    await dialog.getByRole('button',{name:'LLM adapters',exact:true}).click();
-    await expect(dialog.getByRole('button',{name:'New LLM adapter',exact:true})).toBeVisible();
+    await dialog.getByRole('button',{name:'AI Models',exact:true}).click();
+    await expect(dialog.getByRole('button',{name:'New AI connection',exact:true})).toBeVisible();
     await page.screenshot({path:`artifacts/ui-overhaul/${viewport.width}-configuration.png`,animations:'disabled'});
     await page.keyboard.press('Escape');await expect(dialog).toHaveCount(0);
     await expect(page.getByRole('button',{name:'Open configuration',exact:true})).toBeFocused();
@@ -44,6 +44,7 @@ test('dialog focus cycles, returns to opener and busy setup cannot close through
   await expect(close).toBeFocused();await page.keyboard.press('Shift+Tab');
   expect(await dialog.evaluate(el=>el.contains(document.activeElement))).toBe(true);
   await page.keyboard.press('Tab');await expect(close).toBeFocused();
+  await dialog.getByText('Legacy robot definitions & adapters',{exact:true}).click();
   await dialog.getByRole('button',{name:'Add robot to library',exact:true}).click();
   await dialog.getByRole('button',{name:'Import URDF',exact:true}).click();
   await page.getByLabel('URDF source file',{exact:true}).setInputFiles({name:'slow.urdf',mimeType:'application/xml',buffer:Buffer.from('<robot name="Slow"><link name="base"/></robot>')});

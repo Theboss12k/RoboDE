@@ -1,0 +1,10 @@
+QUICKSTART GANTRY: FICTIONAL VIRTUAL SDK
+Version robode-sim-v2. This documents simulated commands, not a hardware manufacturer SDK.
+set_slide_x(value) sets slide_x in m; range -10.0 to 10.0.
+set_slide_y(value) sets slide_y in m; range -10.0 to 10.0.
+set_slide_z(value) sets slide_z in m; range -10.0 to 10.0.
+read_feedback() returns simulated actuator feedback.
+stop_motion() stops simulated motion.
+disconnect() closes the simulated transport.
+
+Joint mapping: slide_x -> set_slide_x; slide_y -> set_slide_y; slide_z -> set_slide_z. Units are metres; mapping scale 1, offset 0. Position limits in the URDF are stricter than these generic virtual transport limits.

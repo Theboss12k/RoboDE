@@ -46,7 +46,7 @@ def validate_positions(model: dict, positions: dict, complete: bool = True) -> N
         limits = actuators[name]
         if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
             raise ValueError(f"{name}: position must be finite")
-        if not limits["min"] <= value <= limits["max"]:
+        if name not in model.get('continuous_joints',[]) and not limits["min"] <= value <= limits["max"]:
             raise ValueError(f"{name}: {value:.9g} outside [{limits['min']}, {limits['max']}] {limits['unit']}")
 
 
@@ -95,6 +95,13 @@ def load_model(folder: Path) -> dict:
             raise ValueError(f"Adapter {name} declares capabilities missing from the model")
     if (folder / 'source/import.json').exists():
         model['source_import'] = json.loads((folder / 'source/import.json').read_text())
+        source=(folder/'source/package'/model['source_import']['urdf_path']).resolve()
+        if source.is_relative_to((folder/'source/package').resolve()) and source.is_file():
+            from services.imports.urdf import parse_urdf
+            parsed=parse_urdf(source.read_bytes());model['geometry']=parsed['geometry'];model['urdf_joint_metadata']=parsed['joints']
+            meshes={m['uri']:m for m in model['source_import'].get('meshes',[])}
+            for item in model['geometry']:
+                if item['shape']=='mesh':item['asset']=meshes.get(item['parameters']['uri'])
     return model
 
 

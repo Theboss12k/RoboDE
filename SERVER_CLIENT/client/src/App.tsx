@@ -35,6 +35,9 @@ import type {
 import PlanWorkspace, { type PlanTab } from "./PlanWorkspace";
 import RobotsWorkspace from "./RobotsWorkspace";
 import Configuration from "./Configuration";
+import { ModeSwitch } from "./mode";
+import FirstBootSetup, { type SetupInfo } from "./FirstBootSetup";
+import type { Validation, ValidationStage } from "./PlanningPipeline";
 import type { LLMConfiguration, TaskDefinition } from "./types";
 import EnvironmentWorkspace from "./EnvironmentWorkspace";
 import Tutorial, { type TutorialLocation } from "./Tutorial";
@@ -55,7 +58,18 @@ export default function App() {
     default_id: null,
   });
   const [health, setHealth] = useState<Health | null>(null);
+  const [setupInfo, setSetupInfo] = useState<SetupInfo | null>(null), [setupOpen, setSetupOpen] = useState(false);
+  useEffect(() => {
+    void api<SetupInfo>("/setup").then((info) => {
+      setSetupInfo(info);
+      document.documentElement.dataset.edition = info.edition;
+      if (info.edition === "nvidia") document.title = "RoboDE for NVIDIA";
+      // Only the NVIDIA build asks on first boot; the standard build keeps its existing start.
+      if (info.edition === "nvidia" && !info.completed) setSetupOpen(true);
+    }).catch(() => {});
+  }, []);
   useCloudActivity(!!health?.cloud_session);
+  const [controlsRobotId, setControlsRobotId] = useState<string>();
   const [workspace, setWorkspace] = useState<Workspace>("plans");
   const [tab, setTab] = useState<PlanTab>("tasks");
   const [draft, setDraft] = useState<PlanDefinition | null>(null);
@@ -88,6 +102,7 @@ export default function App() {
     if (id === currentId.current && sequence===refreshSequence.current) setDetail(next);
     return next;
   }, []);
+  const [validation, setValidation] = useState<Validation | null>(null);
   const act = async (label: string, fn: () => Promise<void>) => {
     setBusy(label);
     setError(null);
@@ -209,6 +224,7 @@ export default function App() {
           name: draft.name,
           goal: draft.goal,
           tasks: draft.tasks,
+          allowed_robot_ids: draft.allowed_robot_ids??[],
           version: draft.version,
         }),
       },
@@ -218,8 +234,9 @@ export default function App() {
     await refresh();
     return saved;
   };
-  const openPlan = async (id: string, taskId?: string) =>
-    act("Loading plan", async () => {
+  const openPlan = async (id: string, taskId?: string) => {
+    if(draft?.id===id&&!run){setSelected(taskId??draft.tasks[0]?.id??null);setWorkspace("plans");setTab("tasks");return;}
+    await act("Loading plan", async () => {
       await saveCurrent();
       const d = await api<PlanDefinition>(
         `/projects/${projectId}/plan-definitions/${id}`,
@@ -238,6 +255,7 @@ export default function App() {
       setTab("tasks");
       setExpanded((prev) => new Set([...prev, id]));
     });
+  };
   const openRun = async (id: string) =>
     act("Loading recorded revision", async () => {
       await saveCurrent();
@@ -290,6 +308,9 @@ export default function App() {
     setName("");
     setModal(kind);
   };
+  // Progress belongs to the plan state it validated; edits or another plan clear it.
+  useEffect(() => { if (dirty) setValidation(null); }, [dirty]);
+  useEffect(() => setValidation(null), [draft?.id]);
   const definitions = detail?.plan_definitions ?? [];
   return (
     <div className={`ide ide-v3 ${sidebar ? "" : "collapsed"}`}>
@@ -301,6 +322,7 @@ export default function App() {
           <strong>
             Robo<span>DE</span>
           </strong>
+          {setupInfo?.edition === "nvidia" && <span className="edition-tag"><NvidiaLogo /> for NVIDIA · Nebius</span>}
           <span className="version">{appVersion}</span>
         </div>
         <div className="title-crumb">
@@ -322,6 +344,7 @@ export default function App() {
           <span className={`status-dot ${health ? "green" : ""}`} />
           {health ? "Runtime connected" : "Connecting…"}
         </button>
+        <ModeSwitch />
         <button
           className="configuration-launch"
           aria-label="Open configuration"
@@ -625,6 +648,7 @@ export default function App() {
               detail={detail}
               busy={disabled}
               tutorialWizard={tutorialWizard}
+              onOpenControls={id=>{setControlsRobotId(id);setWorkspace("environment")}}
               onError={setError}
               onRefresh={async () => {
                 await refresh();
@@ -665,6 +689,7 @@ export default function App() {
             />
           ) : workspace === "environment" ? (
             <EnvironmentWorkspace
+              initialRobotId={controlsRobotId}
               onRefresh={async () => {
                 await refresh();
               }}
@@ -745,6 +770,7 @@ export default function App() {
               onChange={(p) => {
                 setDraft(p);
                 setDirty(true);
+                setValidation(null);
               }}
               onNew={() => newDialog("plan")}
               onArchive={() =>
@@ -818,27 +844,67 @@ export default function App() {
                   );
                 })
               }
-              onCompile={() =>
-                void act("Compiling plan", async () => {
-                  const saved = await saveCurrent();
-                  if (!saved) return;
-                  const p = await post<Plan>(
-                    `/projects/${projectId}/plan-definitions/${saved.id}/compile`,
-                  );
-                  setRevision(p);
-                  setRun(null);
-                  setDraft(
-                    await api(
-                      `/projects/${projectId}/plan-definitions/${saved.id}`,
-                    ),
-                  );
+              onSaved={(d)=>{setDraft(d);setDirty(false);}}
+              onRefresh={()=>void refresh()}
+              onConfigureAI={()=>{setConfigurationTab("llm");setModal("configuration")}}
+              onOpenControls={()=>{setControlsRobotId(draft?.tasks.find(t=>t.id===selected)?.robot_id||detail.robots[0]?.instance.instance.id);setWorkspace("environment")}}
+              activity={busy}
+              onPhysicalRun={r=>{setRun(r);setTab("simulation")}}
+              onDecompose={(clarifications, replace, image) => void act("Planner: creating tasks", async () => {
+                const saved=await saveCurrent();if(!saved)return;
+                setValidation(null);
+                const planned=await post<PlanDefinition>(`/projects/${projectId}/plan-definitions/${saved.id}/decompose`,{version:saved.version,instruction:saved.goal,clarifications,replace_tasks:replace,image});
+                setDraft(planned);setDirty(false);setRevision(null);setRun(null);setSelected(planned.tasks[0]?.id??null);
+                if(planned.planning_status!=="tasks_ready"){
+                  await refresh();setNotice(planned.planning_status==="needs_clarification"?"Answer the planner's questions, then generate again.":"This plan requires an unavailable robot capability.");return;
+                }
+                setBusy("Task LLM: creating actuator commands");
+                try{
+                  const converted=await post<{definition:PlanDefinition;errors:{task_id:string;error:string}[]}>(`/projects/${projectId}/plan-definitions/${saved.id}/bind-commands`,{version:planned.version});
+                  setDraft(converted.definition);setDirty(false);
+                  if(converted.errors.length)setSelected(converted.errors[0].task_id);
+                  await refresh();setNotice(converted.errors.length?"Tasks were generated. Review the conversion errors beside the affected tasks.":"Tasks and actuator commands are ready. Edit them if needed, then validate the plan.");
+                }catch(error){await refresh();throw Error("Tasks were saved, but the converter could not finish: "+(error as Error).message)}
+              })}
+              onBind={() => void act("Converting tasks to actuator commands", async () => {
+                const saved=await saveCurrent();if(!saved)return;
+                const next=await post<{definition:PlanDefinition;errors:{task_id:string;error:string}[]}>(`/projects/${projectId}/plan-definitions/${saved.id}/bind-commands`,{version:saved.version});
+                setDraft(next.definition);setDirty(false);setRevision(null);await refresh();
+                setNotice(next.errors.length?"Unresolved calls remain visible beside their tasks. Correct them before validation.":"Commands resolved. Validate the plan to compile motion and check collisions.");
+              })}
+              validation={validation}
+              onValidate={() => void act("Validating plan", async () => {
+                // Simple mode's single action: resolve commands, compile motion, then run the physical checker.
+                let stage: ValidationStage = "commands";
+                try {
+                  setValidation({ stage });
+                  let saved = await saveCurrent(); if (!saved) { setValidation(null); return; }
+                  if (saved.tasks.some((t) => t.binding_status === "unresolved")) {
+                    const next = await post<{definition:PlanDefinition;errors:{task_id:string;error:string}[]}>(`/projects/${projectId}/plan-definitions/${saved.id}/bind-commands`, { version: saved.version });
+                    setDraft(next.definition); setDirty(false); setRevision(null);
+                    if (next.errors.length) {
+                      setValidation({ stage, failed: `${next.errors.length} task${next.errors.length === 1 ? "" : "s"} could not be resolved` });
+                      setSelected(next.errors[0].task_id); await refresh();
+                      setError("Some tasks need attention. Each explanation is shown with its task; edit them and validate again.");
+                      return;
+                    }
+                    saved = next.definition;
+                  }
+                  stage = "motion"; setValidation({ stage });
+                  const p = await post<Plan>(`/projects/${projectId}/plan-definitions/${saved.id}/compile`);
+                  stage = "checker"; setValidation({ stage });
+                  setRevision(p); setRun(null);
+                  setDraft(await api(`/projects/${projectId}/plan-definitions/${saved.id}`));
                   await refresh();
-                  if (!p.valid)
-                    setError(
-                      "Compilation found failed validation checks. Review them before simulation.",
-                    );
-                })
-              }
+                  if (!p.valid || p.validation_report?.status === "failed") {
+                    setValidation({ stage, failed: "Validation found problems; review them below" });
+                    setError("Validation found failed checks. Review them before simulation.");
+                  } else setValidation({ stage: "done" });
+                } catch (e) {
+                  setValidation({ stage, failed: (e as Error).message });
+                  throw e;
+                }
+              })}
               onSimulate={() =>
                 void act("Starting simulation", async () => {
                   if (!revision) return;
@@ -926,6 +992,7 @@ export default function App() {
                 </button>
               </div>
               <p>Runtime: {health?.status ?? "unavailable"}</p>
+              {setupInfo && <button onClick={() => { setModal(null); setSetupOpen(true); }}>Run setup again · simulator, compute & AI model</button>}
               <p>Task provider: {health?.provider ?? "unavailable"}</p>
               <p>
                 Simulator:{" "}
@@ -946,7 +1013,7 @@ export default function App() {
                 reviewed adapter, connection validation and explicit arming.
               </p>
               <small>
-                Use Configuration → LLM adapters for task and SDK drafting.
+                Use Configuration → AI Models for task and adapter drafting.
                 Native Isaac GPU execution and real hardware need their own
                 acceptance checks.
               </small>
@@ -1036,6 +1103,10 @@ export default function App() {
           )}
         </div>
       )}
+      {setupOpen && setupInfo && (
+          <FirstBootSetup info={setupInfo} onClose={setupInfo.completed ? () => setSetupOpen(false) : undefined}
+            onDone={(next) => { setSetupInfo(next); setSetupOpen(false); setNotice("Setup saved. New projects use the chosen simulator."); void loadLLM(); void refresh(); }} />
+        )}
       {tutorial && (
         <Tutorial
           onClose={closeTutorial}

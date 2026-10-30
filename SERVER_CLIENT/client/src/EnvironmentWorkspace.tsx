@@ -29,7 +29,9 @@ export default function EnvironmentWorkspace({
   onReset,
   onDisconnect,
   onWorld,
+  initialRobotId,
 }: {
+  initialRobotId?: string;
   detail: ProjectDetail;
   busy: boolean;
   onBackend: (backend: string, objects?: WorldObject[]) => void;
@@ -113,6 +115,7 @@ export default function EnvironmentWorkspace({
     return () => window.removeEventListener("keydown", key);
   }, [editingRobot]);
   const [controlRobot, setControlRobot] = useState("");
+  useEffect(()=>{if(initialRobotId)selectRobot(initialRobotId)},[initialRobotId,detail.project.id]);
   const [controlsConnected, setControlsConnected] = useState(false);
   const refresh = useRef(onRefresh);
   refresh.current = onRefresh;
@@ -234,7 +237,7 @@ export default function EnvironmentWorkspace({
       {reachability.controls}
       <div className="environment-robot-toolbar placement-editor">
         <div className="scene-robot-picker">
-          <span className="eyebrow">ROBOTS</span>
+          <span className="eyebrow">ROBOT CONTROLS</span><small>Select a robot to move its joints or tool.</small>
           {detail.robots.map((r) => (
             <button
               key={r.instance.instance.id}
@@ -242,6 +245,8 @@ export default function EnvironmentWorkspace({
                 editingRobot === r.instance.instance.id ? "selected" : ""
               }
               disabled={busy || !!controlRobot || editorBusy}
+              aria-label={`Control ${r.instance.instance.name}`}
+              title="Open joint and end-effector controls"
               onClick={() => selectRobot(r.instance.instance.id)}
             >
               {r.instance.instance.name}

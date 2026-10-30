@@ -13,6 +13,8 @@ from services.world_model.world import object_map, contained
 
 
 def validate_definition(definition, robot_ids):
+    scope=getattr(definition,'allowed_robot_ids',[])
+    if len(set(scope))!=len(scope) or set(scope)-set(robot_ids):raise ValueError('Choose distinct robots that belong to this project')
     if len(definition.tasks)>144:raise ValueError('A plan supports at most 144 tasks')
     if not definition.name.strip():
         raise ValueError("Plan name cannot be blank")
@@ -24,7 +26,7 @@ def validate_definition(definition, robot_ids):
             if task.robot_id or not task.llm_input.strip() or any(v is not None for v in (task.target,task.joint_positions,task.object_id,task.target_id)):
                 raise ValueError(f'{task.id}: LLM tasks require input, no robot assignment and no motion/object parameters')
         if task.operation=='command':
-            if task.command is None or any(v is not None for v in (task.target,task.joint_positions)):
+            if (task.command is None and task.binding_status=='legacy') or any(v is not None for v in (task.target,task.joint_positions)):
                 raise ValueError(f'{task.id}: standardized tasks require a command and no legacy motion parameters')
         elif task.command is not None:
             raise ValueError(f'{task.id}: command is only allowed for a standardized task')
@@ -49,6 +51,10 @@ def compile_definition(definition, instances, models, objects, states, fingerpri
     validate_definition(definition, set(instances))
     if not definition.tasks:
         raise ValueError("Add at least one task before compiling")
+    if definition.planning_status in {'needs_clarification','unsupported'}:
+        raise ValueError('Resolve the plan clarification or unsupported request before compiling')
+    if any(t.binding_status=='unresolved' for t in definition.tasks):
+        raise ValueError('Resolve every task command before validating the plan')
     has_motion = any(t.operation != "llm" for t in definition.tasks)
     by_id = {t.id:t.model_copy(deep=True) for t in definition.tasks}
     steps = [TaskStep(id=t.id,label=t.name,operation=t.operation,implementation='services.planning.definitions',dependencies=t.dependencies,robot_id=t.robot_id) for t in definition.tasks]

@@ -1,52 +1,43 @@
+# Dependencies and language caches
 node_modules/
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.tsbuildinfo
+
+# Builds, installers and generated media
 dist/
 out/
 release/
-.env
-.venv/
-__pycache__/
-*.pyc
-.DS_Store
-.pytest_cache/
-*.tsbuildinfo
-SERVER_CLIENT/server/robot_system/runtime/**/*.json
-SERVER_CLIENT/server/robot_system/runtime/*.sqlite3*
-SERVER_CLIENT/server/projects/*/tasks/*/
-SERVER_CLIENT/server/projects/*/results/*.json
 artifacts/
+
+# Test output and coverage
 test-results/
 playwright-report/
-SERVER_CLIENT/server/robot_system/runtime/isaac_cell/
+.coverage
+.coverage.*
+coverage/
+coverage.xml
+htmlcov/
 
-SERVER_CLIENT/server/projects/*/plans/
-SERVER_CLIENT/server/projects/*/migration_backups/
-SERVER_CLIENT/server/projects/*/robots/*/connections.json
-SERVER_CLIENT/server/robot_system/runtime/adapter_drafts/
-SERVER_CLIENT/server/robot_system/runtime/adapters/
-SERVER_CLIENT/server/robot_system/runtime/registry_backups/
-
-SERVER_CLIENT/server/projects/*/environment/assets/
-
-SERVER_CLIENT/server/robot_system/runtime/llm/
-SERVER_CLIENT/server/robot_system/runtime/imported_models/
-
-SERVER_CLIENT/server/robot_system/runtime/tools/
-SERVER_CLIENT/server/robot_system/runtime/phone/
-SERVER_CLIENT/server/robot_system/runtime/rooms/
-
-*.egg-info/
-SERVER_CLIENT/server/robot_system/runtime/local_isaac/
-SERVER_CLIENT/server/robot_system/runtime/isaac_project_scene/
-SERVER_CLIENT/server/robot_system/runtime/connections/
-
-# Release artifacts contain platform launchers; private runtime stays excluded.
-/dist/
-
-# Native camera exports and their project metadata stay out of source control.
-SERVER_CLIENT/server/robot_system/runtime/recordings/
-
-# Saved workspaces and machine-local credentials are never application source.
-SERVER_CLIENT/server/projects/
-SERVER_CLIENT/server/robot_system/runtime/
+# Local configuration and credentials; keep the public template
+.env
 .env.*
 !.env.example
+
+# Saved workspaces, imported assets, connection settings and runtime credentials
+# Canonical examples under SERVER_CLIENT/server/examples remain versioned.
+/SERVER_CLIENT/server/projects/
+/SERVER_CLIENT/server/robot_system/runtime/
+
+# OS and editor scratch files
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~

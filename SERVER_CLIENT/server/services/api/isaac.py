@@ -14,7 +14,7 @@ from shared.models.worker import PROTOCOL
 
 
 class IsaacConfiguration(Contract):
-    deployment:Literal['local','gcp','remote']='remote'
+    deployment:Literal['local','gcp','remote','nebius']='remote'
     url:str=Field(default='http://127.0.0.1:9100',max_length=2048)
     token:str|None=Field(default=None,max_length=4096)
     load_scene:bool=False
@@ -31,6 +31,9 @@ class IsaacConfiguration(Contract):
     local_source:str=Field(default='',max_length=4096)
     local_source_kind:Literal['automatic','catalog','manifest']='automatic'
     local_gui:bool=True
+    # Nebius is connect-only: the operator starts the GPU VM; RoboDE tunnels to its worker over SSH.
+    nebius_host:str=Field(default='',pattern=r'^(?:[A-Za-z0-9][A-Za-z0-9.:-]*)?$',max_length=255)
+    nebius_ssh_user:str=Field(default='ubuntu',pattern=r'^[a-z_][a-z0-9_-]*$',max_length=64)
 
     @model_validator(mode='after')
     def endpoint(self):
@@ -43,6 +46,9 @@ class IsaacConfiguration(Contract):
         if self.on_demand and not all((self.gcp_project,self.gcp_zone,self.gcp_instance)):raise ValueError('Set project, zone and VM name for on-demand GPU')
         if self.deployment!='gcp' and self.deployment!='remote' and self.on_demand:raise ValueError('Local Isaac cannot start a GCP VM')
         if self.deployment=='local' and (parsed.scheme!='http' or parsed.hostname!='127.0.0.1'):raise ValueError('Local Isaac uses http://127.0.0.1:PORT')
+        if self.deployment=='nebius':
+            if not self.nebius_host:raise ValueError('Enter the Nebius VM public IP address or hostname')
+            if parsed.scheme!='http' or parsed.hostname not in {'127.0.0.1','localhost'}:raise ValueError('Nebius Isaac is reached through the SSH tunnel at http://127.0.0.1:PORT')
         if any(ch in self.local_launcher+self.local_source+self.ssh_key_file for ch in '\r\n\0'):raise ValueError('Use paths without control characters')
         if self.ssh_key_file:
             from pathlib import Path
@@ -52,16 +58,24 @@ class IsaacConfiguration(Contract):
 
 
 def worker_configuration(store):
-    path=store.runtime/'connections/isaac.json'
+    from services.api.edition import connection_path,edition
+    path=connection_path(store)
     saved=json.loads(path.read_text()) if path.exists() else {}
     # Legacy manually configured endpoints remain attach-only; never acquire a
     # local process or change cloud billing behavior as a side effect of upgrading.
     if saved or os.getenv('ISAAC_WORKER_URL') or os.getenv('ISAAC_WORKER_TOKEN'):
         deployment=saved.get('deployment') or ('gcp' if saved.get('on_demand') or saved.get('gcp_project') else 'remote')
+    elif edition()=='nvidia':deployment='nebius'
     else:deployment='gcp' if sys.platform=='darwin' else 'local'
     return {'deployment':deployment,'local_launcher':'','local_source':'','local_source_kind':'automatic','local_gui':True,
         'url':os.getenv('ISAAC_WORKER_URL','http://127.0.0.1:9100'),'token':os.getenv('ISAAC_WORKER_TOKEN',''),
-        'load_scene':deployment=='local','gcp_project':'','gcp_zone':'','gcp_instance':'','on_demand':False,'idle_minutes':10,'max_session_minutes':120,'use_iap':True,'ssh_key_file':'',**saved}
+        'load_scene':deployment=='local','gcp_project':'','gcp_zone':'','gcp_instance':'','on_demand':False,'idle_minutes':10,'max_session_minutes':120,'use_iap':True,'ssh_key_file':'','nebius_host':'','nebius_ssh_user':'ubuntu',**saved}
+
+
+def save_configuration(store,value):
+    from services.api.edition import connection_path
+    path=connection_path(store);path.parent.mkdir(parents=True,exist_ok=True);path.parent.chmod(0o700)
+    atomic_json(path,value);path.chmod(0o600)
 
 
 def isaac_router(store,controller,controls):
@@ -77,9 +91,8 @@ def isaac_router(store,controller,controls):
             raise ValueError('Disconnect Isaac and close active controls before changing the worker connection')
         updated=data.model_dump();updated['token']=data.token or worker_configuration(store)['token']
         if len(updated['token'])<16:raise ValueError('Set the worker token before saving')
-        await controller.gpu.close()
-        path=store.runtime/'connections/isaac.json';path.parent.mkdir(parents=True,exist_ok=True);path.parent.chmod(0o700)
-        atomic_json(path,updated);path.chmod(0o600)
+        await controller.gpu.close();await controller.nebius.close()
+        save_configuration(store,updated)
         return public()
     @router.get('/setup')
     async def setup():
@@ -131,6 +144,19 @@ def isaac_router(store,controller,controls):
         for pid,session in list(controller.sessions.items()):
             if session.remote:await controller.disconnect(pid)
         return await controller.gpu.stop()
+
+    @router.get('/nebius')
+    async def nebius_status():return controller.nebius.snapshot()
+    @router.post('/nebius/connect')
+    async def nebius_connect():return await controller.nebius.connect()
+    @router.post('/nebius/disconnect')
+    async def nebius_disconnect():
+        for pid in controller.sessions:controller.recordings.guard(pid)
+        if controller.leases or controls.sessions or controller.resources.owners:raise ValueError('Stop active plans and close manual controls before disconnecting the Nebius VM.')
+        for pid,session in list(controller.sessions.items()):
+            if session.remote:await controller.disconnect(pid)
+        await controller.nebius.close()
+        return controller.nebius.snapshot()
 
     @router.post('/probe')
     async def probe():

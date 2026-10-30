@@ -1,0 +1,2 @@
+# Keep scripts usable on Unix, including checkouts made on Windows.
+* text=auto eol=lf

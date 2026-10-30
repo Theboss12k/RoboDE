@@ -8,7 +8,7 @@ test('signed-in user reveals, copies and hides the workspace code without showin
   await page.getByRole('button',{name:'Open workspace',exact:true}).click();
   await page.getByRole('button',{name:'Continue',exact:true}).click();
   await page.getByRole('button',{name:'Open configuration',exact:true}).click();
-  await page.getByRole('button',{name:'Workspace access',exact:true}).click();
+  await page.getByRole('button',{name:'Workspace',exact:true}).click();
   await expect(page.getByLabel('Revealed workspace access code',{exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'Show workspace access code',exact:true}).click();
   await expect(page.getByLabel('Revealed workspace access code',{exact:true})).toHaveValue('hosted-browser-test-code');
@@ -20,8 +20,8 @@ test('signed-in user reveals, copies and hides the workspace code without showin
   await page.getByRole('button',{name:'Hide access code',exact:true}).click();
   await expect(page.getByLabel('Revealed workspace access code',{exact:true})).toHaveCount(0);
   await page.getByRole('button',{name:'Show workspace access code',exact:true}).click();
-  await page.getByRole('button',{name:'LLM adapters',exact:true}).click();
-  await page.getByRole('button',{name:'Workspace access',exact:true}).click();
+  await page.getByRole('button',{name:'AI Models',exact:true}).click();
+  await page.getByRole('button',{name:'Workspace',exact:true}).click();
   await expect(page.getByLabel('Revealed workspace access code',{exact:true})).toHaveCount(0);
   await page.clock.install();
   await page.getByRole('button',{name:'Show workspace access code',exact:true}).click();
@@ -39,7 +39,7 @@ for(const status of [404,405])test(`desktop local runtime (${status}) uses scope
   await page.route('**/api/workspace/access',route=>route.fulfill({status,json:{detail:'Endpoint unavailable on private runtime'}}));
   await page.goto('/');await page.getByRole('button',{name:'Continue',exact:true}).click();
   await page.getByRole('button',{name:'Open configuration',exact:true}).click();
-  await page.getByRole('button',{name:'Workspace access',exact:true}).click();
+  await page.getByRole('button',{name:'Workspace',exact:true}).click();
   await page.getByRole('button',{name:'Show workspace access code',exact:true}).click();
   const field=page.getByLabel('Revealed workspace access code',{exact:true});
   await expect(field).toHaveValue('native-local-test-code');

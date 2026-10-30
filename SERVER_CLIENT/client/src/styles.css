@@ -3766,6 +3766,14 @@ h1 {
   margin-bottom: 6px;
   gap: 5px;
 }
+.llm-configuration > aside > button > strong,
+.llm-configuration > aside > button > small {
+  max-width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  text-align: left;
+}
 .llm-configuration > aside > button.selected {
   background: #1a212a;
   color: #dadfe5;

@@ -24,6 +24,7 @@ class IsaacCell:
         self.metadata = {}
         self.latest = None
         self.asset_provider=None
+        self.robot_package_provider=None
         self.room_asset_path=None
         self.uploaded_assets=set()
 
@@ -56,6 +57,8 @@ class IsaacCell:
                 if not self.metadata.get('room_loading'):raise WorkerUnavailable('Enable ROBOT_IDE_ALLOW_ROOM_UPLOADS=1 on the managed worker to transfer this captured room')
                 await self.upload_file('/v1/scene-assets/rooms/'+self.room['asset_id'],self.room_asset_path)
         robots = [{'instance':i,'model':self.models[i['instance']['id']]} for i in self.instances]
+        if self.load_scene and self.robot_package_provider and self.metadata.get('robot_bundle_uploading'):
+            for robot in robots:robot['robot_package']=self.robot_package_provider(robot['model'])
         body={'project_id':self.project_id,'robots':robots,'objects':[o.model_dump() for o in self.objects],'load_scene':self.load_scene,'room':self.room}
         if self.transfer_positions is not None:body['transfer_positions']=self.transfer_positions
         data = await self.request('POST','/v1/sessions',body)

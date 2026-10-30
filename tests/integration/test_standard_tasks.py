@@ -73,6 +73,16 @@ def test_llm_relative_lift_verifies_compiled_result_before_saving(store,monkeypa
         if expected==422:
             assert 'requested object lift' in response.text
             assert client.get(path).json()['tasks']==[] and client.get(path).json()['version']==1
+        async def staged(input,system):
+            if 'PLANNER' in system:
+                semantic=[{**t,'intent':t['name'],'operation':'command','command':None,'binding_status':'unresolved'} for t in tasks]
+                return {'answer':json.dumps({'status':'ready','tasks':semantic})}
+            task=json.loads(input)['task'];original=next(t for t in tasks if t['id']==task['id'])
+            if original['operation']=='grasp':call={'function':'GRASP','arguments':{'object_id':'apple'}}
+            else:
+                command=original['command'];call={'function':'MOVE','arguments':{'target':command['target'],'position':command['position'],'frame':'world'}}
+            return {'answer':json.dumps({'calls':[call]})}
+        monkeypatch.setattr(app.state.llm,'adapter',lambda *_,**__:staged)
         business=client.post('/api/business/projects/apple_transfer/commands',json={'request_id':str(uuid.uuid4()),'instruction':goal})
         assert business.status_code==(201 if expected==200 else 422),business.text
         assert not app.state.controller.leases

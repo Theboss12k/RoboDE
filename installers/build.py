@@ -15,8 +15,12 @@ def payload_files(root=ROOT):
     for folder in ['SERVER_CLIENT/client/dist','BUSINESS_APP/dist']:
         for p in sorted((root/folder).rglob('*')):
             if p.is_file() and not p.is_symlink():yield p,p.relative_to(root)
+    for folder in ['workers/robotics']:
+        for p in sorted((root/folder).rglob('*')):
+            if p.is_file() and not p.is_symlink() and '__pycache__' not in p.parts and p.suffix!='.pyc':yield p,p.relative_to(root)
     for filename in ['ELECTRON_APP/electron/main.cjs','ELECTRON_APP/electron/preload.cjs']:
         yield root/filename,Path(filename)
+    yield root/'scripts/robotics_worker.py',Path('scripts/robotics_worker.py')
 
 def checksum(path):return hashlib.sha256(path.read_bytes()).hexdigest()
 def seal(path):

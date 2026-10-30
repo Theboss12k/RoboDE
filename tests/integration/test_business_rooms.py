@@ -25,10 +25,11 @@ def test_capture_upload_reconstruction_requirements_and_scene_import(store,monke
         assert client.post(path+'/reconstruct').status_code==422
         assert client.get(path).json()['photos']==12
         assert client.put(path+'/scene',content=usdz('../escape.usda')).status_code==422
-        imported=client.put(path+'/scene',content=usdz())
+        payload=usdz()
+        imported=client.put(path+'/scene',content=payload)
         assert imported.status_code==200,imported.text
         assert imported.json()['status']=='align'
-        assert client.get(path+'/scene').content==usdz()
+        assert client.get(path+'/scene').content==payload
         assert client.post(path+'/deploy',json={'metres_per_unit':1,'translation':{'x':0,'y':0,'z':0},'yaw_degrees':0,'reviewed':False,'assets':[dict(id='table',name='Table',kind='obstacle',position=dict(x=0,y=0,z=.5),size=dict(x=1,y=1,z=1),mass_kg=0)]}).status_code==422
         assert not (store.project_folder('apple_transfer')/'environment/room.json').exists()
 

@@ -1,0 +1,53 @@
+{
+  "name": "Quickstart Gantry Virtual Driver",
+  "category": "virtual",
+  "sdk_version": "robode-sim-v2",
+  "documentation": "set_slide_x(value) sets slide_x in m; range -10.0 to 10.0.\nset_slide_y(value) sets slide_y in m; range -10.0 to 10.0.\nset_slide_z(value) sets slide_z in m; range -10.0 to 10.0.\nread_feedback() returns simulated actuator feedback.\nstop_motion() stops simulated motion.\ndisconnect() closes the simulated transport.",
+  "source_code": "class Transport:\n    def __init__(self, client, setpoints):\n        self.client = client\n        self.setpoints = setpoints\n    def set_slide_x(self, value):\n        return self.client.set_slide_x(value)\n    def set_slide_y(self, value):\n        return self.client.set_slide_y(value)\n    def set_slide_z(self, value):\n        return self.client.set_slide_z(value)\n    def read_feedback(self):\n        return self.client.read_feedback()\n    def stop(self):\n        return self.client.stop_motion()\n    def disconnect(self):\n        return self.client.disconnect()\n",
+  "functions": [
+    {
+      "id": "set_slide_x",
+      "vendor_method": "set_slide_x",
+      "argument": "value",
+      "mode": "position",
+      "unit": "m",
+      "minimum": -10.0,
+      "maximum": 10.0,
+      "documentation_quote": "set_slide_x(value) sets slide_x in m; range -10.0 to 10.0.",
+      "write_style": "single",
+      "vendor_joint": ""
+    },
+    {
+      "id": "set_slide_y",
+      "vendor_method": "set_slide_y",
+      "argument": "value",
+      "mode": "position",
+      "unit": "m",
+      "minimum": -10.0,
+      "maximum": 10.0,
+      "documentation_quote": "set_slide_y(value) sets slide_y in m; range -10.0 to 10.0.",
+      "write_style": "single",
+      "vendor_joint": ""
+    },
+    {
+      "id": "set_slide_z",
+      "vendor_method": "set_slide_z",
+      "argument": "value",
+      "mode": "position",
+      "unit": "m",
+      "minimum": -10.0,
+      "maximum": 10.0,
+      "documentation_quote": "set_slide_z(value) sets slide_z in m; range -10.0 to 10.0.",
+      "write_style": "single",
+      "vendor_joint": ""
+    }
+  ],
+  "feedback_method": "read_feedback",
+  "stop_method": "stop_motion",
+  "disconnect_method": "disconnect",
+  "watchdog_method": "",
+  "watchdog_timeout_seconds": 2.0,
+  "sdk_module": "",
+  "client_factory": "Client",
+  "connection": {}
+}

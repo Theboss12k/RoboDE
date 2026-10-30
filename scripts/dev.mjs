@@ -4,6 +4,9 @@ import {resolve} from 'node:path';
 import {randomUUID} from 'node:crypto';
 import {root,server,python,pythonEnv,npm} from './paths.mjs';
 const built=process.argv.includes('--built'),web=process.argv.includes('--web'),hosted=process.argv.includes('--server');
+// --edition=nvidia launches RoboDE for NVIDIA: NVIDIA accents, Isaac Sim on Nebius and first-boot setup.
+const edition=(process.argv.find(a=>a.startsWith('--edition='))?.split('=')[1])||process.env.ROBOT_IDE_EDITION||'standard';
+if(!['standard','nvidia'].includes(edition))throw new Error('Use --edition=standard or --edition=nvidia');
 const runtimePort=Number(process.env.ROBOT_IDE_RUNTIME_PORT||8765),port=Number(process.env.ROBOT_IDE_PORT||8081);
 if(!Number.isInteger(runtimePort)||runtimePort<1024||runtimePort>65535||!Number.isInteger(port)||port<1024||port>65535)throw new Error('Use ports between 1024 and 65535');
 const upstream=`http://127.0.0.1:${runtimePort}`;
@@ -19,7 +22,7 @@ function stop(code=0){
  Promise.all(children.map(child=>child.exitCode!==null?Promise.resolve():new Promise(r=>child.once('exit',r)))).then(()=>{clearTimeout(deadline);if(hosted)try{if(JSON.parse(readFileSync(statePath,'utf8')).instanceId===instanceId)unlinkSync(statePath);}catch{}process.exit(code);});
 }
 function start(command,args,options={}){
- const child=spawn(command,args,{cwd:root,stdio:'inherit',env:{...pythonEnv,ROBOT_IDE_UPSTREAM:upstream,ROBOT_IDE_INSTANCE_ID:instanceId},shell:process.platform==='win32'&&command===npm,...options});
+ const child=spawn(command,args,{cwd:root,stdio:'inherit',env:{...pythonEnv,ROBOT_IDE_UPSTREAM:upstream,ROBOT_IDE_INSTANCE_ID:instanceId,ROBOT_IDE_EDITION:edition},shell:process.platform==='win32'&&command===npm,...options});
  children.push(child);child.on('error',e=>{console.error(e.message);stop(1);});child.on('exit',code=>{if(!stopping)stop(code??0);});return child;
 }
 async function ready(url){

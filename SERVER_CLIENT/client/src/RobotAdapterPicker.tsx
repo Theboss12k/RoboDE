@@ -70,7 +70,7 @@ export default function RobotAdapterPicker({
       </label>
       <p>
         {target === "physical"
-          ? "Testing is simulated by default. A physical assignment never authorizes automatic hardware execution. Live manual control requires a validated connection and explicit arming."
+          ? "Testing is simulated by default. Target selection does not arm hardware. Physical execution requires a published mapping, complete checking, device qualification and explicit arming of the exact revision."
           : "This adapter is saved on the instance. Select the simulation engine and connection separately in Environment."}
       </p>
     </>

@@ -71,3 +71,7 @@ This explicitly contacts the configured provider. The runner reads its global pr
 The same command and plan formats apply to a validated Isaac scene. Start a GPU worker, load matching robot assets, and use the IDE's Environment native controls or the API client against that explicitly connected project. These offline examples validate the command/compiler/runtime contract, not native PhysX. See [GCP setup](../../../docs/GCP_ISAAC.md).
 
 Existing historical revisions, run results and legacy compatibility tests retain their recorded format. New example generation uses the standardized task contract.
+
+## Guided robot-import sample
+
+See [Quickstart Gantry](imports/quickstart_gantry/README.md) for a self-contained visual URDF, a virtual-driver manifest, sample MOVE arguments, an environment OBJ and the step-by-step setup flow. The fixture is virtual and needs no manufacturer SDK.

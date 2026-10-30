@@ -10,14 +10,14 @@ def inside_box(point, obstacle: WorldObject, padding: float = 0.025) -> bool:
                for value, axis in zip(point, ("x", "y", "z")))
 
 
-def validate_trajectory(model: dict, frames: list[Frame], objects: list[WorldObject]) -> None:
+def validate_trajectory(model: dict, frames: list[Frame], objects: list[WorldObject], check_geometry: bool = True) -> None:
     if len(frames) < 2:
         raise ValueError("Trajectory needs at least two samples")
     obstacles = [o for o in objects if o.kind == "obstacle"]
     previous_velocity = None
     for index, frame in enumerate(frames):
         validate_positions(model, frame.positions)
-        points = link_points(model, frame.positions) if supports_model(model) else []
+        points = link_points(model, frame.positions) if check_geometry and supports_model(model) else []
         floor_points = points[1:]
         if model['kinematics']['solver']=='serial_chain_dls_v1' and points:
             # Coincident fixed/root joint frames represent the anchored base, not an arm segment.

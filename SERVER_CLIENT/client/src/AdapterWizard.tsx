@@ -295,14 +295,14 @@ export default function AdapterWizard({
                     />
                   </label>
                   <label className="field">
-                    LLM adapter
+                    AI model
                     <select
                       aria-label="Documentation LLM adapter"
                       value={provider}
                       onChange={(e) => setProvider(e.target.value)}
                     >
                       <option value="">
-                        Global default ·{" "}
+                        Workspace default ·{" "}
                         {llm.adapters.find((p) => p.id === llm.default_id)
                           ?.name ?? "None configured"}
                       </option>

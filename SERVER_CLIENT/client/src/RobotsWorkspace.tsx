@@ -1,3 +1,4 @@
+import PublishedBindings from "./PublishedBindings";
 import { useEffect, useState } from "react";
 import { Plus, Bot, Save } from "lucide-react";
 import type { AdapterBundle, CellRobot, ProjectDetail } from "./types";
@@ -14,7 +15,9 @@ export default function RobotsWorkspace({
   onError,
   onInitial,
   tutorialWizard,
+  onOpenControls,
 }: {
+  onOpenControls: (id:string)=>void;
   detail: ProjectDetail;
   busy: boolean;
   onRefresh: () => void | Promise<void>;
@@ -107,11 +110,11 @@ export default function RobotsWorkspace({
     <div className="robots-workspace">
       <div className="section-title">
         <span className="eyebrow">PROJECT / ROBOT INSTANCES</span>
-        <h2>Select a robot. Pair an adapter. Test it.</h2>
+        <h2>Robots in this project</h2>
         <p>
-          Robot definitions and control adapters live in Global configuration.
-          Each project instance saves its own pairing; task assignments remain
-          explicit.
+          Saved robots and control adapters live in Configuration → Robot
+          library. Each project instance keeps its own pairing; task
+          assignments remain explicit.
         </p>
       </div>
       <div className="robot-workspace-layout">
@@ -157,17 +160,17 @@ export default function RobotsWorkspace({
           <span className={`tiny-tag target-${target}`}>
             {target === "physical" ? "Physical target" : "Virtual target"}
           </span>
-          <h3>1. Robot from global library</h3>
+          <div className="section-toolbar"><h3>Robot</h3><button className="secondary" disabled={locked} onClick={()=>onOpenControls(robot.instance.instance.id)}>Open robot controls</button></div>
           <h2>{robot.model.robot.name}</h2>
           <p>
             Instance: {robot.instance.instance.name} ·{" "}
             {robot.instance.instance.id}
           </p>
-          <small>
+          <small className="expert-only">
             Global definition: {robot.model.robot.id} ·{" "}
             {robot.model.robot.version}
           </small>
-          <h3>2. Compatible control adapter</h3>
+          <PublishedBindings detail={detail} robot={robot} disabled={locked} onRefresh={onRefresh}/><details className="expert-only" open={!robot.instance.control_adapter?.binding_id}><summary>Legacy simulator / adapter pairing</summary><h3>Compatible control adapter</h3>
           <RobotAdapterPicker
             target={target}
             onTarget={(t) => {
@@ -204,7 +207,7 @@ export default function RobotsWorkspace({
           >
             {test ? "Close test window" : "Test selected adapter"}
           </button>
-          {test && (
+          {test && !robot.instance.control_adapter?.binding_id && (
             <AdapterControls
               key={robot.instance.instance.id + adapter}
               detail={detail}
@@ -214,7 +217,7 @@ export default function RobotsWorkspace({
               onSessionChange={setActive}
             />
           )}
-          <details className="instance-reference">
+          </details><details className="instance-reference">
             <summary>Saved starting configuration</summary>
             <p>
               Joint positions and base placement can be previewed and saved in

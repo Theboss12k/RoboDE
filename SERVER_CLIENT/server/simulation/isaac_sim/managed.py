@@ -15,7 +15,7 @@ class ManagedNativeCell:
         root=Path(catalog_path).resolve().parent if catalog_path else self.store.runtime/'isaac_project_scene'
         root.mkdir(parents=True,exist_ok=True)
         self.folder=root/'managed_scenes';self.cell=None
-        self.models={};self.metadata={'engine':'isaac_sim','simulator_version':'6.2.x','physics_available':True,'scene_loading':True,'scene_editing':True,'automatic_scene_transfer':True,'asset_sha256':'unloaded'}
+        self.models={};self.metadata={'engine':'isaac_sim','simulator_version':'6.2.x','physics_available':True,'scene_loading':True,'scene_editing':True,'automatic_scene_transfer':True,'asset_sha256':'unloaded','robot_bundle_uploading':True}
         self.room_root=root/'captured_rooms'
         self.room_root.mkdir(exist_ok=True)
         self.mesh_root=root/'meshes';self.mesh_root.mkdir(exist_ok=True)
@@ -39,7 +39,7 @@ class ManagedNativeCell:
             self.cell=None;self.models={}
             raise
         self.models=self.cell.models
-        self.metadata={**self.cell.metadata,'scene_loading':True,'scene_editing':True,'automatic_scene_transfer':True,'asset_uploading':True,'room_loading':os.getenv('ROBOT_IDE_ALLOW_ROOM_UPLOADS')=='1'}
+        self.metadata={**self.cell.metadata,'robot_bundle_uploading':True,'scene_loading':True,'scene_editing':True,'automatic_scene_transfer':True,'asset_uploading':True,'room_loading':os.getenv('ROBOT_IDE_ALLOW_ROOM_UPLOADS')=='1'}
         self.cell.metadata=self.metadata
     def register_mesh(self,path,digest):
         self.catalog.setdefault('meshes',{})[digest]=str(path)

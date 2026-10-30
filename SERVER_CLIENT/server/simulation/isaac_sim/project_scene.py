@@ -20,11 +20,18 @@ def prepare_robots(request,catalog,folder,store):
     additions={}
     for entry in request.robots:
         instance=entry['instance'];mid=instance['robot_model']['id']
+        from simulation.isaac_sim.robot_packages import receive_package,reviewed_model
+        if entry.get('robot_package'):receive_package(store,entry['robot_package'])
         if mid in catalog.get('robots',{}) or mid in additions:continue
-        model=load_model(store.model_folder(mid))
+        model=reviewed_model(store,instance,entry['model'])
+        model.pop('base_pose',None)
         require_same_model(entry['model'],with_base(model,instance),instance['instance']['id'])
         # The analytic demo has explicit authored link geometry. Other designs
         # need a real imported USD articulation, rather than guessed geometry.
+        if model.get('source_import'):
+            from simulation.isaac_sim.urdf_asset import convert
+            key=hashlib.sha256(json.dumps(model,sort_keys=True).encode()).hexdigest()
+            additions[mid]=convert(model,store.model_folder(mid),folder/key);continue
         if mid!='demo_arm' or model['kinematics']['solver']!='analytic_yaw_two_link_v1' or not supports_model(model):
             raise ValueError(f'{mid}: configure its manufacturer USD and joint mapping once in the worker asset catalog; the scene will then transfer automatically')
         key=hashlib.sha256(json.dumps({'model':model,'generator_version':6},sort_keys=True).encode()).hexdigest()

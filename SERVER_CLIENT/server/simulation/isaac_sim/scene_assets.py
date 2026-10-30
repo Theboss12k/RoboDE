@@ -71,7 +71,8 @@ def compose_scene(request,catalog,folder,store):
         ids.add(rid)
         asset=catalog.get('robots',{}).get(mid)
         if asset is None:raise ValueError(f'{mid}: no approved USD asset in worker catalog')
-        model=with_base(load_model(store.model_folder(mid)),instance)
+        from simulation.isaac_sim.robot_packages import reviewed_model
+        model=reviewed_model(store,instance,entry['model'])
         require_same_model(entry['model'],model,rid)
         validate_positions(model,instance['initial_configuration']['actuator_positions'])
         path=Path(asset['usd']).expanduser().resolve()
@@ -105,7 +106,7 @@ def compose_scene(request,catalog,folder,store):
         prim.ClearXformOpOrder()
         prim.AddTranslateOp(opSuffix='robot_ide_base').Set(Gf.Vec3d(base['x'],base['y'],base['z']));prim.AddOrientOp(opSuffix='robot_ide_base').Set(Gf.Quatf(__import__('math').cos(base['yaw']/2),Gf.Vec3f(0,0,__import__('math').sin(base['yaw']/2))))
         file=folder/f'{rid}.yaml';file.write_text(yaml.safe_dump(instance,sort_keys=False))
-        robots.append({'instance_file':str(file.resolve()),'prim_path':mount+('/'+asset['articulation_path'] if asset.get('articulation_path') else ''),'joints':asset['joints']})
+        robots.append({'instance_file':str(file.resolve()),'prim_path':mount+('/'+asset['articulation_path'] if asset.get('articulation_path') else ''),'joints':asset['joints'],'model_snapshot':model})
     paths={o.id:add_object(stage,o,mesh_geometry.get(o.id)) for o in request.objects};stage.GetRootLayer().Save()
     file=folder/'cell.usda'
     config={'scene':str(file.resolve()),'scene_sha256':hashlib.sha256(file.read_bytes()).hexdigest(),'physics_dt':1/120,

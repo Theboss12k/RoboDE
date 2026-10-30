@@ -31,7 +31,8 @@ def relative_object_lift(goal, objects):
 def validate_goal_outcome(goal, objects, plan, task_ids=None):
     constraint=relative_object_lift(goal,objects)
     if constraint is None:return
-    tick=max((entry['end_tick'] for key,entry in plan.task_schedule.items() if task_ids is None or key in task_ids),default=len(plan.frames)-1)
+    selected=[entry for key,entry in plan.task_schedule.items() if task_ids is None or key in task_ids]
+    tick=max((entry.get('end_tick',next((i for i,f in enumerate(plan.frames) if f.time>=entry['end']-1e-9),len(plan.frames)-1)) for entry in selected),default=len(plan.frames)-1)
     frame=plan.frames[min(int(tick),len(plan.frames)-1)]
     actual=frame.objects.get(constraint['object_id'])
     expected=constraint['required_final_position']

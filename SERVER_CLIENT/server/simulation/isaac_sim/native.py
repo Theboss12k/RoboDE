@@ -43,6 +43,9 @@ class NativeCell:
         for definition in self.config['robots']:
             instance = read_yaml(Path(definition['instance_file']))
             model = load_model(catalog.model_folder(instance['robot_model']['id']))
+            if definition.get('model_snapshot'):
+                from simulation.isaac_sim.robot_packages import reviewed_model
+                model=reviewed_model(catalog,instance,definition['model_snapshot']);model.pop('base_pose',None)
             instance = load_instance(Path(definition['instance_file']),model)
             rid = instance['instance']['id']
             if rid in self.models:
@@ -77,9 +80,11 @@ class NativeCell:
             if min(np.linalg.norm(quaternion-target),np.linalg.norm(quaternion+target)) > .002:
                 raise ValueError(f'{rid}: USD base rotation must match the Z-up project yaw')
         self.simulation_time = 0.
+        from simulation.isaac_sim.grasp_feedback import ObservedGrasp
+        self.grasp_tracker=ObservedGrasp()
         self.target_positions={rid:dict(zip(self.models[rid]['actuators']['actuators'],map(float,np.asarray(robot.get_joint_positions(joint_indices=self.indices[rid]))[0]))) for rid,robot in self.robots.items()}
         self.metadata = {'engine':'isaac_sim','simulator_version':version,'asset_sha256':digest,'physics_available':True,
-                         'collision_certificate':False,'joint_tracking_tolerance_rad':.12,'joint_tracking_tolerance_m':.015,
+                         'mobile_base_feedback':True,'attachment_feedback':True,'attachment_feedback_source':'observed_rigid_body_following_motion','collision_certificate':False,'joint_tracking_tolerance_rad':.12,'joint_tracking_tolerance_m':.015,
                          'feedback_limit_tolerance':FEEDBACK_LIMIT_TOLERANCE}
 
     def validate_scene(self,request):
@@ -101,6 +106,10 @@ class NativeCell:
     def observe(self):
         if self.scene_fault:return {'states':{},'objects':[],'measured_at':now(),'simulation_time':self.simulation_time,'faults':[self.scene_fault]}
         stamp,states,corrections = now(),{},{}
+        objects = []
+        for item in self.objects:
+            p,_ = self.object_views[item.id].get_world_poses()
+            objects.append(item.model_copy(update={'position':Pose(x=float(p[0][0]),y=float(p[0][1]),z=float(p[0][2]))}).model_dump())
         for rid,robot in self.robots.items():
             q = np.asarray(robot.get_joint_positions(joint_indices=self.indices[rid]))[0]
             velocities = np.asarray(robot.get_joint_velocities(joint_indices=self.indices[rid]))[0]
@@ -108,12 +117,21 @@ class NativeCell:
             stopped = all(abs(float(v)) < (.002 if self.models[rid]['actuators']['actuators'][k]['unit']=='m' else .01) for k,v in zip(names,velocities))
             positions,adjusted=bounded_feedback(self.models[rid],dict(zip(names,map(float,q))))
             if adjusted:corrections[rid]=adjusted
-            states[rid] = RobotState(instance_id=rid,positions=positions,source='simulation',measured_at=stamp,stopped=stopped).model_dump()
+            root_position,root_rotation=robot.get_world_poses();quat=root_rotation[0];w,x,y,z=map(float,quat);base_pose={'x':float(root_position[0][0]),'y':float(root_position[0][1]),'z':float(root_position[0][2]),'yaw':math.atan2(2*(w*z+x*y),1-2*(y*y+z*z))}
+            from services.commands.standard import effectors,components
+            from services.planning.kinematics import forward
+            component_map=components(self.models[rid]);attached={}
+            for tool_id in effectors(self.models[rid]):
+                definition=self.models[rid]['kinematics'].get('end_effectors',{}).get(tool_id,{})
+                component=component_map.get(definition.get('component_id',tool_id)) or (next(iter(component_map.values())) if len(component_map)==1 and len(effectors(self.models[rid]))==1 else None)
+                if not component:continue
+                aperture=positions[component['actuator']];opening=(aperture-component['closed'])/(component['open']-component['closed']);closed=opening<.92
+                point=forward({**self.models[rid],'base_pose':base_pose},positions,tool_id)
+                observed=[{'id':o['id'],'position':[o['position'][k] for k in ('x','y','z')]} for o in objects if o['kind']=='object' and (self.models[rid]['actuators']['actuators'][component['actuator']]['unit']!='m' or aperture<=o['size']['x']+.003)]
+                held=self.grasp_tracker.update((rid,tool_id),[point.x,point.y,point.z],observed,closed,self.simulation_time)
+                if held:attached[tool_id]=held
+            states[rid] = RobotState(instance_id=rid,positions=positions,source='simulation',measured_at=stamp,stopped=stopped,velocities=dict(zip(names,map(float,velocities))),base_pose=base_pose,attachments=list(attached.values()),attachment_tools=attached,attachment_source='simulation_observed_motion').model_dump()
         self.metadata['feedback_limit_corrections']={'measured_at':stamp,'robots':corrections}
-        objects = []
-        for item in self.objects:
-            p,_ = self.object_views[item.id].get_world_poses()
-            objects.append(item.model_copy(update={'position':Pose(x=float(p[0][0]),y=float(p[0][1]),z=float(p[0][2]))}).model_dump())
         return {'states':states,'objects':objects,'measured_at':stamp,'simulation_time':self.simulation_time,'faults':[]}
 
     def inventory(self):
@@ -220,5 +238,6 @@ class NativeCell:
                 view.set_linear_velocities(np.zeros((1,3)))
                 view.set_angular_velocities(np.zeros((1,3)))
         self.simulation_time = 0.
+        self.grasp_tracker.candidates.clear()
         self.target_positions={rid:dict(q) for rid,q in positions.items()}
         self.stop()

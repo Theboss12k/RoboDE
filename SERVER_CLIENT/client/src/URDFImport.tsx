@@ -31,6 +31,7 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
   const [busy, setBusy] = useState(""), [error, setError] = useState(""), [accepted, setAccepted] = useState(false),
     [reviewed, setReviewed] = useState(false), [validated, setValidated] = useState<Validation | null>(null),
     [validatedInput, setValidatedInput] = useState("");
+  const [coupling,setCoupling]=useState(false);
   const currentDraft = useRef<string | null>(null);
   useEffect(() => {
     void api<LLMConfiguration>("/llm/adapters").then(setProviders).catch(e => setError(e.message));
@@ -42,7 +43,7 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
     try { await fn(); } catch (e) { setError((e as Error).message); } finally { setBusy(""); onBusy(false); }
   };
   const settings = {
-    id, name, manufacturer, description, tool_link: tool,
+    id, name, manufacturer, description, tool_link: tool, review_coupling:coupling,
     joints: Object.fromEntries(Object.entries(joints).map(([key, values]) => [key,
       Object.fromEntries(Object.entries(values).map(([field, value]) => [field, value.trim() === "" ? null : Number(value)]))])),
     payload_kg: payload.trim() === "" ? null : Number(payload),
@@ -126,11 +127,11 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
       </div>
     </details>
     <details><summary>Optional LLM assistance</summary>
-      <p>Use a global LLM adapter to suggest labels, descriptions and documentation-backed command mappings. Suggestions cannot change extracted geometry or limits, enable hardware, or activate capabilities.</p>
+      <p>Use an AI model to suggest labels, descriptions and documentation-backed command mappings. Suggestions cannot change extracted geometry or limits, enable hardware, or activate capabilities.</p>
       <label className="field">LLM adapter<select aria-label="URDF LLM adapter" value={provider} disabled={locked} onChange={e => setProvider(e.target.value)}>
-        <option value="">{providers.default_id ? "Global default" : "Choose an adapter"}</option>
+        <option value="">{providers.default_id ? "Workspace default" : "Choose an AI model"}</option>
         {providers.adapters.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
-      {!providers.adapters.length && <p className="inline-note">Configure an LLM in Configuration → LLM adapters for suggestions. Manual URDF conversion remains available.</p>}
+      {!providers.adapters.length && <p className="inline-note">Add an AI model in Configuration → AI Models for suggestions. Manual URDF conversion remains available.</p>}
       <label className="field">Vendor documentation · optional<textarea aria-label="URDF vendor documentation" maxLength={20000} value={documentation} disabled={locked}
         onChange={e => setDocumentation(e.target.value)} /></label>
       <button disabled={locked || (!provider && !providers.default_id)} onClick={() => void work("Requesting suggestions…", async () => {
@@ -159,7 +160,8 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
       {draft.meshes.length ? <ul>{draft.meshes.map(m => <li key={m.uri}><code>{m.uri || "Unnamed mesh"}</code> · {m.status}{m.path ? ` → ${m.path}` : " · include its package for Isaac import"}</li>)}</ul> : <p>No external mesh references.</p>}
       <p>The built-in preview renders the kinematic structure. Original mesh materials, collisions and dynamics need separate native Isaac import and validation.</p>
     </details>
-    <div className="section-toolbar"><button className="secondary" disabled={locked || !!draft.parsed.unsupported.length} onClick={() => void work("Validating robot…", async () => {
+    <label className="check-row"><input type="checkbox" checked={coupling} disabled={locked} onChange={e=>setCoupling(e.target.checked)}/>Review imported mimic joints as coupled joints in the mapping wizard; they must never receive independent setters.</label>
+    <div className="section-toolbar"><button className="secondary" disabled={locked || draft.parsed.unsupported.some(reason=>!coupling||!reason.includes("mimic coupling"))} onClick={() => void work("Validating robot…", async () => {
       setValidated(null); const result = await post<Validation>(`/registry/urdf/drafts/${draft.id}/validate`, settings);
       setValidated(result); setValidatedInput(signature); setReviewed(false);
     })}><Check size={14} /> Validate robot definition</button>

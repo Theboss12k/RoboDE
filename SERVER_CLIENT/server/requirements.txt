@@ -35,3 +35,4 @@ websockets==17.3
 
 # Bundles FFmpeg; no runtime download is needed for MP4 recording.
 imageio-ffmpeg==0.6.0
+pypdf==6.21.4

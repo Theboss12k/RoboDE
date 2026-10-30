@@ -10,6 +10,7 @@ def bounded_feedback(model,measured):
     """
     positions=dict(measured);corrections={}
     for key,value in measured.items():
+        if key in model.get('continuous_joints',[]):continue
         spec=model['actuators']['actuators'][key]
         tolerance=FEEDBACK_LIMIT_TOLERANCE.get(spec['unit'],0.)
         boundary=spec['min'] if value<spec['min'] else spec['max'] if value>spec['max'] else None

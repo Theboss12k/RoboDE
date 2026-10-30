@@ -13,6 +13,11 @@ export type Asset = {
   category?: string;
 };
 export type Command = {
+  ai_models?: { planner: string | null; task: string | null };
+  clarification_questions?: string[];
+  planning_error?: string | null;
+  physical_status?: string;
+  validation_report?: {status:string;findings:{message:string}[]};
   id: string;
   instruction: string;
   robot_name: string;
@@ -69,3 +74,5 @@ export type Room = {
     assets: WorldObject[];
   };
 };
+
+export type AIModelChoice = { models: { id: string; name: string; model: string }[]; planner_adapter_id: string | null; task_adapter_id: string | null };

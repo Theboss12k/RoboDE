@@ -21,6 +21,7 @@ class CreatePlan(Contract):
 
 
 class EditPlan(CreatePlan):
+    allowed_robot_ids: list[str] | None = Field(default=None,max_length=64)
     version: int
     tasks: list[TaskDefinition] = Field(max_length=144)
 
@@ -69,6 +70,19 @@ def plans_router(store, controller):
     async def edit(project_id:str,definition_id:str,data:EditPlan):
         controller.ensure_idle(project_id)
         definition = current(project_id,definition_id,data.version)
+        from services.ai_orchestrator.two_stage import task_signature
+        previous={t.id:t for t in definition.tasks}
+        removed=set(previous)-{t.id for t in data.tasks}
+        if any(removed & set(t.dependencies) for t in data.tasks):raise ValueError('Repair dependent tasks before deleting their prerequisite')
+        for task in data.tasks:
+            old=previous.get(task.id)
+            if task.binding_status!='legacy' and old:
+                signature=lambda t:(t.name,t.intent,t.robot_id,t.duration_seconds,t.repeat_count,t.dependencies,t.completion_condition,t.object_id,t.target_id,t.placement,[c.model_dump() for c in t.function_calls])
+                if (old.intent!=task.intent or old.robot_id!=task.robot_id) and task.function_calls==old.function_calls:
+                    task.function_calls=[]
+                if signature(old)!=signature(task):
+                    task.binding_status='unresolved';task.binding_fingerprint=None;task.authored_by='user';task.binding_error=None
+        if data.allowed_robot_ids is not None:definition.allowed_robot_ids=data.allowed_robot_ids
         definition.name,definition.goal,definition.tasks = data.name.strip(),data.goal,data.tasks
         validate_definition(definition,{i['instance']['id'] for i in store.load_project(project_id)[1]})
         definition.version += 1
@@ -183,11 +197,18 @@ def plans_router(store, controller):
         session = controller.sessions[project_id]
         if any(session.held_objects.values()):
             raise ValueError('Reset the interrupted grasp before compiling')
-        revision = compile_definition(definition,session.instances,session.models,session.objects,
-                                      await controller.states(session),fingerprint(snapshot),session.backend)
+        if any(t.binding_status!='legacy' for t in definition.tasks):
+            from services.planning.compiler_v2 import compile_v2
+            revision=await compile_v2(store,definition,session,await controller.states(session),fingerprint(snapshot),controller.motion)
+        else:
+            revision = compile_definition(definition,session.instances,session.models,session.objects,
+                                          await controller.states(session),fingerprint(snapshot),session.backend)
+        validate_goal_outcome(definition.goal,session.objects,revision)
         controller.ensure_idle(project_id)
         if store.get_definition(project_id,definition_id).version != definition.version:
             raise HTTPException(409,'Plan changed while compiling; compile the current version')
+        if fingerprint(await controller.snapshot(project_id))!=fingerprint(snapshot):
+            raise HTTPException(409,'Scene changed while compiling; validate the current scene')
         store.save_plan(revision,snapshot)
         return revision
 

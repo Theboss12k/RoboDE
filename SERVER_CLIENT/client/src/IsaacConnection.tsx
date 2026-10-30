@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { api, post } from "./api";
 import { desktop, type IsaacFileKind } from "./desktop";
 
-type Deployment = "local" | "gcp" | "remote";
+type Deployment = "local" | "gcp" | "remote" | "nebius";
 type Settings = {
   deployment: Deployment;
   url: string;
@@ -22,6 +22,8 @@ type Settings = {
   local_source: string;
   local_source_kind: "automatic" | "catalog" | "manifest";
   local_gui: boolean;
+  nebius_host: string;
+  nebius_ssh_user: string;
 };
 type Host = {
   platform: string;
@@ -49,6 +51,8 @@ const defaults: Settings = {
   local_source: "",
   local_source_kind: "automatic",
   local_gui: true,
+  nebius_host: "",
+  nebius_ssh_user: "ubuntu",
 };
 
 function shellArgument(value: string) {
@@ -161,10 +165,10 @@ export default function IsaacConnection({
     update({
       deployment,
       on_demand: deployment === "gcp",
-      ...(deployment === "local"
+      ...(deployment === "local" || deployment === "nebius"
         ? {
             url: "http://127.0.0.1:9100",
-            load_scene: settings?.local_source_kind !== "manifest",
+            load_scene: deployment === "nebius" || settings?.local_source_kind !== "manifest",
           }
         : {}),
     });
@@ -219,6 +223,17 @@ export default function IsaacConnection({
           >
             <button
               type="button"
+              aria-pressed={settings.deployment === "nebius"}
+              disabled={locked}
+              onClick={() => selectDeployment("nebius")}
+            >
+              <strong>Nebius GPU VM</strong>
+              <span>
+                You start the VM in the Nebius console · RoboDE connects over SSH
+              </span>
+            </button>
+            <button
+              type="button"
               aria-pressed={settings.deployment === "gcp"}
               disabled={locked}
               onClick={() => selectDeployment("gcp")}
@@ -255,6 +270,10 @@ export default function IsaacConnection({
             {host?.platform ?? "checking host"}. Local paths and tools refer to
             the computer running the IDE backend.
           </p>
+          {settings.deployment === "nebius" && (
+            <NebiusSetup settings={settings} locked={locked} update={update} dirty={dirty}
+              onStatus={setStatus} onError={setError} onChanged={onChanged} />
+          )}
           {settings.deployment === "gcp" && (
             <section
               className="isaac-setup-section"
@@ -769,5 +788,40 @@ export default function IsaacConnection({
         </>
       )}
     </details>
+  );
+}
+
+type Nebius = { configured: boolean; status: string; message: string; host?: string; idle_guard_active?: boolean };
+/** Connect-only Nebius target: the operator owns the VM lifecycle; RoboDE opens an SSH tunnel to its worker. */
+function NebiusSetup({ settings, locked, update, dirty, onStatus, onError, onChanged }: { settings: Settings; locked: boolean; update: (patch: Partial<Settings>) => void; dirty: boolean;
+  onStatus: (m: string) => void; onError: (m: string) => void; onChanged?: () => void | Promise<void> }) {
+  const [state, setState] = useState<Nebius | null>(null), [busy, setBusy] = useState(false);
+  useEffect(() => { void api<Nebius>("/configuration/isaac/nebius").then(setState).catch(() => {}); }, [settings.nebius_host]);
+  const act = (path: "connect" | "disconnect") => {
+    setBusy(true); onError("");
+    void post<Nebius>(`/configuration/isaac/nebius/${path}`).then((r) => { setState(r); onStatus(r.message); return onChanged?.(); })
+      .catch((e) => onError((e as Error).message)).finally(() => setBusy(false));
+  };
+  return (
+    <section className="isaac-setup-section" aria-label="Nebius Isaac setup">
+      <h3>1. Start your Nebius GPU VM</h3>
+      <ol className="isaac-checklist">
+        <li>In the Nebius console, create a VM with an NVIDIA RTX GPU (for example L40S). A100 and H100 lack the RT cores Isaac Sim needs.</li>
+        <li>Install Isaac Sim and the RoboDE worker with <code>scripts/bootstrap_isaac_vm.sh</code>, and set the worker token shown below.</li>
+        <li>Start the VM before simulating. RoboDE does not start, stop or create it; the guest idle watchdog powers it off.</li>
+      </ol>
+      <h3>2. Connect</h3>
+      <div className="configuration-grid">
+        <label className="field">VM public IP or hostname<input aria-label="Nebius VM address" value={settings.nebius_host} disabled={locked} placeholder="203.0.113.10" onChange={(e) => update({ nebius_host: e.target.value.trim() })} /></label>
+        <label className="field">SSH user<input aria-label="Nebius SSH user" value={settings.nebius_ssh_user} disabled={locked} onChange={(e) => update({ nebius_ssh_user: e.target.value.trim() })} /></label>
+      </div>
+      <label className="field">SSH private key on the RoboDE server · optional<input aria-label="Nebius SSH key file" value={settings.ssh_key_file} disabled={locked} placeholder="/Users/you/.ssh/id_ed25519" onChange={(e) => update({ ssh_key_file: e.target.value.trim() })} /></label>
+      <div className="section-toolbar">
+        <button className="primary" type="button" disabled={locked || busy || dirty || !settings.nebius_host || state?.status === "ready"} onClick={() => act("connect")}>{busy ? "Connecting…" : "Connect to Nebius VM"}</button>
+        <button type="button" disabled={locked || busy || state?.status !== "ready"} onClick={() => act("disconnect")}>Disconnect</button>
+      </div>
+      {dirty && <small>Save the connection before connecting.</small>}
+      {state && <p className="inline-note" role="status">{state.status === "ready" ? "Connected" : state.status === "error" ? "Not connected" : "Disconnected"} · {state.message}{state.status === "ready" && !state.idle_guard_active ? " The VM's idle watchdog is not running; stop the VM yourself when finished." : ""}</p>}
+    </section>
   );
 }

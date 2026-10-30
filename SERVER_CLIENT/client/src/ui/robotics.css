@@ -1,0 +1,92 @@
+.robot-setup{display:grid;gap:18px;min-width:0}.robot-setup h3,.planning-pipeline h3{margin:4px 0 10px}.robot-setup-stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));list-style:none;padding:0;gap:8px}.robot-setup-stages button{width:100%;justify-content:flex-start;gap:8px;min-height:52px;text-align:left;font-size:11px}.robot-setup-stages span{display:grid;place-items:center;flex-shrink:0;border:1px solid #475569;border-radius:50%;width:23px;height:23px}.robot-setup-stages .active button{border-color:#6a98eb;background:#182c48}.robot-setup-stages .done span{background:#255441}.robot-mapping-layout{display:grid;grid-template-columns:minmax(260px,1fr) minmax(280px,1fr);gap:18px}.mapping-preview{height:360px;position:relative;overflow:hidden;border:1px solid #2b394b;border-radius:14px;background:#0c1420}.mapping-table{width:100%;border-collapse:collapse;font-size:12px}.mapping-table th,.mapping-table td{text-align:left;border-bottom:1px solid #2b394b;padding:10px 8px}.robot-setup input,.robot-setup select,.robot-setup textarea{max-width:100%;min-width:0}.robot-setup textarea{min-height:120px}.robot-setup .check-field,.planning-pipeline .check-field{display:flex;align-items:flex-start;gap:10px;font-size:12px;line-height:1.6}.planning-pipeline{margin:16px}.planning-pipeline .section-toolbar{flex-wrap:wrap}.typed-task-editor{border-top:1px solid #2b394b;padding-top:12px;margin-top:16px}.resolved-calls{padding-left:22px}.resolved-calls li{padding:8px;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}.resolved-calls code{overflow-wrap:anywhere;font-size:11px}.physical-report{padding:16px;margin-top:16px;border:1px solid #3e6957;border-radius:10px;background:#11231f}.physical-report.status-incomplete{border-color:#8b702d;background:#292414}.physical-report.status-failed{border-color:#a5414c;background:#2b171d}.physical-report li{margin-top:8px;font-size:12px}.robot-setup small,.planning-pipeline small{display:block;line-height:1.6;color:#a7b6c9}@media(max-width:850px){.robot-mapping-layout{grid-template-columns:1fr}.robot-setup-stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+.physical-execution{margin:16px}.physical-warning{padding:18px;border:1px solid #e76070;border-radius:10px;background:#3a141d;color:#ffd6dc;line-height:1.7}.physical-execution .section-toolbar{flex-wrap:wrap}
+
+/* Simple / Expert interface modes. Hidden markup stays mounted so edits survive a switch. */
+[data-mode="simple"] .expert-only{display:none!important}
+[data-mode="expert"] .simple-only{display:none!important}
+.mode-switch{display:inline-flex;border:1px solid #334155;border-radius:999px;padding:2px;gap:2px;background:#0d141e}
+.mode-switch button{border:0;border-radius:999px;min-height:26px;padding:0 12px;font-size:11px;background:transparent;color:#a7b6c9}
+.mode-switch button.active{background:#1f3a5f;color:#e6efff}
+.readiness{display:flex;flex-wrap:wrap;gap:6px;list-style:none;padding:0;margin:8px 0}
+.readiness li{font-size:11px;border:1px solid #334155;border-radius:999px;padding:3px 10px;color:#a7b6c9}
+.readiness li.ok{border-color:#2f6b52;color:#b5f0d2}.readiness li.todo{border-color:#8b702d;color:#f6dfa4}.readiness li.bad{border-color:#a5414c;color:#ffd6dc}
+.field-issue{color:#ffb3bd;font-size:11px;line-height:1.5;margin:4px 0 0}
+.coordinate-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.function-table input,.function-table select{width:100%;min-width:70px}
+.function-table td{vertical-align:top}
+.function-table tr.invalid td{background:#2b171d}
+.ai-models{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:18px}
+.ai-model-list{display:grid;gap:8px;align-content:start;min-width:0}
+.ai-model-list button{display:grid;justify-items:start;gap:3px;text-align:left;min-height:62px;min-width:0;max-width:100%;white-space:normal}
+.ai-model-list button>*{min-width:0;max-width:100%;white-space:normal;overflow-wrap:anywhere}
+.ai-model-list button.selected{border-color:#6a98eb;background:#182c48}
+.model-status{font-size:11px}.model-status.ok{color:#b5f0d2}.model-status.bad{color:#ffb3bd}.model-status.unknown{color:#f6dfa4}
+.nemotron-tag{font-size:10px;border:1px solid #76b900;color:#c8f08a;border-radius:6px;padding:1px 6px;margin-left:6px}
+.effective-models{display:grid;gap:4px;font-size:12px}
+.validate-progress{display:flex;gap:6px;flex-wrap:wrap;list-style:none;padding:0}
+.validate-progress li{font-size:11px;border:1px solid #334155;border-radius:999px;padding:3px 10px}
+.validate-progress li.active{border-color:#6a98eb}.validate-progress li.done{border-color:#2f6b52;color:#b5f0d2}.validate-progress li.failed{border-color:#a5414c;color:#ffd6dc}
+@media(max-width:850px){.ai-models{grid-template-columns:1fr}.coordinate-grid{grid-template-columns:1fr}}
+.robot-setup-stages.five{grid-template-columns:repeat(5,minmax(0,1fr))}.mapping-table tr.selected td{background:#182c48}@media(max-width:850px){.robot-setup-stages.five{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.configuration-modal>.section-toolbar>.mode-switch{order:1;margin-left:auto}.configuration-modal>.section-toolbar>button[aria-label="Close configuration"]{order:2}
+.planning-pipeline .section-toolbar[aria-label="Plan actions"]{justify-content:flex-start;gap:10px}
+
+/* The primary workflow: one instruction, two AI stages, an editable result. */
+.hidden-compatibility{display:none!important}
+.plans-workspace{overflow:auto}
+.plans-workspace> *{flex-shrink:0}
+.plan-composer{display:grid;gap:12px;margin:18px 26px 8px;padding:18px 20px;border:1px solid var(--line,#2b394b);border-radius:12px;background:var(--ui-panel,#101820);min-width:0}
+.composer-heading{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.composer-heading h3{margin:5px 0 0;font-size:18px;letter-spacing:-.3px}
+.plan-composer .field{margin:0;min-width:0}
+.plan-composer .plan-goal textarea{min-height:76px;resize:vertical;font-size:13px;line-height:1.65;padding:12px}
+.composer-robot-scope{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.composer-robot-scope>.field{min-width:240px;max-width:100%}
+.plan-robot-choices{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+.plan-robot-choices label,.plan-composer .check-field{display:flex;gap:8px;align-items:center;font-size:11px;line-height:1.6}
+.plan-robot-choices input,.plan-composer .check-field input,.planner-converter-settings .check-field input{width:15px;height:15px;flex-shrink:0;margin:0}
+.composer-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.composer-actions button{min-height:38px;padding:9px 15px}
+.composer-models{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding-top:10px;border-top:1px solid var(--line,#2b394b);font-size:11px;color:#a9b8ca}
+.composer-models strong{color:#dfe8f3;margin-right:5px;font-weight:500}
+.composer-models .text-button{margin-left:auto}
+.plan-composer small,.task-command-editor small{color:#94a6bb;line-height:1.6}
+.composer-explanation{font-size:11px}
+.plan-composer .regenerate-consent{font-size:11px;color:#a9b8ca}
+.composer-advanced{border-top:1px solid var(--line,#2b394b);padding-top:8px}
+.composer-advanced[open]{display:grid;gap:10px}
+.plan-check-summary{border:1px solid #355244;border-radius:8px;padding:10px 12px;font-size:12px;line-height:1.6}
+.plan-check-summary.status-incomplete{border-color:#716138}.plan-check-summary.status-failed{border-color:#84474f}
+.plan-check-summary ul{padding-left:20px}.plan-check-summary p{margin:8px 0}
+.task-command-editor{min-width:0;margin:14px 0;padding-top:14px;border-top:1px solid var(--line,#2b394b)}
+.task-command-editor h4{font-size:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:14px 0 8px}
+.task-command-editor h4 small{font-weight:400;font-size:10px}
+.task-command-editor details{margin-top:10px;font-size:12px}
+.task-command-editor textarea{min-height:72px}
+.task-command-editor .resolved-calls{padding:0;list-style:none;margin:0}
+.task-command-editor .resolved-calls li{background:#0c141f;border:1px solid var(--line,#2b394b);border-radius:6px;margin:6px 0;padding:10px}
+.task-command-editor .resolved-calls button{font-size:10px;padding:5px 8px}
+.task-command-editor .call-form{display:grid;gap:10px;margin-top:12px}
+.physical-run-options{margin:8px 26px;font-size:12px}
+.planner-converter-settings{margin:16px 0 20px}
+.planner-converter-settings>.configuration-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.planner-converter-settings .check-field{display:flex;align-items:center;gap:8px;font-size:12px;margin:12px 0}
+.task-authoring>.section-toolbar{margin-top:0}
+@media(max-width:1000px){.plan-composer{margin:14px 16px 6px;padding:16px}.plan-authoring{grid-template-columns:minmax(240px,1fr) minmax(280px,340px)}}
+@media(max-width:760px){.composer-heading{align-items:flex-start}.composer-heading h3{font-size:16px}.plan-composer{margin:10px;padding:14px}.composer-actions button{flex:1}.composer-models .text-button{margin-left:0}.plan-authoring{grid-template-columns:1fr}.planner-converter-settings>.configuration-grid{grid-template-columns:1fr}.composer-robot-scope>.field{width:100%}}
+
+/* Keep the authoring panel compact enough to leave the task list in view. */
+.plan-composer{gap:8px;padding:14px 18px;margin-top:12px}
+.composer-heading .eyebrow{display:none}
+.composer-heading h3{margin:0}
+.plan-composer .plan-goal textarea{min-height:64px;padding:9px 11px}
+.composer-control-row{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap}
+.composer-control-row .composer-robot-scope{flex:0 1 auto;min-width:240px}
+.composer-control-row .composer-actions{padding-bottom:1px}
+.composer-models{padding-top:6px;font-size:10px}
+.composer-explanation{display:none}
+.plan-composer .validate-progress{margin:4px 0}
+.plan-composer .regenerate-consent{margin:0}
+.plan-composer .plan-check-summary{padding:7px 10px}
+@media(max-width:760px){.composer-control-row .composer-actions{width:100%}.composer-control-row .composer-robot-scope{min-width:0;width:100%}}

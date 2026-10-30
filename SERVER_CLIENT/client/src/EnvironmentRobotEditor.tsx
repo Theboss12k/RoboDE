@@ -1,3 +1,4 @@
+import MappedEnvironmentEditor from "./MappedEnvironmentEditor";
 import Feedback from "./ui/Feedback";
 import NvidiaLogo from "./branding/NvidiaLogo";
 import { useEffect, useRef, useState } from "react";
@@ -16,7 +17,7 @@ import type {
 } from "./types";
 
 type Draft = { base: RobotBase; positions: Record<string, number> };
-export default function EnvironmentRobotEditor({
+function LegacyEnvironmentRobotEditor({
   detail,
   robot,
   draft,
@@ -825,3 +826,5 @@ export default function EnvironmentRobotEditor({
     </section>
   );
 }
+
+export default function EnvironmentRobotEditor(props:Parameters<typeof LegacyEnvironmentRobotEditor>[0]){return props.robot.instance.control_adapter?.binding_id?<MappedEnvironmentEditor {...props}/>:<LegacyEnvironmentRobotEditor {...props}/>}

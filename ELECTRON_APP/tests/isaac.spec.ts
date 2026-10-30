@@ -15,6 +15,8 @@ test('Electron imports a reviewed URDF into its global robot library',async()=>{
   const welcome=page.getByRole('dialog',{name:'Hello.'});
   await expect(welcome).toBeVisible();await welcome.getByRole('button',{name:'Continue',exact:true}).click();
   await page.getByRole('button',{name:'Open configuration',exact:true}).click();
+  await page.getByRole('dialog',{name:'Global configuration'}).getByRole('radio',{name:'Expert',exact:true}).click();
+  await page.getByText('Legacy robot definitions & adapters', {exact:true}).click();
   await page.getByRole('button',{name:'Add robot to library',exact:true}).click();
   await page.getByRole('button',{name:'Import URDF',exact:true}).click();
   await page.getByLabel('URDF source file',{exact:true}).setInputFiles(resolve('SERVER_CLIENT/server/examples/robots/bench_gantry.urdf'));
@@ -75,7 +77,7 @@ test('sandboxed Electron exposes scoped Isaac file selection only to the trusted
     expect(menuCode.detail).toContain('native-workspace-test-code');expect(menuCode.copied).toBe('native-workspace-test-code');
     await page.route('**/api/workspace/access',route=>route.fulfill({status:405,json:{detail:'Method Not Allowed'}}));
     await page.getByRole('button',{name:'Open configuration',exact:true}).click();
-    await page.getByRole('button',{name:'Workspace access',exact:true}).click();
+    await page.getByRole('button',{name:'Workspace',exact:true}).click();
     await page.getByRole('button',{name:'Show workspace access code',exact:true}).click();
     await expect(page.getByLabel('Revealed workspace access code',{exact:true})).toHaveValue('native-workspace-test-code');
     await page.getByRole('button',{name:'Hide access code',exact:true}).click();
@@ -118,9 +120,15 @@ test('Electron runs a saved plan and keeps failed submissions inside the dialog'
   await page.getByLabel('Workspace access code').fill('hosted-browser-test-code');await page.getByRole('button',{name:'Open workspace',exact:true}).click();
   await page.getByRole('button',{name:'New plan',exact:true}).first().click();const dialog=page.getByRole('dialog',{name:'New plan',exact:true});
   await dialog.getByLabel('New plan name').fill('Electron acceptance');await dialog.getByRole('button',{name:'Create plan',exact:true}).click();
-  await page.getByRole('button',{name:'Add task',exact:true}).click();await page.getByRole('button',{name:'Save changes',exact:true}).click();
-  await page.getByRole('button',{name:'Compile plan',exact:true}).click();await page.getByRole('tab',{name:'Generated code',exact:true}).click();await expect(page.locator('.monaco-editor')).toBeVisible();
-  await page.getByRole('button',{name:'Simulate',exact:true}).click();await expect(page.locator('.run-status.success')).toHaveText('simulation passed',{timeout:25000});
+  await page.getByRole('radio',{name:'Expert',exact:true}).click();
+  await page.getByRole('button',{name:'Add task',exact:true}).click();
+  await page.getByText('Add a command manually',{exact:true}).click();
+  await page.getByLabel('Approved task function',{exact:true}).selectOption('set_base_yaw');
+  await page.getByLabel('Function value',{exact:true}).fill('0.02');
+  await page.getByRole('button',{name:'Add function call',exact:true}).click();
+  await page.getByRole('button',{name:'Save changes',exact:true}).click();
+  await page.getByRole('button',{name:'Validate plan',exact:true}).click();await page.getByRole('tab',{name:'Generated code',exact:true}).click();await expect(page.locator('.monaco-editor')).toBeVisible();
+  await page.getByRole('button',{name:'Run simulation',exact:true}).click();await expect(page.locator('.run-status.success')).toHaveText('simulation passed',{timeout:25000});
   await page.route('**/plan-definitions',async route=>route.request().method()==='POST'?route.fulfill({status:422,json:{detail:'Choose another plan name.'}}):route.continue());
   await page.getByRole('button',{name:'New plan',exact:true}).first().click();await dialog.getByLabel('New plan name').fill('Failed draft');await dialog.getByRole('button',{name:'Create plan',exact:true}).click();
   await expect(dialog.getByRole('alert')).toContainText('Choose another plan name.');

@@ -8,6 +8,7 @@ const sample = resolve('SERVER_CLIENT/server/examples/robots/bench_gantry.urdf')
 async function open(page: Page) {
   await page.goto('/');
   await page.getByRole('button', {name:'Open configuration',exact:true}).click();
+  await page.getByText('Legacy robot definitions & adapters', {exact:true}).click();
   await page.getByRole('button', {name:'Add robot to library',exact:true}).click();
   await page.getByRole('button', {name:'Import URDF',exact:true}).click();
   await page.getByLabel('URDF source file',{exact:true}).setInputFiles(sample);
@@ -82,6 +83,7 @@ test('LLM suggestions require acceptance and cannot change extracted joint value
 test('URDF review remains aligned on a compact desktop and blockers stay visible',async({page})=>{
   await page.setViewportSize({width:1100,height:760});await page.goto('/');
   await page.getByRole('button',{name:'Open configuration',exact:true}).click();
+  await page.getByText('Legacy robot definitions & adapters', {exact:true}).click();
   await page.getByRole('button',{name:'Add robot to library',exact:true}).click();
   await page.getByRole('button',{name:'Import URDF',exact:true}).click();
   const source=(await readFile(sample,'utf8')).replace('type="prismatic"','type="floating"');

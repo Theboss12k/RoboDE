@@ -17,14 +17,15 @@ class DiscardOutput:
 
 
 async def main():
-    data = json.loads(sys.stdin.buffer.read(1000000))
+    data = json.loads(sys.stdin.buffer.read(18000000))
     namespace = {'__name__': 'robot_ide_llm_adapter'}
     # A disposable working directory avoids accidental writes into a project.
     with tempfile.TemporaryDirectory(prefix='robot-ide-llm-') as folder:
         os.chdir(folder)
         with contextlib.redirect_stdout(DiscardOutput()), contextlib.redirect_stderr(DiscardOutput()):
             exec(compile(data['source'], '<llm-adapter>', 'exec'), namespace)
-            answer = namespace['invoke'](data['input'], data['system_prompt'])
+            answer = (namespace['invoke_multimodal'](data['input'],data['system_prompt'],data['images']) if data.get('images')
+                      else namespace['invoke'](data['input'], data['system_prompt']))
             if inspect.isawaitable(answer):
                 answer = await answer
         if not isinstance(answer, str) or not answer.strip() or len(answer) > 120000:

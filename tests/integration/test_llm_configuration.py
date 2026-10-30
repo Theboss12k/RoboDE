@@ -12,13 +12,15 @@ from services.ai_orchestrator.llm import ProviderConfiguration,LLMRegistry
 from shared.models.domain import PlanDefinition,TaskDefinition
 
 
-@pytest.mark.parametrize('answer', ['{"tasks":[]}', '```json\n{"tasks":[]}\n```', '```\n{"tasks":[]}\n```', '```json\n{"tasks":[]}\n```\n### Explanation\nReview these tasks.'])
+@pytest.mark.parametrize('answer', ['{"tasks":[]}', '```json\n{"tasks":[]}\n```', '```\n{"tasks":[]}\n```', '```json\n{"tasks":[]}\n```\n### Explanation\nReview these tasks.',
+                                    'Here is the corrected JSON instance:\n\n```json\n{"tasks":[]}\n```'])
 def test_local_model_json_formatting(answer):
     from services.ai_orchestrator.llm import json_answer
     assert json_answer(answer) == {'tasks': []}
 
 
-@pytest.mark.parametrize('answer', ['Here is the plan: {"tasks":[]}', '```json\n{}\n```\n```json\n{}\n```', '```python\n{}\n```', '```json\n{}'])
+@pytest.mark.parametrize('answer', ['Here is the plan: {"tasks":[]}', '```json\n{}\n```\n```json\n{}\n```', '```python\n{}\n```', '```json\n{}',
+                                    'Intro:\n```json\n{}\n```\n```json\n{}\n```', 'Intro:\n```python\n{}\n```', 'Intro:\n```json\n{}', 'Use {"a":1}\n```json\n{}\n```'])
 def test_local_model_json_rejects_prose_multiple_fences_and_truncation(answer):
     from services.ai_orchestrator.llm import json_answer
     with pytest.raises(ValueError):
@@ -322,3 +324,25 @@ async def invoke(input, system_prompt):
     else:
         with pytest.raises(ValueError):await job
     with pytest.raises(ProcessLookupError):os.kill(pid,0)
+
+
+@pytest.mark.parametrize('choice,expected',[
+    ({'message':{'content':'{"tasks":[]}'},'finish_reason':'length'},'token limit'),
+    ({'message':{'content':'<think>still reasoning'},'finish_reason':'stop'},'token limit'),
+    ({'message':{'content':None},'finish_reason':'stop'},'invalid answer'),
+])
+async def test_truncated_or_empty_chat_answers_are_rejected(store,monkeypatch,choice,expected):
+    fake_provider(monkeypatch,lambda request:httpx.Response(200,json={'choices':[choice]}))
+    adapter=LLMRegistry(store).save(configuration())
+    with pytest.raises(ValueError,match=expected):
+        await LLMRegistry(store).adapter(adapter['id'])('Plan','')
+
+
+async def test_chat_answer_records_provider_host_and_strips_reasoning(store,monkeypatch):
+    from services.ai_orchestrator.llm import json_answer
+    body={'choices':[{'message':{'content':'<think>plan steps</think>\n{"calls":[]}'},'finish_reason':'stop'}],'usage':{'prompt_tokens':9,'completion_tokens':4}}
+    fake_provider(monkeypatch,lambda request:httpx.Response(200,json=body))
+    adapter=LLMRegistry(store).save(configuration())
+    answer=await LLMRegistry(store).adapter(adapter['id'])('Plan','')
+    assert answer['provider_host']=='llm.local' and answer['finish_reason']=='stop' and answer['usage']=={'prompt_tokens':9,'completion_tokens':4}
+    assert json_answer(answer['answer'])=={'calls':[]}

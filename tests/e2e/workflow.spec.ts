@@ -3,6 +3,8 @@ async function openGlobalAdapterWizard(page: Page) {
   await page
     .getByRole("button", { name: "Open configuration", exact: true })
     .click();
+  const legacy=page.getByText("Legacy robot definitions & adapters", {exact:true});
+  if(await legacy.count() && !(await legacy.locator("..").evaluate(el=>el.hasAttribute("open")))) await legacy.click();
   await page
     .getByRole("dialog", { name: "Global configuration", exact: true })
     .getByRole("button", { name: "Configure adapters & test", exact: true })
@@ -109,6 +111,7 @@ async function newPlan(page: Page, name = "Apple transfer plan") {
   await page.getByLabel("New plan name", { exact: true }).fill(name);
   await page.getByRole("button", { name: "Create plan", exact: true }).click();
   await expect(page.getByLabel("Plan name", { exact: true })).toHaveValue(name);
+  await page.getByRole("button", {name:"Legacy goal editor",exact:true}).click();
 }
 async function compiled(page: Page) {
   await newPlan(page);
@@ -122,12 +125,12 @@ async function compiled(page: Page) {
   await expect(
     page.getByLabel("Standard command type", { exact: true }),
   ).toHaveValue("MOVE_END_EFFECTOR");
-  await page.getByRole("button", { name: "Compile plan", exact: true }).click();
+  await page.getByRole("button", { name: "Validate plan", exact: true }).click();
   await expect(
     page.getByText("Ready for simulation", { exact: true }),
   ).toBeVisible();
   await expect(
-    page.getByRole("button", { name: "Compile plan", exact: true }),
+    page.getByRole("button", { name: "Validate plan", exact: true }),
   ).toBeEnabled();
   await expect(page.getByLabel("Plan goal", { exact: true })).toHaveValue(
     "Pick up the apple and place it in the basket.",
@@ -153,7 +156,7 @@ test("hierarchy, atomic tasks, immutable code, simulation and history", async ({
   await page.getByRole("tab", { name: "Generated code", exact: true }).click();
   await expect(page.locator(".monaco-editor")).toBeVisible();
   await expect(page.locator(".code-bar")).toContainText("/revisions/");
-  await page.getByRole("button", { name: "Simulate", exact: true }).click();
+  await page.getByRole("button", { name: "Run simulation", exact: true }).click();
   await expect(page.locator(".run-status.success")).toHaveText(
     "simulation passed",
     { timeout: 25000 },
@@ -189,7 +192,7 @@ test("robot browsing does not change task assignments and edits require compilat
     .getByLabel("Task name", { exact: true })
     .fill("Approach carefully");
   await expect(
-    page.getByRole("button", { name: "Simulate", exact: true }),
+    page.getByRole("button", { name: "Run simulation", exact: true }),
   ).toBeDisabled();
   await page.getByRole("button", { name: "Save changes", exact: true }).click();
   await page.reload();
@@ -197,7 +200,7 @@ test("robot browsing does not change task assignments and edits require compilat
     "Approach carefully",
   );
   await expect(
-    page.getByRole("button", { name: "Simulate", exact: true }),
+    page.getByRole("button", { name: "Run simulation", exact: true }),
   ).toBeDisabled();
 });
 
@@ -231,7 +234,7 @@ test("saved robot configuration stays separate from actual feedback and environm
     .getByRole("button", { name: "Plans workspace", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "Simulate", exact: true }),
+    page.getByRole("button", { name: "Run simulation", exact: true }),
   ).toBeDisabled();
   await page
     .getByRole("button", { name: "Environment workspace", exact: true })
@@ -345,7 +348,7 @@ test("physical ROS adapter wizard generates, reviews, tests and controls through
   const adapterId = adapters.find(
     (a: any) => a.name === "E2E generated ROS adapter",
   ).id;
-  await page
+  await page.getByRole("group", {name:"Project robot target",exact:true})
     .getByRole("button", { name: "Physical · hardware", exact: true })
     .click();
   await page
@@ -425,11 +428,11 @@ test("unsupported task requests fail explicitly and stop confirms cancellation",
     .getByRole("button", { name: "Generate tasks", exact: true })
     .click();
   await expect(page.locator(".atomic-task")).toHaveCount(9);
-  await page.getByRole("button", { name: "Compile plan", exact: true }).click();
+  await page.getByRole("button", { name: "Validate plan", exact: true }).click();
   await expect(
     page.getByText("Ready for simulation", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Simulate", exact: true }).click();
+  await page.getByRole("button", { name: "Run simulation", exact: true }).click();
   await page
     .getByRole("button", { name: "Stop simulation", exact: true })
     .first()
@@ -467,11 +470,11 @@ test("two-robot goals expand to atomic tasks and execute with independent verifi
     .getByRole("button", { name: "Generate tasks", exact: true })
     .click();
   await expect(page.locator(".atomic-task")).toHaveCount(18);
-  await page.getByRole("button", { name: "Compile plan", exact: true }).click();
+  await page.getByRole("button", { name: "Validate plan", exact: true }).click();
   await expect(
     page.getByText("Ready for simulation", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Simulate", exact: true }).click();
+  await page.getByRole("button", { name: "Run simulation", exact: true }).click();
   await expect(page.locator(".run-status.success")).toHaveText(
     "simulation passed",
     { timeout: 25000 },
@@ -479,7 +482,7 @@ test("two-robot goals expand to atomic tasks and execute with independent verifi
   await page.screenshot({ path: "artifacts/atomic-multi-robot.png" });
 });
 
-test("tutorial covers every workspace and wizard stage without mutations, then restores focus and view", async ({
+test("tutorial covers the simplified workflow and every workspace without mutations, then restores focus and view", async ({
   page,
 }) => {
   await compiled(page);
@@ -499,7 +502,7 @@ test("tutorial covers every workspace and wizard stage without mutations, then r
     .getByLabel("Jump to tutorial section", { exact: true })
     .locator("option")
     .count();
-  expect(count).toBeGreaterThanOrEqual(30);
+  expect(count).toBeGreaterThanOrEqual(15);
   for (let i = 0; i < count; i++) {
     const card = page.locator(".tutorial-card");
     await expect(
@@ -530,7 +533,7 @@ test("tutorial supports reduced motion, direct jumps and keyboard dismissal duri
   page,
 }) => {
   await compiled(page);
-  await page.getByRole("button", { name: "Simulate", exact: true }).click();
+  await page.getByRole("button", { name: "Run simulation", exact: true }).click();
   await expect(
     page.getByRole("tab", { name: "Simulation", exact: true }),
   ).toHaveAttribute("aria-selected", "true");
@@ -555,10 +558,10 @@ test("tutorial supports reduced motion, direct jumps and keyboard dismissal duri
   const menu = page.getByLabel("Jump to tutorial section", { exact: true });
   const value = await menu
     .locator("option")
-    .filter({ hasText: "Vendor documentation or custom commands" })
+    .filter({ hasText: "Choose the Planner LLM and Task LLM" })
     .getAttribute("value");
   await menu.selectOption(value!);
-  await expect(page.locator(".adapter-choices")).toBeVisible();
+  await expect(page.locator(".planner-converter-settings")).toBeVisible();
   await page.keyboard.press("Escape");
   await expect(page.locator(".tutorial-card")).toHaveCount(0);
   await expect(page.locator(".explorer")).toHaveCount(0);
@@ -697,6 +700,7 @@ test("configuration imports a global robot before the project creates its config
   await page
     .getByRole("button", { name: "Open configuration", exact: true })
     .click();
+  await page.getByText("Legacy robot definitions & adapters", {exact:true}).click();
   await page
     .getByRole("button", { name: "Add robot to library", exact: true })
     .click();
@@ -760,6 +764,12 @@ test("global LLM functions, per-task selection, refinement and standalone execut
   const server = createServer(async (req, res) => {
     let text = "";
     for await (const part of req) text += part;
+    // AI Models checks availability with read-only model-list requests.
+    if (req.method === "GET") {
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ models: [], data: [] }));
+      return;
+    }
     const body = JSON.parse(text);
     calls.push(body);
     let content = "A recorded LLM answer";
@@ -789,7 +799,7 @@ test("global LLM functions, per-task selection, refinement and standalone execut
       .click();
     await page
       .locator(".configuration-modal")
-      .getByRole("button", { name: "LLM adapters", exact: true })
+      .getByRole("button", { name: "AI Models", exact: true })
       .click();
     await page.getByLabel("LLM name", { exact: true }).fill("Test function A");
     await page
@@ -799,10 +809,10 @@ test("global LLM functions, per-task selection, refinement and standalone execut
     await expect(page.getByLabel("LLM default system prompt", { exact: true })).toHaveCount(0);
     await expect(page.getByLabel("LLM test system prompt", { exact: true })).toHaveCount(0);
     await page
-      .getByRole("button", { name: "Save LLM adapter", exact: true })
+      .getByRole("button", { name: "Save AI model", exact: true })
       .click();
     await expect(
-      page.getByRole("button", { name: "Invoke saved adapter", exact: true }),
+      page.getByRole("button", { name: "Test model", exact: true }),
     ).toBeVisible();
     ids.push(
       ...(await (await request.get("/api/llm/adapters")).json()).adapters
@@ -810,7 +820,7 @@ test("global LLM functions, per-task selection, refinement and standalone execut
         .map((p: any) => p.id),
     );
     await page
-      .getByRole("button", { name: "Invoke saved adapter", exact: true })
+      .getByRole("button", { name: "Test model", exact: true })
       .click();
     await expect(
       page.getByLabel("LLM test answer", { exact: true }),
@@ -834,8 +844,16 @@ test("global LLM functions, per-task selection, refinement and standalone execut
       .click();
     await page.reload();
     await newPlan(page, "LLM plan");
-    await page.getByRole("button", { name: "Add task", exact: true }).click();
-    await page.getByLabel("Task type", { exact: true }).selectOption("llm");
+    // Standalone answer tasks are a legacy project feature. Load a saved record;
+    // the normal Add task button now creates a semantic robot task for the Converter.
+    const pid=await page.getByLabel("Select project",{exact:true}).inputValue();
+    const detail=await(await request.get(`/api/projects/${pid}`)).json();
+    const definition=detail.plan_definitions.find((d:any)=>d.name==="LLM plan");
+    const imported=await request.put(`/api/projects/${pid}/plan-definitions/${definition.id}`,{data:{name:definition.name,goal:definition.goal,version:definition.version,tasks:[{id:"legacy_llm",name:"New task",operation:"llm",robot_id:"",llm_input:"Analyze the environment",binding_status:"legacy"}]}});
+    expect(imported.ok(),await imported.text()).toBeTruthy();
+    await page.reload();
+    await page.getByRole("dialog",{name:"Hello.",exact:true}).getByRole("button",{name:"Continue",exact:true}).click();
+    await expect(page.getByRole("dialog",{name:"Hello.",exact:true})).toHaveCount(0);
     await expect(page.getByLabel("Task robot", { exact: true })).toHaveCount(0);
     await page
       .getByLabel("Task LLM adapter", { exact: true })
@@ -847,6 +865,8 @@ test("global LLM functions, per-task selection, refinement and standalone execut
     await page
       .getByLabel("Task refinement instruction", { exact: true })
       .fill("Improve the task name");
+    await expect(page.getByLabel("Task refinement instruction",{exact:true})).toHaveValue("Improve the task name");
+    await expect(page.getByRole("button",{name:"Draft task refinement",exact:true})).toBeEnabled();
     await page
       .getByRole("button", { name: "Draft task refinement", exact: true })
       .click();
@@ -854,12 +874,12 @@ test("global LLM functions, per-task selection, refinement and standalone execut
       "Refined LLM task",
     );
     await page
-      .getByRole("button", { name: "Compile plan", exact: true })
+      .getByRole("button", { name: "Validate plan", exact: true })
       .click();
     await expect(
       page.getByText("Ready for simulation", { exact: true }),
     ).toBeVisible();
-    await page.getByRole("button", { name: "Simulate", exact: true }).click();
+    await page.getByRole("button", { name: "Run simulation", exact: true }).click();
     await expect(page.locator(".llm-results")).toContainText(
       "A recorded LLM answer",
     );
@@ -1187,20 +1207,23 @@ test("standardized task controls retain explicit units and bypass pose IK for di
 }) => {
   await newPlan(page, "Direct component task");
   await page.getByRole("button", { name: "Add task", exact: true }).click();
-  await page.getByLabel("Task type", { exact: true }).selectOption("command");
-  await page.getByLabel("Standard command type").selectOption("SET_ACTUATOR");
-  await page
-    .getByLabel("Command target", { exact: true })
-    .selectOption("elbow");
-  await page.getByLabel("Command value", { exact: true }).fill("-1.6");
-  await expect(
-    page.getByText("Direct adapter control; IK is bypassed.", { exact: false }),
-  ).toBeVisible();
-  await page.getByRole("button", { name: "Compile plan", exact: true }).click();
+  await page.getByLabel("Semantic task intent",{exact:true}).fill("Set elbow to -1.6 rad");
+  await page.getByText("Add a command manually",{exact:true}).click();
+  await page.getByLabel("Approved task function",{exact:true}).selectOption("set_elbow");
+  await expect(page.locator(".call-form")).toContainText("rad");
+  await page.getByLabel("Function value",{exact:true}).fill("-1.6");
+  await page.getByRole("button",{name:"Add function call",exact:true}).click();
+  await expect(page.locator(".resolved-calls")).toContainText('set_elbow(value=-1.6, unit="rad")');
+  await page.getByRole("button", { name: "Validate plan", exact: true }).click();
   await expect(
     page.getByText("Ready for simulation", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("button", { name: "Simulate", exact: true }).click();
+  const pid=await page.getByLabel("Select project",{exact:true}).inputValue();
+  const detail=await(await page.request.get(`/api/projects/${pid}`)).json();
+  const definition=detail.plan_definitions.find((d:any)=>d.name==="Direct component task");
+  const revision=await(await page.request.get(`/api/projects/${pid}/plans/${definition.latest_revision_id}`)).json();
+  expect(revision.motion_manifest.tasks[0].normalized[0].kind).toBe("joint");
+  await page.getByRole("button", { name: "Run simulation", exact: true }).click();
   await expect(page.locator(".run-status.success")).toHaveText(
     "simulation passed",
     { timeout: 15000 },
@@ -1649,22 +1672,22 @@ test("LLM code setup accepts a standard function without exposing prompt fields"
   let id: string | undefined;
   try {
     await page.getByRole('button', {name:'Open configuration',exact:true}).click();
-    await page.getByRole('button', {name:'LLM adapters',exact:true}).click();
-    await page.getByLabel('Paste adapter code',{exact:true}).check();
+    await page.getByRole('button', {name:'AI Models',exact:true}).click();
+    await page.getByLabel('Custom Python function',{exact:true}).check();
     await expect(page.locator('.llm-code-setup .monaco-editor')).toBeVisible();
     await page.getByLabel('LLM name',{exact:true}).fill('Standard function test');
     await page.getByLabel('LLM model',{exact:true}).fill('custom-test');
     await page.getByLabel('Import LLM adapter code',{exact:true}).setInputFiles({name:'adapter.py',mimeType:'text/x-python',buffer:Buffer.from('async def invoke(input: str, system_prompt: str) -> str:\n    return "Function received: " + input\n')});
-    await page.getByRole('button',{name:'Save LLM adapter',exact:true}).click();
-    await expect(page.getByText('LLM adapter saved. Recompile affected plans.',{exact:true})).toBeVisible();
+    await page.getByRole('button',{name:'Save AI model',exact:true}).click();
+    await expect(page.getByText('AI model saved. Recompile affected plans.',{exact:true})).toBeVisible();
     const saved = await (await request.get('/api/llm/adapters')).json();
     id = saved.adapters.find((a:any)=>a.name==='Standard function test').id;
     expect(saved.adapters.find((a:any)=>a.id===id)).not.toHaveProperty('system_prompt');
     await expect(page.locator('textarea[aria-label*="system prompt"]')).toHaveCount(0);
     await page.getByLabel('LLM test input',{exact:true}).fill('sample input');
-    await page.getByRole('button',{name:'Invoke saved adapter',exact:true}).click();
+    await page.getByRole('button',{name:'Test model',exact:true}).click();
     await expect(page.getByLabel('LLM test answer',{exact:true})).toHaveText('Function received: sample input');
-    await page.getByLabel('Configure with UI',{exact:true}).check();
+    await page.getByLabel('OpenAI-compatible API',{exact:true}).check();
     await expect(page.locator('.llm-code-setup')).toHaveCount(0);
   } finally {
     if(id) await request.delete(`/api/llm/adapters/${id}`);

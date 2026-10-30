@@ -28,6 +28,8 @@ class Session:
     backend: str = 'mock'
     remote: IsaacCell | None = None
     held_objects: dict = field(default_factory=dict)
+    base_poses: dict = field(default_factory=dict)
+    held_tools: dict = field(default_factory=dict)
 
     @property
     def adapter(self):
@@ -48,6 +50,8 @@ class SimulationController:
         self.gpu = GpuLifecycle(storage)
         from integrations.local_isaac import LocalIsaac
         self.local_isaac = LocalIsaac(storage)
+        from integrations.nebius.tunnel import NebiusTunnel
+        self.nebius = NebiusTunnel(storage)
         self.sessions,self.runs,self.jobs,self.leases = {},{},{},{}
         self.context_locks = {}
         self.offline = {}
@@ -100,6 +104,7 @@ class SimulationController:
                         from services.api.isaac import worker_configuration
                         settings=worker_configuration(self.storage)
                         if self.gpu.enabled() and self.gpu.state['status']!='ready':raise ValueError('GPU is stopped or not connected. Start GPU processing or explicitly connect the simulator first.')
+                        if settings['deployment']=='nebius':await self.nebius.ensure()
                         room_path=self.storage.project_folder(project_id)/'environment/room.json'
                         room=json.loads(room_path.read_text()) if room_path.exists() else None
                         if room:room={k:v for k,v in room.items() if k not in {'proxy_ids','capture_id'}}
@@ -107,6 +112,8 @@ class SimulationController:
                             transfer_positions=scene_transfer['positions'] if scene_transfer is not None else None)
                         from services.api.assets import asset_record
                         cell.asset_provider=lambda digest:asset_record(self.storage,project_id,digest)
+                        from simulation.isaac_sim.robot_packages import package_model
+                        cell.robot_package_provider=lambda model:package_model(self.storage,model)
                         if room:
                             from services.api.storage import safe_id
                             reference=json.loads(room_path.read_text())
@@ -150,6 +157,7 @@ class SimulationController:
                                 await session.adapters[rid].request_stop()
                             session.objects = [WorldObject.model_validate(o) for o in saved['objects']]
                             session.held_objects = saved.get('held_objects',dict.fromkeys(ids))
+                            session.base_poses=saved.get('base_poses',{});session.held_tools=saved.get('held_tools',{})
                             if 'held_object' in saved:
                                 session.held_object = saved['held_object']
                 self.sessions[project_id] = session
@@ -158,6 +166,7 @@ class SimulationController:
                 raise ValueError('Robot registry or adapter changed; reconnect/reset the simulation session')
             # Saving desired initial values never changes measured state.
             session.instances,session.models = dict(zip(ids,instances)),models
+            for rid,pose in session.base_poses.items():session.models[rid]['base_pose']=pose
             if not session.remote:
                 for rid in ids:
                     session.adapters[rid].model = models[rid]
@@ -237,7 +246,7 @@ class SimulationController:
             try:
                 if not session.remote and not offline and not warning:
                     atomic_json(self.storage.runtime/'states'/f'{project_id}.json',{'robots':transfer['positions'],
-                        'objects':[o.model_dump(mode='json') for o in transfer['objects']], 'held_objects':session.held_objects,'source':'simulation'})
+                        'objects':[o.model_dump(mode='json') for o in transfer['objects']], 'held_objects':session.held_objects,'base_poses':session.base_poses,'held_tools':session.held_tools,'source':'simulation'})
                 try:await self._disconnect_session(project_id)
                 except WorkerUnavailable:pass
                 self.offline.pop(project_id,None)
@@ -274,7 +283,8 @@ class SimulationController:
             observation = await session.remote.observe()
             session.objects = observation.objects
             return observation.states
-        return dict(zip(session.adapters,await asyncio.gather(*(asyncio.wait_for(a.get_state(),self.command_timeout) for a in session.adapters.values()))))
+        states=dict(zip(session.adapters,await asyncio.gather(*(asyncio.wait_for(a.get_state(),self.command_timeout) for a in session.adapters.values()))))
+        return {rid:s.model_copy(update={'base_pose':session.base_poses.get(rid,session.instances[rid].get('base_pose'))}) for rid,s in states.items()}
 
     async def snapshot(self,project_id):
         project,instance,model,session,state = await self.context(project_id)
@@ -282,8 +292,11 @@ class SimulationController:
         return {'project':project,'instance':instance,'model':model,'instances':session.instances,'models':session.models,
                 'world':[o.model_dump(mode='json') for o in session.objects],'positions':state.positions,
                 'robot_positions':{rid:s.positions for rid,s in states.items()},'held_objects':session.held_objects,
-                'runtime_version':'0.3.0','adapter':session.backend,
+                'base_poses':{rid:s.base_pose for rid,s in states.items()},
+                'runtime_version':'0.4.0-robotics-v2','adapter':session.backend,
                 'llm_adapters':self.llm.snapshot(),
+                'motion_worker':__import__('services.planning.motion_client',fromlist=['MotionClient']).MotionClient(self.storage).configuration(),
+                'llm_roles':__import__('services.ai_orchestrator.two_stage',fromlist=['settings']).settings(self.llm).model_dump(),
                 'worker':session.remote.metadata if session.remote else None,
                 'worker_session_id':session.remote.session_id if session.remote else None,
                 'room':json.loads((self.storage.project_folder(project_id)/'environment/room.json').read_text()) if (self.storage.project_folder(project_id)/'environment/room.json').exists() else None,
@@ -295,7 +308,7 @@ class SimulationController:
             return  # A reconnect must read the GPU scene, never replay saved mock positions.
         states = await self.states(session)
         atomic_json(self.storage.runtime/'states'/f'{project_id}.json',{'robots':{rid:s.positions for rid,s in states.items()},
-            'objects':[o.model_dump(mode='json') for o in session.objects],'held_objects':session.held_objects,'source':'simulation'})
+            'objects':[o.model_dump(mode='json') for o in session.objects],'held_objects':session.held_objects,'base_poses':session.base_poses,'held_tools':session.held_tools,'source':'simulation'})
 
     async def disconnect(self,project_id):
         self.recordings.guard(project_id)
@@ -361,8 +374,11 @@ class SimulationController:
                 raise ValueError('This plan revision is stale; compile the edited plan again')
         snapshot = await self.snapshot(project_id)
         session = self.sessions[project_id]
+        if any(m.get('binding_stale') for m in session.models.values()):raise ValueError('Robot mapping is stale; select a current published binding and compile again')
         if adapter and adapter != session.backend or plan.adapter != session.backend:
             raise ValueError('Plan adapter does not match the connected simulation; generate a new plan')
+        if session.remote and plan.motion_manifest.get('schema_version')==2 and any(g['kind'] in {'grasp','release'} for t in plan.motion_manifest.get('tasks',[]) for g in t['normalized']) and not session.remote.metadata.get('attachment_feedback'):
+            raise ValueError('This Isaac worker does not provide verified grasp-contact feedback for the new task contract. Use the built-in ideal preview or validate a native contact-feedback integration first')
         if plan.fingerprint != expected_fingerprint or fingerprint(snapshot) != plan.fingerprint:
             raise ValueError('This plan is stale. Robot state or project configuration changed; generate and validate a new plan.')
         if any(session.held_objects.values()):
@@ -371,9 +387,16 @@ class SimulationController:
         frames = self.cell_frames(plan,states)
         topological_order(plan.task.steps)
         if not plan.atomic_tasks or any(t.operation != 'llm' for t in plan.atomic_tasks):
-            for rid,model in session.models.items():
-                validate_trajectory(model,[f.model_copy(update={'positions':f.robot_positions[rid]}) for f in frames],session.objects)
-            validate_cell(frames,session.models,session.objects)
+            if plan.motion_manifest.get('schema_version')==2:
+                from services.planning.physical_checker import check_plan
+                checked=await check_plan(self.motion,session.models,frames,session.objects)
+                if checked.status=='failed':raise ValueError('Physical checker: '+'; '.join(f.message for f in checked.findings))
+                if session.remote and not session.remote.metadata.get('mobile_base_feedback') and any(f.base_poses.get(rid,model.get('base_pose',{}))!=model.get('base_pose',{}) for rid,model in session.models.items() for f in frames):
+                    raise ValueError('This Isaac worker does not yet advertise mobile-base trajectory feedback; use the built-in preview')
+            else:
+                for rid,model in session.models.items():
+                    validate_trajectory(model,[f.model_copy(update={'positions':f.robot_positions[rid]}) for f in frames],session.objects)
+                validate_cell(frames,session.models,session.objects)
         self.ensure_idle(project_id)
         run = Run(id=uuid.uuid4().hex[:12],plan_id=plan.id,project_id=project_id,adapter=session.backend,definition_id=plan.definition_id,revision_id=plan.id)
         self.resources.acquire([environment_resource(project_id,session.backend)],run.id)
@@ -398,7 +421,7 @@ class SimulationController:
     def apply_preview(self,session,frame,states):
         for rid,state in states.items():
             if not session.held_objects.get(rid) and not frame.held_objects.get(rid):continue
-            tool = forward(session.models[rid],state.positions)
+            tool = forward(session.models[rid],state.positions,frame.held_tools.get(rid) or session.held_tools.get(rid))
             held = session.held_objects.get(rid)
             if held:
                 next(o for o in session.objects if o.id==held).position = tool
@@ -407,11 +430,16 @@ class SimulationController:
                 if desired in session.held_objects.values():
                     raise RuntimeError('Two robots cannot own the same object')
                 item = next(o for o in session.objects if o.id==desired)
-                if math.dist(tuple(tool.model_dump().values()),tuple(item.position.model_dump().values()))>.012 or state.positions['gripper']>item.size.x:
+                from services.commands.standard import components
+                gripper=next(iter(components(session.models[rid]).values()))
+                if math.dist(tuple(tool.model_dump().values()),tuple(item.position.model_dump().values()))>.012 or (session.models[rid]['actuators']['actuators'][gripper['actuator']]['unit']=='m' and state.positions[gripper['actuator']]>item.size.x+.0001):
                     raise RuntimeError(f'{rid}: observed grasp preconditions failed')
                 session.held_objects[rid],item.position = desired,tool
+                session.held_tools[rid]=frame.held_tools.get(rid)
             elif not desired and held:
-                if state.positions['gripper']<.075:
+                from services.commands.standard import components
+                gripper=next(iter(components(session.models[rid]).values()))
+                if abs(state.positions[gripper['actuator']]-gripper['open'])>.005:
                     raise RuntimeError(f'{rid}: gripper feedback did not confirm release')
                 session.held_objects[rid] = None
 
@@ -463,6 +491,17 @@ class SimulationController:
             success = success and placement_satisfied(item,region,task.placement) and state.positions['gripper'] >= .075 and task.object_id not in session.held_objects.values()
         else:
             success = success and all(abs(state.positions[k]-v) <= tolerance for k,v in endpoint.robot_positions[task.robot_id].items())
+        if plan.motion_manifest.get('schema_version')==2:
+            from services.world_model.world import placement_satisfied
+            from services.commands.standard import components
+            manifest=next(m for m in plan.motion_manifest['tasks'] if m['id']==task.id)
+            for goal in manifest['normalized']:
+                if goal['kind']=='grasp':success=success and session.held_objects.get(task.robot_id)==goal['object_id'] and (not session.remote or state.attachment_source in {'simulation_contact','simulation_observed_motion'} and goal['object_id'] in state.attachments)
+                elif goal['kind']=='release':success=success and goal['object_id'] not in session.held_objects.values()
+                elif goal['kind']=='verify':
+                    item=next(o for o in session.objects if o.id==goal['object_id']);target=next(o for o in session.objects if o.id==goal['target_id'])
+                    gripper=next(iter(components(session.models[task.robot_id]).values()),None)
+                    success=success and placement_satisfied(item,target,goal.get('placement','inside')) and goal['object_id'] not in session.held_objects.values() and (not gripper or abs(state.positions[gripper['actuator']]-gripper['open'])<.005)
         run.evidence.setdefault('tasks',{})[task.id] = {'postcondition_passed':success,'operation':task.operation,'robot_id':task.robot_id,'observation_source':'isaac_sim' if session.remote else 'built_in_simulator'}
         if not success:
             raise RuntimeError(f'{task.name}: observed task postcondition failed')
@@ -510,7 +549,12 @@ class SimulationController:
         completed,active = set(),set()
         verified = set()
         llm_only = bool(plan.atomic_tasks) and all(t.operation == 'llm' for t in plan.atomic_tasks)
+        dispatch=None
         try:
+            if plan.motion_manifest.get('schema_version')==2:
+                from services.adapters.simulation_dispatch import SimulatedDispatch
+                dispatch=SimulatedDispatch(self.storage,self.llm,session.models);await dispatch.open(await self.states(session))
+                run.evidence['generated_driver_dispatch']={'source':'simulation','hardware_contacted':False,'bindings':{rid:m['binding']['hash'] for rid,m in session.models.items() if m.get('binding')}}
             for status in (Lifecycle.VALIDATING,Lifecycle.PLANNING,Lifecycle.PLAN_READY,Lifecycle.SIMULATING):
                 self.transition(run,status)
             run.logs.append(Log(level='info',message=f'Validated {len(session.adapters)} robot(s); acquired exclusive cell lease.'))
@@ -534,7 +578,9 @@ class SimulationController:
                     if step.operation == 'llm':
                         task = next(t for t in plan.atomic_tasks if t.id==step_id)
                         before = time.monotonic()
-                        if not await self.invoke_llm_task(run,task,session):
+                        precomputed=plan.motion_manifest.get('llm_answers',{}).get(task.id)
+                        if precomputed is not None:run.evidence.setdefault('llm',{})[task.id]=precomputed
+                        elif not await self.invoke_llm_task(run,task,session):
                             break
                         started += time.monotonic()-before
                 if run.stop_requested:
@@ -546,25 +592,37 @@ class SimulationController:
                     await asyncio.sleep(delay)
                 if run.stop_requested:
                     break
+                if dispatch:frame=await dispatch.dispatch(frame)
                 if session.remote:
                     if frame.time>previous_time and not llm_only:
                         observation = await session.remote.advance(frame.robot_positions,frame.time-previous_time)
                     else:
                         observation = await session.remote.observe()
                     states,session.objects = observation.states,observation.objects
+                    for rid,state in states.items():
+                        if state.attachment_source in {'simulation_contact','simulation_observed_motion'}:session.held_objects[rid]=state.attachments[0] if state.attachments else None
+                    for rid,expected_object in frame.held_objects.items():
+                        if plan.motion_manifest.get('schema_version')==2 and expected_object and rid not in frame.pending_grasps and session.held_objects.get(rid)!=expected_object:raise RuntimeError(rid+': measured object-following feedback no longer confirms the grasp')
                     # Object dynamics belong to Isaac; never synthesize attachment/poses here.
                 else:
                     if not llm_only:
                         await asyncio.gather(*(asyncio.wait_for(session.adapters[rid].command(q),self.command_timeout) for rid,q in frame.robot_positions.items()))
+                        session.base_poses.update(frame.base_poses)
+                        for rid,pose in frame.base_poses.items():session.models[rid]['base_pose']=pose
                     states = await self.states(session)
                 for rid,state in states.items():
                     validate_positions(session.models[rid],state.positions)
+                    if session.remote and session.models[rid].get('mobility',{}).get('classification','STATIONARY')!='STATIONARY' and rid in frame.base_poses:
+                        base=state.base_pose;expected=frame.base_poses[rid]
+                        if not base or math.hypot(base['x']-expected['x'],base['y']-expected['y'])>.03 or abs(math.atan2(math.sin(base['yaw']-expected['yaw']),math.cos(base['yaw']-expected['yaw'])))>.08:raise RuntimeError(rid+': native base odometry did not track the validated navigation path')
                     for key,value in frame.robot_positions[rid].items():
                         step_id = frame.active_steps.get(rid)
                         operation = next((s.operation for s in plan.task.steps if s.id==step_id),None)
                         contact_closing = bool(frame.held_objects.get(rid)) or operation=='grasp'
                         tolerance = ((.04 if contact_closing else .015) if key=='gripper' else .12) if session.remote else (.003 if key=='gripper' else .01)
-                        if abs(state.positions[key]-value)>tolerance:
+                        error=state.positions[key]-value
+                        if key in session.models[rid].get('continuous_joints',[]):error=math.atan2(math.sin(error),math.cos(error))
+                        if abs(error)>tolerance:
                             unit=session.models[rid]['actuators']['actuators'][key]['unit']
                             raise RuntimeError(f'{rid}/{key}: simulated joint feedback {state.positions[key]:.6g} {unit} did not track the validated command {value:.6g} {unit} (tolerance {tolerance:g} {unit})')
                 if not session.remote and not llm_only:
@@ -640,6 +698,10 @@ class SimulationController:
             with contextlib.suppress(Exception):
                 run.stopped_verified = all(s.stopped for s in (await self.stopped(session)).values())
         finally:
+            if dispatch:
+                confirmed=await dispatch.close()
+                if not confirmed:
+                    run.stopped_verified=False;run.status=Lifecycle.FAILED;run.logs.append(Log(level='error',message='Generated adapter did not confirm stopped simulated feedback'))
             run.finished_at = now()
             run.evidence.update({'scope':'isaac_sim_observed' if session.remote else 'kinematic_preview','physics_validated':False,
                 'physics_simulated':bool(session.remote and session.remote.metadata.get('engine')=='isaac_sim'),
@@ -650,8 +712,7 @@ class SimulationController:
             try:
                 self.storage.save_run(run)
             finally:
-                self.leases.pop(run.project_id,None)
-                self.resources.release(run.id)
+                self.leases.pop(run.project_id,None);self.resources.release(run.id)
 
     def stop(self,run_id):
         run = self.runs.get(run_id) or self.storage.get_run(run_id)

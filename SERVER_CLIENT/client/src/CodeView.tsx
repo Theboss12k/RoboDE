@@ -1,20 +1,30 @@
 import Editor, { loader } from "@monaco-editor/react";
+// The small API entry point does not eagerly register these editor services.
+// Load them before language registration can initialize the standalone service
+// collection (including when an Expert editor is opened after Simple mode).
+import "monaco-editor/editor/contrib/codelens/browser/codeLensCache.js";
+import "monaco-editor/editor/contrib/inlayHints/browser/inlayHintsController.js";
+import "monaco-editor/editor/common/services/treeViewsDndService.js";
+import "monaco-editor/editor/contrib/suggest/browser/suggestMemory.js";
+import "monaco-editor/platform/actionWidget/browser/actionWidget.js";
 import * as monaco from "monaco-editor/editor/editor.api.js";
 import "monaco-editor/languages/definitions/python/register.js";
+import "monaco-editor/languages/features/json/register.js";
+import JSONWorker from "monaco-editor/languages/features/json/json.worker.js?worker";
 import EditorWorker from "monaco-editor/editor/editor.worker.js?worker";
 import { Download, FileCode2, LockKeyhole } from "lucide-react";
 import { download } from "./api";
 import type { Plan } from "./types";
 (globalThis as unknown as { MonacoEnvironment: unknown }).MonacoEnvironment = {
-  getWorker: () => new EditorWorker(),
+  getWorker: (_:string,label:string) => label==="json"?new JSONWorker():new EditorWorker(),
 };
 loader.config({ monaco });
-export function AdapterCodeEditor({ value, disabled, onChange }: {
-  value: string; disabled: boolean; onChange: (value: string) => void;
+export function AdapterCodeEditor({ value, disabled, onChange, language="python", label="LLM adapter code" }: {
+  value: string; disabled: boolean; onChange: (value: string) => void; language?:"python"|"json"; label?:string;
 }) {
-  return <Editor height="330px" language="python" theme="vs-dark" value={value}
+  return <Editor height="330px" language={language} theme="vs-dark" value={value}
     onChange={(text) => onChange(text ?? "")}
-    options={{ ariaLabel: "LLM adapter code", readOnly: disabled,
+    options={{ ariaLabel: label, readOnly: disabled,
       minimap: { enabled: false }, fontSize: 12, lineHeight: 20,
       automaticLayout: true, scrollBeyondLastLine: false, wordWrap: "on",
       padding: { top: 12 }, tabSize: 4 }} />;
@@ -35,17 +45,17 @@ export default function CodeView({ plan }: { plan: Plan | null }) {
       <div className="code-bar">
         <span>
           <FileCode2 size={13} /> plans/{plan.definition_id ?? plan.id}
-          /revisions/{plan.id}/generated.py
+          /revisions/{plan.id}/{plan.motion_manifest?.schema_version===2?"commands.json":"generated.py"}
         </span>
         <button
-          onClick={() => download("generated.py", plan.code, "text/x-python")}
+          onClick={() => download(plan.motion_manifest?.schema_version===2?"commands.json":"generated.py", plan.code, plan.motion_manifest?.schema_version===2?"application/json":"text/x-python")}
         >
           <Download size={13} /> Export
         </button>
       </div>
       <Editor
         height="100%"
-        defaultLanguage="python"
+        language={plan.motion_manifest?.schema_version===2?"json":"python"}
         value={plan.code}
         theme="vs-dark"
         beforeMount={(m) =>

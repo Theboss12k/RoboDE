@@ -18,6 +18,14 @@ LOGIN='''<!doctype html><html lang="en"><meta name="viewport" content="width=dev
 LOGO_PATH=Path(__file__).parent/'static/robot-logo.svg'
 LOGIN=LOGIN.replace('<title>','<link rel="icon" type="image/svg+xml" href="/branding/robot-logo.svg"><title>',1).replace('<style>','<style>.login-logo{display:block;width:72px;height:auto;margin-bottom:20px}',1).replace('<h1>','<img class="login-logo" src="/branding/robot-logo.svg" alt=""><h1>',1)
 
+def nvidia_login(html):
+    """RoboDE for NVIDIA: NVIDIA green accents on the IDE sign-in page."""
+    return (html.replace('#90baff','#76b900').replace('color:#0a1525','color:#0b1400')
+        .replace('<title>RoboDE · Sign in','<title>RoboDE for NVIDIA · Sign in',1)
+        .replace('<style>','<style>form{border-top:3px solid #76b900}.edition{display:inline-block;margin:0 0 12px;padding:3px 10px;border:1px solid #4f7a12;border-radius:999px;color:#c8f08a;font-size:12px}',1)
+        .replace('<h1>RoboDE</h1>','<h1>RoboDE for NVIDIA</h1><span class="edition">NVIDIA Isaac Sim · Nemotron · Nebius</span>',1))
+
+
 def create_gateway(upstream='http://127.0.0.1:8765',dist=None,code=None,scope='business',transport=None):
     if scope not in {'business','ide'}:raise ValueError('Unknown gateway scope')
     home='/' if scope=='ide' else '/business/'
@@ -26,7 +34,9 @@ def create_gateway(upstream='http://127.0.0.1:8765',dist=None,code=None,scope='b
     login_html=LOGIN.replace('RoboDE Workspace','RoboDE').replace('Your workspace, ready to work.','Connect to your shared team workspace.') if scope=='ide' else LOGIN
     if scope=='business':login_html=login_html.replace('action="/login"','action="/business/login"')
     if scope=='ide':
-        login_html=login_html.replace('Ask your workspace administrator for access.','In the local desktop app, use Workspace → Show workspace access code, or Configuration → Workspace access. Otherwise, ask your workspace administrator.')
+        login_html=login_html.replace('Ask your workspace administrator for access.','In the local desktop app, use Workspace → Show workspace access code, or Configuration → Workspace. Otherwise, ask your workspace administrator.')
+        from services.api.edition import edition
+        if edition()=='nvidia':login_html=nvidia_login(login_html)
     code=code if code is not None else os.getenv('ROBOT_IDE_ACCESS_CODE' if scope=='ide' else 'BUSINESS_ACCESS_CODE','')
     if code and len(code)<12:raise ValueError(('ROBOT_IDE_ACCESS_CODE' if scope=='ide' else 'BUSINESS_ACCESS_CODE')+' must be at least 12 characters')
     secret=secrets.token_bytes(32);failed={}

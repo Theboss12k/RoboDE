@@ -16,14 +16,14 @@ test('compact desktop navigation and configuration remain aligned and usable', a
   await page.getByRole('button', {name:'Open configuration', exact:true}).click();
   const config = page.getByRole('dialog', {name:'Global configuration', exact:true});
   await expect(config).toBeVisible();
+  await config.getByText('Legacy robot definitions & adapters',{exact:true}).click();
   await expect(config.getByRole('button', {name:'Add robot to library', exact:true})).toBeVisible();
   await expect(config.getByRole('button', {name:'Configure adapters & test', exact:true}).first()).toBeVisible();
   await page.screenshot({path:'artifacts/ui-final/configuration-library.png'});
-  await config.getByRole('button', {name:'Control adapters', exact:true}).click();
+  await config.getByRole('navigation', {name:'Global robot libraries', exact:true}).getByRole('button', {name:'Control adapters', exact:true}).click();
   await expect(config.getByRole('heading', {name:'Global control adapter library', exact:true})).toBeVisible();
-  await config.getByRole('button', {name:'Robot library', exact:true}).click();
-  await config.getByRole('button', {name:'LLM adapters', exact:true}).click();
-  await expect(config.getByRole('button', {name:'New LLM adapter', exact:true})).toBeVisible();
+  await config.getByRole('button', {name:'AI Models', exact:true}).click();
+  await expect(config.getByRole('button', {name:'New AI connection', exact:true})).toBeVisible();
   await page.screenshot({path:'artifacts/ui-final/configuration-llm.png'});
   expect(await config.evaluate(el=>el.scrollWidth <= el.clientWidth + 1)).toBe(true);
   await config.getByRole('button', {name:'Close configuration', exact:true}).click();

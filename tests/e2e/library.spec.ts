@@ -31,6 +31,7 @@ test("global setup imports a reusable robot and adapter before a project pairs a
   await expect(
     config.getByRole("button", { name: "Add robot to project", exact: true }),
   ).toHaveCount(0);
+  await config.getByText("Legacy robot definitions & adapters", {exact:true}).click();
   await config
     .getByRole("button", { name: "Add robot to library", exact: true })
     .click();

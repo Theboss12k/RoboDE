@@ -1,3 +1,4 @@
+import URDFGeometry from "./URDFGeometry";
 import {
   Component,
   useMemo,
@@ -347,18 +348,18 @@ function SerialRobot({
           }
         }}
       >
-        <Link
+        {!model.geometry?.length && <Link
           a={point(parent)}
           b={point(start)}
           radius={0.017}
           color="#70839e"
-        />
-        <Link
+        />}
+        {!model.geometry?.length && <Link
           a={point(start)}
           b={point(end)}
           radius={0.023}
           color={selected ? "#72adff" : "#afbbcb"}
-        />
+        />}
         <mesh position={point(end)}>
           <sphereGeometry args={[0.028, 16, 16]} />
           <meshStandardMaterial color={selected ? "#72adff" : "#70839e"} />
@@ -443,7 +444,7 @@ function SerialRobot({
       </group>,
     );
   }
-  return <group>{parts}</group>;
+  return <group>{model.geometry?.length?<URDFGeometry model={model} frames={frames} selected={selectedPart} onSelect={onSelectPart}/>:null}{parts}</group>;
 }
 
 export type RobotBase = { x: number; y: number; z: number; yaw: number };
@@ -744,6 +745,7 @@ export default function Scene({
   onSelectObject,
   appearance='studio',
   visualBounds=[],
+  validationMarkers=[],
   selectedRobot,
   robotFocus,
   onSelectRobot,
@@ -758,6 +760,7 @@ export default function Scene({
   onSelectObject?:(id:string)=>void;
   appearance?:'studio'|'business';
   visualBounds?:WorldObject[];
+  validationMarkers?:{position?:number[]|null;message:string;task_id?:string|null}[];
   robotFocus?: { id: string; request: string };
   onSelectRobot?: (id: string, focus?: boolean) => void;
   onRobotTransform?: (id: string, base: RobotBase) => void;
@@ -827,7 +830,7 @@ export default function Scene({
           far: 200,
         }}
         dpr={[1, 2]}
-        gl={{ antialias: true }}
+        gl={{ antialias: true, preserveDrawingBuffer: true }}
       >
         <color attach="background" args={[appearance==='business'?'#edf3ef':"#0b0f16"]} />
         {appearance!=='business' && !workspaces.length && (
@@ -905,7 +908,7 @@ export default function Scene({
           robots.map((r) => (
             <EditableRobot
               key={r.instance.instance.id}
-              robot={r}
+              robot={frame?.base_poses?.[r.instance.instance.id]?{...r,instance:{...r.instance,base_pose:frame.base_poses[r.instance.instance.id]}}:r}
               q={
                 frame?.robot_positions?.[r.instance.instance.id] ??
                 r.state.positions
@@ -934,6 +937,7 @@ export default function Scene({
             onSelectPart={onSelectPart}
           />
         )}
+        {validationMarkers.filter(f=>f.position?.length===3).map((f,i)=><group key={"validation-"+i} position={vector({x:f.position![0],y:f.position![1],z:f.position![2]})}><mesh><sphereGeometry args={[.025,20,20]}/><meshBasicMaterial color="#ff6577" transparent opacity={.8}/></mesh><Html position={[0,.06,0]} center><span className="model-marker">{f.task_id??"Validation finding"}<small>{f.message}</small></span></Html></group>)}
         {objects.map((o) => {
           const displayed = {
             ...o,

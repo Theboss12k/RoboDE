@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<!-- Fictional simulation fixture; not a rated hardware model. Configure wheel radius 0.05 m, track width 0.30 m and reviewed acceleration limits during import. -->
+<robot name="Fictional differential rover">
+  <link name="base_link">
+    <visual>
+      <origin xyz="0 0 .12" />
+      <geometry>
+        <box size=".3 .24 .12" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 .12" />
+      <geometry>
+        <box size=".3 .24 .12" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 .12" />
+      <mass value="5" />
+      <inertia ixx=".01" ixy="0" ixz="0" iyy=".01" iyz="0" izz=".01" />
+    </inertial>
+  </link>
+  <link name="left_wheel_link">
+    <visual>
+      <origin rpy="1.57079632679 0 0" />
+      <geometry>
+        <cylinder radius=".05" length=".025" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0" />
+      <geometry>
+        <cylinder radius=".05" length=".025" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value=".2" />
+      <inertia ixx=".001" ixy="0" ixz="0" iyy=".001" iyz="0" izz=".001" />
+    </inertial>
+  </link>
+  <joint name="left_wheel" type="continuous">
+    <parent link="base_link" />
+    <child link="left_wheel_link" />
+    <origin xyz="0 0.15 .05" />
+    <axis xyz="0 1 0" />
+    <limit effort="20" velocity="10" />
+  </joint>
+  <link name="right_wheel_link">
+    <visual>
+      <origin rpy="1.57079632679 0 0" />
+      <geometry>
+        <cylinder radius=".05" length=".025" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin rpy="1.57079632679 0 0" />
+      <geometry>
+        <cylinder radius=".05" length=".025" />
+      </geometry>
+    </collision>
+    <inertial>
+      <mass value=".2" />
+      <inertia ixx=".001" ixy="0" ixz="0" iyy=".001" iyz="0" izz=".001" />
+    </inertial>
+  </link>
+  <joint name="right_wheel" type="continuous">
+    <parent link="base_link" />
+    <child link="right_wheel_link" />
+    <origin xyz="0 -0.15 .05" />
+    <axis xyz="0 1 0" />
+    <limit effort="20" velocity="10" />
+  </joint>
+  <link name="rear_support">
+    <visual>
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size=".035 .035 .035" />
+      </geometry>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" />
+      <geometry>
+        <box size=".035 .035 .035" />
+      </geometry>
+    </collision>
+    <inertial>
+      <origin xyz="0 0 0" />
+      <mass value="0.1" />
+      <inertia ixx=".01" ixy="0" ixz="0" iyy=".01" iyz="0" izz=".01" />
+    </inertial>
+  </link>
+  <joint name="support_mount" type="fixed">
+    <parent link="base_link" />
+    <child link="rear_support" />
+    <origin xyz="-.12 0 .0175" />
+    <axis xyz="0 0 1" />
+  </joint>
+</robot>

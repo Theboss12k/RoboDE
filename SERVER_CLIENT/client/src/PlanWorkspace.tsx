@@ -1,3 +1,5 @@
+import PhysicalExecution from "./PhysicalExecution";
+import PlanningPipeline, { TaskCommandEditor, type Validation } from "./PlanningPipeline";
 import StandardTaskEditor from "./StandardTaskEditor";
 import { useEffect, useState, lazy, Suspense } from "react";
 import {
@@ -5,7 +7,6 @@ import {
   Trash2,
   Save,
   Sparkles,
-  Play,
   Check,
   GitBranch,
   Code2,
@@ -47,7 +48,16 @@ export default function PlanWorkspace({
   onChange,
   onSave,
   onDraft,
-  onCompile,
+  onValidate,
+  validation,
+  onSaved,
+  onDecompose,
+  onBind,
+  onPhysicalRun,
+  onRefresh,
+  onConfigureAI,
+  onOpenControls,
+  activity,
   onSimulate,
   onStop,
   onRun,
@@ -69,7 +79,16 @@ export default function PlanWorkspace({
   onChange: (p: PlanDefinition) => void;
   onSave: () => void;
   onDraft: (goals: Assignment[], adapter_id?: string) => void;
-  onCompile: () => void;
+  onValidate: () => void;
+  validation: Validation | null;
+  onSaved: (p: PlanDefinition) => void;
+  onDecompose: (clarifications: Record<string,string>, replace: boolean, image?: unknown) => void;
+  onBind: () => void;
+  onPhysicalRun: (run:Run) => void;
+  onRefresh: () => void;
+  onConfigureAI: () => void;
+  onOpenControls: () => void;
+  activity?: string | null;
   onSimulate: () => void;
   onStop: () => void;
   onRun: (id: string) => void;
@@ -89,15 +108,16 @@ export default function PlanWorkspace({
       detail.project.default_goals ?? detail.project.workflow_tasks ?? [
         {
           id: "goal_1",
-          robot_id: detail.robots[0].instance.instance.id,
+          robot_id: detail.robots[0]?.instance.instance.id??"",
           prompt: draft?.goal || detail.project.default_prompt,
           dependencies: [],
         },
       ],
     );
-    setShowGoals(!draft?.tasks.length);
+    setShowGoals(false);
     setPreview(null);
   }, [draft?.id, detail.project.id]);
+  useEffect(() => { setGoals(current=>current.length===1?[{...current[0],prompt:draft?.goal??""}]:current); }, [draft?.goal]);
   useEffect(() => setPreview(null), [run?.id, revision?.id]);
   useEffect(() => {
     if (draft?.tasks.length) setShowGoals(false);
@@ -220,14 +240,6 @@ export default function PlanWorkspace({
           <Save size={13} />
           {dirty ? "Save changes" : "Saved"}
         </button>
-        <button
-          className="primary"
-          disabled={busy || !draft.tasks.length}
-          title={draft.tasks.length ? "Validate tasks and compile a new revision" : "Add a task before compiling"}
-          onClick={onCompile}
-        >
-          <Check size={14} /> Compile plan
-        </button>
         {running ? (
           <button
             className="stop-button"
@@ -235,18 +247,9 @@ export default function PlanWorkspace({
             disabled={run.stop_requested}
           >
             <Square size={13} />
-            {run.stop_requested ? "Stopping…" : "Stop simulation"}
+            {run.stop_requested ? "Stopping…" : run.mode==="physical"?"Stop physical run":"Stop simulation"}
           </button>
-        ) : (
-          <button
-            className="secondary"
-            disabled={busy || !revision?.valid || stale}
-            title={stale || !revision?.valid ? "Compile a valid revision before simulating" : "Run the compiled revision in the selected simulator"}
-            onClick={onSimulate}
-          >
-            <Play size={13} /> Simulate
-          </button>
-        )}
+        ) : null}
       </div>
       <div className="plan-status" role="status">
         <span
@@ -254,7 +257,7 @@ export default function PlanWorkspace({
         />
         <span>
           {stale || !revision
-            ? "Needs compilation"
+            ? "Not validated"
             : revision.valid
               ? "Ready for simulation"
               : "Validation needs attention"}
@@ -265,20 +268,22 @@ export default function PlanWorkspace({
         </small>
         {dirty && <span className="tiny-tag">Unsaved changes</span>}
       </div>
+      {run?.mode==="physical"&&<p className="inline-note">Robot joint feedback is measured. Scene objects retain configured positions unless measured object poses are available.</p>}
       <nav className="view-tabs" aria-label="Plan views" role="tablist">
         {(
           [
             { id: "tasks", name: "Tasks", icon: GitBranch },
             { id: "simulation", name: "Simulation", icon: Box },
-            { id: "code", name: "Generated code", icon: Code2 },
+            { id: "code", name: "Generated code", icon: Code2, expert: true },
             { id: "history", name: "Run history", icon: History },
           ] as const
         ).map((t) => (
           <button
             key={t.id}
             role="tab"
+            disabled={busy}
             aria-selected={tab === t.id}
-            className={tab === t.id ? "active" : ""}
+            className={`${tab === t.id ? "active" : ""} ${"expert" in t ? "expert-only" : ""}`}
             onClick={() => onTab(t.id)}
           >
             <t.icon size={14} />
@@ -286,42 +291,33 @@ export default function PlanWorkspace({
           </button>
         ))}
       </nav>
+      <PlanningPipeline detail={detail} draft={draft} revision={revision} llm={llm} busy={busy} dirty={dirty} onChange={onChange} onDecompose={onDecompose} onBind={onBind}
+        validation={validation} onValidate={onValidate} onSimulate={onSimulate} canSimulate={!!revision?.valid && !stale && !running} onSaved={onSaved} onConfigureAI={onConfigureAI} onOpenControls={onOpenControls} activity={activity}/>
+      <details className="expert-only physical-run-options"><summary>Physical execution</summary><PhysicalExecution detail={detail} revision={revision} disabled={busy} onRefresh={onRefresh} onRun={onPhysicalRun}/></details>
       {tab === "tasks" ? (
+        <div>
         <div className="plan-authoring">
           <div className="task-authoring">
-            <label className="field plan-goal">
-              Plan goal
-              <textarea
-                aria-label="Plan goal"
-                value={draft.goal}
-                disabled={busy}
-                onChange={(e) => {
-                  onChange({ ...draft, goal: e.target.value });
-                  if (goals.length === 1)
-                    setGoals([{ ...goals[0], prompt: e.target.value }]);
-                }}
-              />
-            </label>
             <div className="section-toolbar">
               <h3>
-                Tasks <small>One step per task</small>
+                Tasks <small>Generated from this plan · editable</small>
               </h3>
               <button
-                className="text-button"
+                className="text-button expert-only"
                 onClick={() => setShowGoals(!showGoals)}
                 disabled={busy}
               >
                 <Sparkles size={13} />
                 {showGoals
-                  ? "Hide goal assistant"
-                  : "Generate tasks from goals"}
+                  ? "Hide legacy goal editor"
+                  : "Legacy goal editor"}
               </button>
             </div>
             {showGoals && (
-              <section className="goal-assistant">
+              <section className="goal-assistant expert-only">
                 <p>
                   Choose a robot for each goal. The assistant expands goals into
-                  editable tasks. With an LLM adapter, drafting uses the selected robot’s command contract; local templates remain available without one.
+                  editable tasks. With an AI model, drafting uses the selected robot’s command contract; local templates remain available without one.
                 </p>
                 <label className="field">
                   Drafting adapter
@@ -332,7 +328,7 @@ export default function PlanWorkspace({
                     onChange={(e) => setGoalAdapter(e.target.value)}
                   >
                     <option value="">
-                      Global default ·{" "}
+                      Workspace default ·{" "}
                       {llm.adapters.find((p) => p.id === llm.default_id)
                         ?.name ?? "Local templates"}
                     </option>
@@ -482,7 +478,7 @@ export default function PlanWorkspace({
                   <span>
                     <strong>{t.name}</strong>
                     <small>
-                      {t.operation} · {t.robot_id || "LLM answer"}
+                      {detail.robots.find(r=>r.instance.instance.id===t.robot_id)?.instance.instance.name??t.robot_id??"Legacy task"}{t.binding_status==="resolved"?" · commands ready":t.binding_status==="unresolved"?" · needs conversion":""}
                     </small>
                   </span>
                   <span className="task-dependencies">
@@ -504,23 +500,14 @@ export default function PlanWorkspace({
             </div>
             <button
               className="add-task text-button"
-              disabled={busy}
+              disabled={busy||!detail.robots.length}
               onClick={() => {
-                const robot=detail.robots[0];
-                const actuator=Object.keys(robot.model.actuators.actuators)[0];
+                const robot=detail.robots.find(r=>draft.allowed_robot_ids?.includes(r.instance.instance.id))??detail.robots[0];
                 const next: TaskDefinition = {
-                  id: `task_${Date.now()}`,
-                  name: `Set ${actuator}`,
-                  operation: "command",
-                  command:{type:"SET_ACTUATOR",target:actuator,value:robot.state.positions[actuator],unit:robot.model.actuators.actuators[actuator].unit as "rad"|"m"},
-                  robot_id: detail.robots[0].instance.instance.id,
-                  dependencies: draft.tasks.length
-                    ? [draft.tasks.at(-1)!.id]
-                    : [],
-                  target: null,
-                  joint_positions: null,
-                  object_id: null,
-                  target_id: null,
+                  id:`task_${Date.now()}`,name:"New task",intent:"",operation:"command",command:null,
+                  robot_id:robot.instance.instance.id,dependencies:draft.tasks.length?[draft.tasks.at(-1)!.id]:[],
+                  target:null,joint_positions:null,object_id:null,target_id:null,
+                  function_calls:[],binding_status:"unresolved",authored_by:"user",repeat_count:1,
                 };
                 onChange({ ...draft, tasks: [...draft.tasks, next] });
                 onSelect(next.id);
@@ -545,8 +532,8 @@ export default function PlanWorkspace({
                       }
                     />
                   </label>
-                  <label className="field">
-                    Task type
+                  <label className={`field ${task.binding_status && task.binding_status!=="legacy" ? "hidden-compatibility" : "expert-only"}`}>
+                    Legacy task type
                     <select
                       aria-label="Task type"
                       value={task.operation}
@@ -589,7 +576,7 @@ export default function PlanWorkspace({
                         value={task.robot_id}
                         disabled={busy}
                         onChange={(e) =>
-                          setTask({ ...task, robot_id: e.target.value })
+                          setTask({ ...task, robot_id: e.target.value, ...(task.binding_status&&task.binding_status!=="legacy"?{function_calls:[],binding_status:"unresolved" as const,binding_error:null,binding_fingerprint:null}: {}) })
                         }
                       >
                         {detail.robots.map((r) => (
@@ -604,8 +591,9 @@ export default function PlanWorkspace({
                       </select>
                     </label>
                   )}
-                  <label className="field">
-                    LLM adapter
+                  {task.binding_status&&task.binding_status!=="legacy"&&<TaskCommandEditor detail={detail} draft={draft} task={task} busy={busy} onChange={onChange}/>}
+                  <label className={task.operation === "llm" ? "field" : "field expert-only"}>
+                    {task.operation === "llm" ? "AI model" : "Task LLM (override for this task)"}
                     <select
                       aria-label="Task LLM adapter"
                       value={task.llm_adapter_id ?? ""}
@@ -618,7 +606,7 @@ export default function PlanWorkspace({
                       }
                     >
                       <option value="">
-                        Global default ·{" "}
+                        Workspace default ·{" "}
                         {llm.adapters.find((p) => p.id === llm.default_id)
                           ?.name ?? "None configured"}
                       </option>
@@ -637,7 +625,7 @@ export default function PlanWorkspace({
                       ))}
                     </select>
                   </label>
-                  {task.operation === "llm" ? (
+                  {task.binding_status && task.binding_status!=="legacy" ? null : task.operation === "llm" ? (
                     <>
                       <label className="field">
                         Input
@@ -861,7 +849,7 @@ export default function PlanWorkspace({
                       )}
                     </>
                   )}
-                  <div className="task-refinement">
+                  <div className="task-refinement expert-only">
                     <label className="field">
                       Draft a refinement
                       <textarea
@@ -884,8 +872,8 @@ export default function PlanWorkspace({
                       <Sparkles size={13} /> Draft task refinement
                     </button>
                     <small>
-                      Uses this task’s selected adapter. Review the proposal
-                      before saving.
+                      Uses this task’s AI model. Review the proposal before
+                      saving.
                     </small>
                   </div>
                   <fieldset className="dependency-field">
@@ -920,18 +908,12 @@ export default function PlanWorkspace({
                   </small>
                   <button
                     className="text-button danger"
-                    disabled={busy}
+                    title={draft.tasks.some(t=>t.dependencies.includes(task.id)) ? "Remove or replace dependent tasks' prerequisite first" : "Delete this task"}
+                    disabled={busy || draft.tasks.some(t=>t.dependencies.includes(task.id))}
                     onClick={() =>
                       onChange({
                         ...draft,
-                        tasks: draft.tasks
-                          .filter((t) => t.id !== task.id)
-                          .map((t) => ({
-                            ...t,
-                            dependencies: t.dependencies.filter(
-                              (d) => d !== task.id,
-                            ),
-                          })),
+                        tasks: draft.tasks.filter((t) => t.id !== task.id),
                       })
                     }
                   >
@@ -940,7 +922,7 @@ export default function PlanWorkspace({
                 </>
               ) : (
                 <p>
-                  Select a task to edit its task type, robot, parameters and
+                  Select a task to edit its robot, instruction, commands and
                   dependencies.
                 </p>
               )}
@@ -981,11 +963,13 @@ export default function PlanWorkspace({
             )}
           </aside>
         </div>
+        </div>
       ) : tab === "simulation" ? (
         <div className="simulation-workspace">
           {reachability.controls}
           <div className="plan-scene scene-content">
             <Scene
+              validationMarkers={revision?.validation_report?.findings}
               workspaces={reachability.overlay}
               workspaceFocus={reachability.focus}
               projectId={detail.project.id}

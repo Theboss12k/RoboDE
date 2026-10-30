@@ -11,6 +11,8 @@ properties:
       adapter_id: {type: string, minLength: 1}
       category: {enum: [physical, virtual]}
       adapter_hash: {type: [string, 'null']}
+      binding_id: {type: [string, 'null']}
+      binding_hash: {type: [string, 'null']}
   base_pose:
     type: object
     additionalProperties: false

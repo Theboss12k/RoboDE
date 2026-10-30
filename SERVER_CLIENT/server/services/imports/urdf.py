@@ -45,6 +45,7 @@ class Review(Contract):
     gripper_closed: float | None = None
     gripper_open: float | None = None
     reviewed: bool = False
+    review_coupling: bool = False
 
 
 class SuggestRequest(Contract):
@@ -199,9 +200,10 @@ def parse_urdf(data):
             unsupported.append(f'{jid}: {kind or "unspecified"} joints are not supported by this importer')
         mimic = node.find('mimic')
         if mimic is not None:
+            if mimic.get('joint')==jid:raise ValueError('A joint cannot mimic itself')
             unsupported.append(f'{jid}: mimic coupling requires a dedicated model integration; it cannot be imported as an independent actuator')
         joints.append({'name': jid, 'type': kind, 'parent': parent, 'child': child, 'axis': axis,
-                       'origin': {'xyz': xyz, 'rpy': rpy}, **values,
+                       'origin': {'xyz': xyz, 'rpy': rpy}, 'mimic':{'joint':mimic.get('joint'),'multiplier':number(mimic.get('multiplier','1'),f'{jid} coupling multiplier'),'offset':number(mimic.get('offset','0'),f'{jid} coupling offset')} if mimic is not None else None, **values,
                        'effort': number(limits.get('effort') if limits is not None else None, f'{jid} effort', optional=True)})
     roots = set(links) - children
     if len(roots) != 1:
@@ -221,7 +223,22 @@ def parse_urdf(data):
         unsupported.append('This URDF has no moving joints; import static geometry as an environment object instead')
     tips = sorted(set(links) - {j['parent'] for j in ordered})
     meshes = sorted({n.get('filename', '') for n in root.findall('.//mesh')})
-    return {'name': name, 'base_link': base, 'links': links, 'joints': ordered, 'tips': tips,
+    geometry=[]
+    for link in root.findall('link'):
+        for kind in ('visual','collision'):
+            for item in link.findall(kind):
+                g=item.find('geometry');origin=item.find('origin')
+                if g is None or len(g)!=1:continue
+                shape=g[0];parameters={}
+                if shape.tag=='box':parameters['size']=vector(shape.get('size'), '1 1 1', 'box size')
+                elif shape.tag=='sphere':parameters['radius']=number(shape.get('radius'),'sphere radius')
+                elif shape.tag=='cylinder':parameters={'radius':number(shape.get('radius'),'cylinder radius'),'length':number(shape.get('length'),'cylinder length')}
+                elif shape.tag=='mesh':parameters={'uri':shape.get('filename',''),'scale':vector(shape.get('scale'),'1 1 1','mesh scale')}
+                else:continue
+                geometry.append({'link':link.get('name'),'kind':kind,'shape':shape.tag,'parameters':parameters,
+                    'origin':{'xyz':vector(origin.get('xyz') if origin is not None else None,'0 0 0','geometry xyz'),
+                              'rpy':vector(origin.get('rpy') if origin is not None else None,'0 0 0','geometry rpy')}})
+    return {'name': name, 'base_link': base, 'links': links, 'joints': ordered, 'tips': tips,'geometry':geometry,
             'mesh_uris': meshes, 'unsupported': unsupported}
 
 
@@ -328,8 +345,9 @@ class URDFImports:
     def build(self, draft_id, review):
         draft = self.read(draft_id)
         p = draft['parsed']
-        if p['unsupported']:
-            raise ValueError('Unsupported URDF: ' + '; '.join(p['unsupported']))
+        unsupported=[reason for reason in p['unsupported'] if not (review.review_coupling and 'mimic coupling' in reason)]
+        if unsupported:
+            raise ValueError('Unsupported URDF: ' + '; '.join(unsupported))
         if review.tool_link not in p['links']:
             raise ValueError('Select an end-effector link from the URDF')
         if not re.fullmatch(r'[a-z][a-z0-9_]*', review.id):
@@ -398,7 +416,7 @@ class URDFImports:
         for key in ('name','manufacturer','description'):
             value = getattr(review, key).strip()
             fields['robot.'+key] = 'llm_suggestion_accepted' if value and suggestion.get(key) == value else ('urdf' if key=='name' and value==p['name'] else 'user')
-        warnings = ['Preview uses kinematic links, not the original meshes or certified collision geometry. Isaac Sim needs a separately imported and validated articulation.',
+        warnings = ['Retained STL/OBJ/embedded glTF visuals and collision shapes render where available. Missing or unsupported meshes use a marker. Rendering does not establish collision or native Isaac qualification.',
                     'Move home and direct joint/component controls are available. Import does not establish grasping or hardware readiness.']
         if review.payload_kg is None:
             warnings.append('Payload is unknown. The stored zero is an unrated placeholder, not a verified payload rating.')
