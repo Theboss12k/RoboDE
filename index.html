@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="RoboDE turns one sentence into a verified robot run: Planner and Task LLMs (NVIDIA Nemotron), safety checks, and live NVIDIA Isaac Sim control and recording.">
+<meta property="og:title" content="RoboDE Isaac Sim Demo">
+<meta property="og:description" content="RoboDE turns one sentence into a verified robot run: Planner and Task LLMs (NVIDIA Nemotron), safety checks, and live NVIDIA Isaac Sim control and recording.">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://theboss12k.github.io/RoboDE/clips/live-run.jpg">
+<title>RoboDE Isaac Sim Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a single reading column with full-width clip rows; the IDE's own dark-blue workspace palette, NVIDIA green only where NVIDIA is the subject. */
+:root {
+  --bg: #0b0f16; --surface: #121926; --raised: #18212f; --line: #243145;
+  --fg: #e3e9f3; --muted: #93a1b8; --accent: #8fb4ff; --accent-ink: #0b1220;
+  --nv: #76b900; --good: #5fd39a; --warn: #f0b45a; --bad: #f08a7a;
+  --display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body: "IBM Plex Sans", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f2f4f8; --surface: #ffffff; --raised: #e9edf4; --line: #d3dae6;
+    --fg: #121a27; --muted: #526077; --accent: #2c5bcc; --accent-ink: #ffffff;
+    --nv: #4c7a00; --good: #1d8452; --warn: #9a6200; --bad: #bf3d33;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f2f4f8; --surface: #ffffff; --raised: #e9edf4; --line: #d3dae6;
+  --fg: #121a27; --muted: #526077; --accent: #2c5bcc; --accent-ink: #ffffff;
+  --nv: #4c7a00; --good: #1d8452; --warn: #9a6200; --bad: #bf3d33;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg); color: var(--fg); font: 16px/1.6 var(--body);
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+.wrap { max-width: 1120px; margin: 0 auto; }
+a { color: var(--accent); }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 4px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; margin: 0; letter-spacing: -0.01em; }
+h1 { font-size: clamp(2.1rem, 5.2vw, 3.6rem); line-height: 1.05; font-weight: 700; }
+h2 { font-size: clamp(1.6rem, 3.4vw, 2.3rem); line-height: 1.12; font-weight: 700; }
+h3 { font-size: 1.2rem; line-height: 1.25; font-weight: 500; }
+p { margin: 0; }
+.lede { color: var(--muted); font-size: 1.12rem; max-width: 62ch; }
+.eyebrow { font: 500 0.74rem/1.4 var(--mono); letter-spacing: 0.14em; text-transform: uppercase; color: var(--muted); }
+
+/* Header */
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 22px; flex-wrap: wrap; }
+.brand { display: flex; align-items: center; gap: 10px; font: 700 1.25rem var(--display); color: var(--fg); text-decoration: none; }
+.brand svg { width: 34px; height: 26px; }
+nav.links { display: flex; gap: 18px; flex-wrap: wrap; font-size: 0.92rem; }
+nav.links a { color: var(--muted); text-decoration: none; }
+nav.links a:hover { color: var(--fg); }
+
+/* Hero */
+.hero { display: grid; gap: 28px; padding-block: 28px 56px; }
+.hero-copy { display: grid; gap: 18px; max-width: 760px; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px 22px; font: 400 0.86rem/1.5 var(--mono); color: var(--muted); }
+.facts b { color: var(--fg); font-weight: 500; }
+.nv-tag { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--nv); color: var(--nv); border-radius: 999px; padding: 2px 10px; font: 500 0.78rem/1.6 var(--mono); letter-spacing: 0.04em; }
+
+/* Clips */
+.clip { position: relative; margin: 0; display: grid; gap: 10px; min-width: 0; }
+.frame { position: relative; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #000; max-width: 100%; }
+.frame video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; background: #000; }
+.frame.wide video { aspect-ratio: 16 / 9; }
+.badge { position: absolute; left: 12px; top: 12px; font: 500 0.66rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; padding: 7px 9px; border-radius: 4px; background: rgba(8, 12, 19, 0.82); color: #dfe7f3; border: 1px solid rgba(255, 255, 255, 0.14); pointer-events: none; }
+.badge.nv { color: #a6e04a; border-color: rgba(118, 185, 0, 0.6); }
+.toggle { position: absolute; right: 12px; bottom: 12px; display: inline-flex; align-items: center; gap: 6px; font: 500 0.75rem/1 var(--mono); padding: 8px 10px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, 0.22); background: rgba(8, 12, 19, 0.8); color: #eef3fa; cursor: pointer; }
+.toggle:hover { background: rgba(20, 28, 42, 0.92); }
+figcaption { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; font-size: 0.88rem; color: var(--muted); }
+figcaption .speed { font-family: var(--mono); font-size: 0.78rem; }
+
+/* Sections */
+section.block { display: grid; gap: 28px; padding-block: 64px; border-top: 1px solid var(--line); }
+.section-head { display: grid; gap: 12px; max-width: 760px; }
+
+/* Pipeline steps: a real sequence, so they are numbered */
+.steps { display: grid; gap: 48px; counter-reset: step; }
+.step { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 32px; align-items: center; }
+.step-copy { display: grid; gap: 12px; min-width: 0; }
+.step-copy .num { font: 500 0.8rem var(--mono); color: var(--accent); letter-spacing: 0.08em; }
+.step-copy p { color: var(--muted); }
+.step-copy ul { margin: 0; padding-left: 1.1em; color: var(--muted); display: grid; gap: 4px; }
+.step:nth-child(even) .step-copy { order: 2; }
+
+/* Controls pair */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.note { border-left: 3px solid var(--warn); background: var(--surface); padding: 14px 16px; border-radius: 0 8px 8px 0; color: var(--fg); max-width: 760px; }
+.note .eyebrow { color: var(--warn); display: block; margin-bottom: 4px; }
+
+/* Checks list */
+.checks { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; }
+.check { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 18px; display: grid; gap: 8px; align-content: start; }
+.check p { color: var(--muted); font-size: 0.93rem; }
+.check code { font: 0.82rem var(--mono); color: var(--fg); background: var(--raised); padding: 1px 5px; border-radius: 4px; }
+
+/* Results */
+.results { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 22px; display: grid; gap: 16px; align-content: start; min-width: 0; }
+.panel.full { grid-column: 1 / -1; }
+.panel .meta { font: 0.78rem/1.5 var(--mono); color: var(--muted); }
+.bars { display: grid; gap: 12px; }
+.bar-row { display: grid; grid-template-columns: minmax(0, 13rem) minmax(0, 1fr) 3.4rem; gap: 12px; align-items: center; }
+.bar-row .name { font-size: 0.92rem; }
+.bar-row .name small { display: block; font: 0.72rem var(--mono); color: var(--muted); }
+.track { height: 12px; border-radius: 6px; background: var(--raised); position: relative; overflow: hidden; }
+.fill { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: var(--accent); }
+.fill.best { background: var(--nv); }
+.score { font: 500 0.9rem var(--mono); font-variant-numeric: tabular-nums; text-align: right; }
+.table-scroll { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; font-size: 0.92rem; }
+th, td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font: 500 0.72rem var(--mono); letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); }
+td.num { font-family: var(--mono); font-variant-numeric: tabular-nums; white-space: nowrap; }
+td.win { color: var(--good); font-weight: 600; }
+.stage { display: inline-block; font: 500 0.72rem/1.5 var(--mono); padding: 2px 8px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.stage.far { color: var(--good); }
+.stage.mid { color: var(--warn); }
+.stage.early { color: var(--bad); }
+.caveat { color: var(--muted); font-size: 0.9rem; max-width: 80ch; }
+
+/* Editions */
+.editions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+.edition { border: 1px solid var(--line); border-radius: 10px; padding: 20px; display: grid; gap: 10px; align-content: start; background: var(--surface); }
+.edition.nvidia { border-color: var(--nv); }
+.edition p { color: var(--muted); font-size: 0.94rem; }
+.edition .cmd { font: 0.8rem var(--mono); color: var(--fg); background: var(--raised); border-radius: 6px; padding: 6px 8px; overflow-x: auto; white-space: nowrap; }
+
+.stack { display: flex; flex-wrap: wrap; gap: 8px; }
+.stack span { font: 0.82rem var(--mono); border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; color: var(--fg); }
+
+footer { border-top: 1px solid var(--line); padding-block: 28px 40px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 12px; color: var(--muted); font-size: 0.88rem; }
+
+@media (max-width: 900px) {
+  .step { grid-template-columns: minmax(0, 1fr); gap: 16px; }
+  .step:nth-child(even) .step-copy { order: 0; }
+  .checks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .results, .pair, .editions { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  .checks { grid-template-columns: minmax(0, 1fr); }
+  .bar-row { grid-template-columns: minmax(0, 1fr) 3.2rem; }
+  .bar-row .track { grid-column: 1 / -1; grid-row: 2; }
+  section.block { padding-block: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <a class="brand" href="#top" aria-label="RoboDE">
+      <svg viewBox="0 0 34 26" aria-hidden="true" fill="none" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 7 L1.5 13 L6 19"/><path d="M28 7 L32.5 13 L28 19"/>
+        <rect x="9.5" y="8" width="15" height="11" rx="3.5"/><path d="M17 8 V4.5"/><circle cx="17" cy="3.2" r="1.3" fill="var(--accent)" stroke="none"/>
+        <circle cx="14" cy="13.5" r="1.4" fill="var(--accent)" stroke="none"/><circle cx="20" cy="13.5" r="1.4" fill="var(--accent)" stroke="none"/>
+      </svg>
+      RoboDE
+    </a>
+    <nav class="links" aria-label="Sections">
+      <a href="#pipeline">How it works</a>
+      <a href="#controls">Live control</a>
+      <a href="#results">Nemotron results</a>
+      <a href="#editions">Editions</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="nv-tag">NVIDIA Isaac Sim · Nemotron · Nebius</span>
+        <h1>Plan, control and command robots in plain English.</h1>
+        <p class="lede">RoboDE is a robotics IDE. A Planner LLM turns an instruction into robot tasks, a Task LLM turns each task into robot commands, and every motion is checked before it runs in NVIDIA Isaac Sim on a cloud GPU.</p>
+        <div class="facts">
+          <span><b>Isaac Sim 6.2</b> on a GCP NVIDIA L4</span>
+          <span><b>2</b> independently chosen LLMs</span>
+          <span><b>9</b> Nemotron models tested</span>
+          <span><b>369</b> backend tests passing</span>
+        </div>
+      </div>
+      <figure class="clip">
+        <div class="frame wide">
+          <video data-clip src="clips/isaac-transfer.mp4" poster="clips/isaac-transfer.jpg" muted loop playsinline preload="metadata" aria-label="Isaac Sim render of a robot arm moving an apple from Table1 to Table2"></video>
+          <span class="badge nv">NVIDIA Isaac Sim · native camera</span>
+        </div>
+        <figcaption><span>Isaac Sim's own render of a RoboDE plan: grasp the apple on Table1, place it on Table2.</span><span class="speed">1.25× speed</span></figcaption>
+      </figure>
+    </section>
+
+    <section class="block" id="pipeline">
+      <div class="section-head">
+        <span class="eyebrow">Project → Plans → Tasks</span>
+        <h2>From one sentence to a verified simulation run</h2>
+        <p class="lede">Recorded on the RoboDE server running entirely on a Google Cloud GPU VM, connected live to Isaac Sim.</p>
+      </div>
+      <div class="steps">
+        <article class="step">
+          <div class="step-copy">
+            <span class="num">STEP 1</span>
+            <h3>Choose a Planner LLM and a Task LLM</h3>
+            <p>The two roles can use different models and providers. Here the Planner is Nemotron 3.5 Bolt on the GPU VM and the Task LLM is Nemotron 3 Nano 30B. Each plan, and each Business App command, can override them.</p>
+          </div>
+          <figure class="clip">
+            <div class="frame"><video data-clip src="clips/llm-roles.mp4" poster="clips/llm-roles.jpg" muted loop playsinline preload="none" aria-label="Selecting the Planner LLM and Task LLM in RoboDE"></video><span class="badge">Configuration · AI models</span></div>
+            <figcaption><span>Saving the Planner and Task LLM for the workspace.</span><span class="speed">1× speed</span></figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <div class="step-copy">
+            <span class="num">STEP 2</span>
+            <h3>The Planner LLM writes the tasks</h3>
+            <p>From the instruction “move the apple from Table1 to Table2”, Nemotron 3.5 Bolt produced nine ordered tasks for arm_01, each with its dependencies. Tasks stay editable before anything is converted or run.</p>
+          </div>
+          <figure class="clip">
+            <div class="frame"><video data-clip src="clips/generated-plan.mp4" poster="clips/generated-plan.jpg" muted loop playsinline preload="none" aria-label="A nine-task plan generated by Nemotron"></video><span class="badge">Plan / 9 tasks</span></div>
+            <figcaption><span>The generated plan with its per-plan model settings.</span><span class="speed">1× speed</span></figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <div class="step-copy">
+            <span class="num">STEP 3</span>
+            <h3>Connect Isaac Sim and start recording</h3>
+            <p>The Environment workspace connects to the Isaac Sim worker on the GPU VM, reads the live scene and resets it. A native Isaac camera recording starts at 1280×720, 10 fps.</p>
+          </div>
+          <figure class="clip">
+            <div class="frame"><video data-clip src="clips/isaac-connect.mp4" poster="clips/isaac-connect.jpg" muted loop playsinline preload="none" aria-label="Connecting to Isaac Sim and starting a scene recording"></video><span class="badge nv">Isaac Sim · connected worker</span></div>
+            <figcaption><span>Connect, reset the simulator, start the scene recording.</span><span class="speed">1.5× speed</span></figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <div class="step-copy">
+            <span class="num">STEP 4</span>
+            <h3>Validate, then run it live</h3>
+            <p>Validation compiles the plan into trajectories and checks reach, joint limits and collisions. Run sends it to Isaac Sim; the 3D view shows execution feedback as each task completes.</p>
+          </div>
+          <figure class="clip">
+            <div class="frame"><video data-clip src="clips/live-run.mp4" poster="clips/live-run.jpg" muted loop playsinline preload="none" aria-label="A plan running live in Isaac Sim"></video><span class="badge nv">Execution feedback · Isaac Sim</span></div>
+            <figcaption><span>Validate plan, Run simulation, live execution feedback.</span><span class="speed">1× speed</span></figcaption>
+          </figure>
+        </article>
+        <article class="step">
+          <div class="step-copy">
+            <span class="num">STEP 5</span>
+            <h3>Every run is kept and verified</h3>
+            <p>Each run reopens its exact compiled revision. Postconditions are verified from the state Isaac Sim reports, and the log lists every task with a timestamp.</p>
+            <ul>
+              <li>Status: simulation passed</li>
+              <li>Postconditions: passed</li>
+              <li>Hardware: never authorized for automatic plans</li>
+            </ul>
+          </div>
+          <figure class="clip">
+            <div class="frame"><video data-clip src="clips/recorded-result.mp4" poster="clips/recorded-result.jpg" muted loop playsinline preload="none" aria-label="Run history and the recorded result"></video><span class="badge">Recorded result · Isaac Sim</span></div>
+            <figcaption><span>Run history, the recorded result and its verification log.</span><span class="speed">1.5× speed</span></figcaption>
+          </figure>
+        </article>
+      </div>
+    </section>
+
+    <section class="block" id="controls">
+      <div class="section-head">
+        <span class="eyebrow">Project simulator · Isaac Sim physics worker</span>
+        <h2>Drive the robots in real time</h2>
+        <p class="lede">Joint sliders stream targets to the GPU scene, and the measured joint values come back from Isaac's articulation. In the recording, each move was confirmed against that feedback before the next one started.</p>
+      </div>
+      <div class="pair">
+        <figure class="clip">
+          <div class="frame"><video data-clip src="clips/controls-arm01.mp4" poster="clips/controls-arm01.jpg" muted loop playsinline preload="none" aria-label="Dragging joint sliders to move arm_01 in Isaac Sim"></video><span class="badge nv">Control robots in Isaac Sim</span></div>
+          <figcaption><span>arm_01: base, shoulder, elbow, wrist and gripper, then back home.</span><span class="speed">3× speed</span></figcaption>
+        </figure>
+        <figure class="clip">
+          <div class="frame"><video data-clip src="clips/controls-arm02.mp4" poster="clips/controls-arm02.jpg" muted loop playsinline preload="none" aria-label="Rotating arm_02 and waving its wrist"></video><span class="badge nv">Control robots in Isaac Sim</span></div>
+          <figcaption><span>arm_02: base rotation and a wrist wave.</span><span class="speed">2× speed</span></figcaption>
+        </figure>
+      </div>
+      <figure class="clip">
+        <div class="frame wide"><video data-clip src="clips/isaac-controls.mp4" poster="clips/isaac-controls.jpg" muted loop playsinline preload="none" aria-label="Isaac Sim render of the manual control session"></video><span class="badge nv">NVIDIA Isaac Sim · native camera · recorded playback</span></div>
+        <figcaption><span>The same session from Isaac Sim's camera, exported as MP4 through RoboDE.</span><span class="speed">5× speed</span></figcaption>
+      </figure>
+      <p class="note"><span class="eyebrow">Safety check in action</span>One scripted move would have lowered arm_02 into a table. RoboDE refused it with “Link intersects table at sample 30” and stopped that control session before anything moved.</p>
+    </section>
+
+    <section class="block" id="checks">
+      <div class="section-head">
+        <span class="eyebrow">Before anything moves</span>
+        <h2>LLM output is never run unchecked</h2>
+      </div>
+      <div class="checks">
+        <div class="check"><h3>Schema and repair</h3><p>Task LLM output is validated against the robot's command catalog, normalized, and repaired once if the JSON is malformed. Anything else is rejected with a specific error.</p></div>
+        <div class="check"><h3>Kinematics</h3><p>Commands become trajectories through inverse kinematics, with analytic and <code>serial_chain_dls_v1</code> solvers.</p></div>
+        <div class="check"><h3>Limits and collisions</h3><p>Joint limits, robot-to-robot, table and object collisions are checked on every sample of every trajectory.</p></div>
+        <div class="check"><h3>Postconditions</h3><p>After a run, the result is verified from observed simulator state, and each compiled revision is immutable.</p></div>
+      </div>
+    </section>
+
+    <section class="block" id="results">
+      <div class="section-head">
+        <span class="eyebrow">From recorded test results only</span>
+        <h2>How the Nemotron models performed</h2>
+        <p class="lede">Each model ran once per test, with pass or fail checks. These are functional checks of RoboDE's planning flow, not general model rankings.</p>
+      </div>
+      <div class="results">
+        <div class="panel">
+          <h3>Nemotron on the GCP L4 GPU</h3>
+          <p class="meta">29 Oct · Ollama · the same 12 tests per model</p>
+          <div class="bars" role="list">
+            <div class="bar-row" role="listitem"><span class="name">Nemotron 3.5 Bolt E4B<small>nemotron-3.5-bolt:e4b-q4_K_M</small></span><span class="track"><span class="fill best" style="width:75%"></span></span><span class="score">9/12</span></div>
+            <div class="bar-row" role="listitem"><span class="name">Nemotron 3 Nano 4B Q4<small>nemotron-3-nano:4b-q4_K_M</small></span><span class="track"><span class="fill" style="width:66.67%"></span></span><span class="score">8/12</span></div>
+            <div class="bar-row" role="listitem"><span class="name">Nemotron 3 Nano 4B Q8<small>nemotron-3-nano:4b-q8_0</small></span><span class="track"><span class="fill" style="width:58.33%"></span></span><span class="score">7/12</span></div>
+            <div class="bar-row" role="listitem"><span class="name">Nemotron Mini 4B<small>nemotron-mini:4b</small></span><span class="track"><span class="fill" style="width:41.67%"></span></span><span class="score">5/12</span></div>
+          </div>
+          <p class="caveat">All four rejected unreachable poses, unknown actuators and joint-limit violations. All four failed the three adapter-generation tests. Only Bolt passed the 30 cm object lift, and it was the most reliable Planner on the live Isaac project.</p>
+        </div>
+        <div class="panel">
+          <h3>Small Nemotrons against Phi-4</h3>
+          <p class="meta">30 Oct · this Mac · Ollama</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Test</th><th>Phi-4 14B</th><th>Mini 4B</th><th>Nano 4B</th></tr></thead>
+              <tbody>
+                <tr><td>Full plans</td><td class="num win">4/6</td><td class="num">0/6</td><td class="num">0/6</td></tr>
+                <tr><td>Task conversion</td><td class="num win">2/2</td><td class="num">1/2</td><td class="num">1/2</td></tr>
+                <tr><td>Adapter from docs</td><td class="num">1/1</td><td class="num">1/1</td><td class="num">0/1</td></tr>
+                <tr><td>Adapter time</td><td class="num">38.6 s</td><td class="num win">11.7 s</td><td class="num">34.9 s</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="caveat">Phi-4 won on planning. It is about 3.5 times larger than the 4B Nemotrons. Bolt was not tested against Phi-4.</p>
+        </div>
+        <div class="panel full">
+          <h3>Large hosted Nemotrons</h3>
+          <p class="meta">30 Oct · OpenRouter · how far each got through plan → convert → validate</p>
+          <div class="table-scroll">
+            <table>
+              <thead><tr><th>Model</th><th>Furthest stage reached</th><th>What happened</th></tr></thead>
+              <tbody>
+                <tr><td>Nemotron 3 Ultra 550B</td><td><span class="stage far">Validation</span></td><td>12 tasks, converted to commands; stopped on a tool orientation the demo arm cannot reach (RoboDE now handles this).</td></tr>
+                <tr><td>Nemotron 3.5 Super VL</td><td><span class="stage far">Validation</span></td><td>7 tasks, converted; final placement check failed.</td></tr>
+                <tr><td>Nemotron 3 Super 120B</td><td><span class="stage mid">Conversion</span></td><td>Good 6–12 task plans; Task LLM step left move targets incomplete.</td></tr>
+                <tr><td>Nemotron 3.5 Lightning</td><td><span class="stage mid">Conversion</span></td><td>Short 4-task plans; token limits and conversion errors.</td></tr>
+                <tr><td>Nemotron 3 Nano 30B</td><td><span class="stage early">Planning</span></td><td>Plans failed; used as Task LLM in the demo because of remaining credit.</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="caveat">No model produced a fully valid plan end to end without help. Many hosted runs were cut short by API credit and free-tier limits, and the hosted runs used a test scene, not the live Isaac project. Every failure was traced to a fix in RoboDE's planning flow.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="block" id="editions">
+      <div class="section-head">
+        <span class="eyebrow">Version 0.4.0</span>
+        <h2>One codebase, several ways to run it</h2>
+      </div>
+      <div class="editions">
+        <div class="edition">
+          <h3>RoboDE</h3>
+          <p>The standard edition. Desktop app with local calculations, or a team server with the browser IDE and Business App.</p>
+          <div class="cmd">npm run server:start</div>
+        </div>
+        <div class="edition nvidia">
+          <span class="nv-tag">NVIDIA edition</span>
+          <h3>RoboDE for NVIDIA</h3>
+          <p>NVIDIA accents and a first-boot setup that defaults to Isaac Sim on a Nebius GPU VM and Nemotron on Nebius Token Factory. Other simulators and models stay available.</p>
+          <div class="cmd">npm run server:start:nvidia</div>
+        </div>
+        <div class="edition">
+          <h3>Business App</h3>
+          <p>A phone-friendly companion: named workspace assets, natural-language and voice commands with model choice, and room photos.</p>
+          <div class="cmd">npm run business:start</div>
+        </div>
+      </div>
+      <div class="section-head">
+        <span class="eyebrow">Built with</span>
+        <div class="stack">
+          <span>Electron</span><span>React + TypeScript</span><span>Python FastAPI</span><span>three.js</span><span>Monaco</span><span>NVIDIA Isaac Sim 6.2</span><span>Omniverse Replicator</span><span>Nemotron</span><span>Nebius Token Factory</span><span>Ollama</span><span>Playwright</span><span>pytest</span>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <span>RoboDE 0.4.0 · installers for Windows, Linux and macOS</span>
+    <a href="https://github.com/Theboss12k/RoboDE" target="_blank" rel="noopener">github.com/Theboss12k/RoboDE</a>
+  </footer>
+</div>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const clips = [...document.querySelectorAll('video[data-clip]')];
+  const label = (btn, playing) => { btn.textContent = playing ? '❚❚ Pause' : '▶ Play'; btn.setAttribute('aria-label', (playing ? 'Pause' : 'Play') + ' clip'); };
+  clips.forEach(v => {
+    const btn = document.createElement('button');
+    btn.type = 'button'; btn.className = 'toggle'; label(btn, false);
+    v.parentElement.appendChild(btn);
+    v.dataset.user = '';
+    btn.addEventListener('click', () => {
+      if (v.paused) { v.dataset.user = 'play'; v.play().catch(() => {}); }
+      else { v.dataset.user = 'pause'; v.pause(); }
+    });
+    v.addEventListener('click', () => btn.click());
+    v.addEventListener('play', () => label(btn, true));
+    v.addEventListener('pause', () => label(btn, false));
+  });
+  if (reduce || !('IntersectionObserver' in window)) return;
+  // Play clips while they are mostly on screen; respect a viewer's own pause.
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    const v = e.target;
+    if (e.isIntersecting && e.intersectionRatio >= 0.55) { if (v.dataset.user !== 'pause') v.play().catch(() => {}); }
+    else if (!v.paused) v.pause();
+  }), { threshold: [0, 0.55] });
+  clips.forEach(v => io.observe(v));
+})();
+</script>
+
+</body></html>
