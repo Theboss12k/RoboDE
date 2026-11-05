@@ -1,0 +1,9 @@
+RoboDE
+Copyright 2026 Paramesh Sriram
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE).
+
+Third-party trademarks and logos in this repository, including the NVIDIA
+name and logo in SERVER_CLIENT/client/src/branding/, belong to their owners.
+They are not covered by the Apache License and are used only to identify
+integrations. See SERVER_CLIENT/client/src/branding/NOTICE.md.
