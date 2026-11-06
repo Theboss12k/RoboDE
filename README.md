@@ -1,5 +1,7 @@
 # RoboDE
 
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24022436.svg)](https://doi.org/10.5281/zenodo.24022436)
+
 RoboDE is a robotics IDE for setting up robots, building scenes and running task
 plans. It runs in a browser or an Electron desktop window. Both use the same
 React interface and Python backend, so projects and robot definitions work across
@@ -140,3 +142,8 @@ Build installer packages with `npm run installers:build`; on macOS, add
 `-- --dmg` for disk images. Requirements and supported targets are in the
 [installer guide](installers/README.md). Generated packages belong in release
 assets, outside the source tree committed to Git.
+
+## Citing RoboDE
+
+If you use RoboDE in your work, please cite it. GitHub's **Cite this repository** button gives APA and BibTeX from [`CITATION.cff`](CITATION.cff), and the DOI [10.5281/zenodo.24022436](https://doi.org/10.5281/zenodo.24022436) always resolves to the latest archived release on Zenodo.
+
