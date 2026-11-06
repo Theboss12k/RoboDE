@@ -1,0 +1,83 @@
+{
+ "cases": {
+  "c1_converter_joint": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "c2_converter_cartesian": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "n1_degrees": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n2_joint_limit": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n3_unknown_robot": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "n4_unknown_actuator": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n5_repeat_count": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "n6_named_second_robot": {
+   "pass_rate": 0.667,
+   "runs": 3
+  },
+  "n7_pick_and_place": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p1_single_joint": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "p2_gripper_then_joint": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "p3_two_robots": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "p4_ambiguous_waving": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p5_impossible_float": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "p6_cartesian_move": {
+   "pass_rate": 0.0,
+   "runs": 3
+  }
+ },
+ "environment": {
+  "details": {
+   "families": [
+    "phi3"
+   ],
+   "family": "phi3",
+   "format": "gguf",
+   "parameter_size": "14.7B",
+   "parent_model": "",
+   "quantization_level": "Q4_K_M"
+  },
+  "digest": "ac896e5b8b34a1f4efa7b14d7520725140d5512484457fab45d2a4ea14c69dba",
+  "mode": "record",
+  "ollama_version": "0.12.3",
+  "regraded_by": "replay",
+  "size_bytes": 9053116391
+ },
+ "model": "phi4:14b",
+ "updated_at": "2026-11-05T22:48:23+00:00"
+}

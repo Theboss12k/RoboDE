@@ -1,0 +1,6 @@
+id: n2_joint_limit
+about: The shoulder's limit is 2.8 rad. Clamping to the limit would silently change the request, so it must be refused.
+instruction: Set ARM ONE shoulder to 5 rad.
+expect:
+  execute: true
+  blocked: true

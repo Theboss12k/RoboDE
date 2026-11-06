@@ -1,0 +1,11 @@
+id: n1_degrees
+about: The robot works in radians; 10 degrees must be converted, not passed through.
+instruction: Turn ARM ONE base_yaw to 10 degrees. Nothing else should move.
+expect:
+  execute: true
+  status: ready
+  bound: true
+  executed: true
+  final_state: {arm_01: {base_yaw: {value: 0.174533, tol: 0.001}}}
+  unchanged_joints: {arm_01: [shoulder, elbow, wrist, gripper]}
+  robots_unchanged: [arm_02]

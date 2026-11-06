@@ -1,0 +1,64 @@
+{
+ "case": "n3_unknown_robot",
+ "case_hash": "49653fe91f55511c",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:00:03+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the target frame for the base_yaway rotation? Is it 'world' or 'base'?\",\n    \"Is the rotation of the base_yaway actuator the only action, or should the full 4-axis arm be rotated to align with the Apple object?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Rotate ARM ONE base_yaway to 0.1 rad.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Rotate ARM ONE base_yaway to 0.1 rad.\",\n  \"id\": \"task_001\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 18.238,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5728,
+      "completion_tokens": 293
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the target frame for the base_yaway rotation? Is it 'world' or 'base'?\",\n    \"Is the rotation of the base_yaway actuator the only action, or should the full 4-axis arm be rotated to align with the Apple object?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Rotate ARM ONE base_yaway to 0.1 rad.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Rotate ARM ONE base_yaway to 0.1 rad.\",\n  \"id\": \"task_001\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.067,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6771,
+      "completion_tokens": 296
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:01:47+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5728,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:03:30+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5728,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

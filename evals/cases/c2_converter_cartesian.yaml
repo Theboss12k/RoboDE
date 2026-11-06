@@ -1,0 +1,13 @@
+id: c2_converter_cartesian
+about: Converter only. A MOVE call with target, position and frame, and nothing extra.
+instruction: Move ARM ONE tool to (0.30, -0.10, 0.30) m in the world frame; preserve gripper and ARM TWO.
+tasks:
+  - {id: reach, name: Reach point, intent: "Move ARM ONE parallel_gripper to world position [0.30, -0.10, 0.30] m. Keep the gripper opening unchanged.", robot_id: arm_01}
+expect:
+  execute: true
+  bound: true
+  executed: true
+  required_functions: [{function: MOVE, robot: arm_01}]
+  tool_position: {arm_01: {position: [0.30, -0.10, 0.30], tol: 0.003}}
+  unchanged_joints: {arm_01: [gripper]}
+  robots_unchanged: [arm_02]

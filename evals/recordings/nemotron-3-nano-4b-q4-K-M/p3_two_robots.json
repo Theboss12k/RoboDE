@@ -1,0 +1,64 @@
+{
+ "case": "p3_two_robots",
+ "case_hash": "1bed981b5b8e3ef3",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:15:08+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5752,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:16:51+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5752,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:17:24+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the desired final base_yaw value for ARM ONE and ARM TWO? The plan specifies 0.02 rad and -0.02 rad respectively, but are these absolute values or relative to current positions?\",\n    \"Are there any dependencies between the two arms' movements, such as shared sensors or actuators?\",\n    \"Is the base pose of ARM ONE and ARM TWO fixed, or will they move during this operation?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"operation\": \"command\",\n  \"intent\": \"Rotate base_yaw of ARM ONE to 0.02 rad and ARM TWO to -0.02 rad independently.\",\n  \"command\": null,\n  \"target\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"id\": \"task_001\",\n  \"name\": \"Rotate base_yaw\",\n  \"dependencies\": [],\n  \"joint_positions\": null,\n  \"robot_id\": \"arm_01\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 19.548,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5752,
+      "completion_tokens": 344
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the desired final base_yaw value for ARM ONE and ARM TWO? The plan specifies 0.02 rad and -0.02 rad respectively, but are these absolute values or relative to current positions?\",\n    \"Are there any dependencies between the two arms' movements, such as shared sensors or actuators?\",\n    \"Is the base pose of ARM ONE and ARM TWO fixed, or will they move during this operation?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"operation\": \"command\",\n  \"intent\": \"Rotate base_yaw of ARM ONE to 0.02 rad and ARM TWO to -0.02 rad independently.\",\n  \"command\": null,\n  \"target\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"id\": \"task_001\",\n  \"name\": \"Rotate base_yaw\",\n  \"dependencies\": [],\n  \"joint_positions\": null,\n  \"robot_id\": \"arm_01\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 12.459,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6844,
+      "completion_tokens": 353
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

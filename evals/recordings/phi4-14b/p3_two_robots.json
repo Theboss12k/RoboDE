@@ -1,0 +1,130 @@
+{
+ "case": "p3_two_robots",
+ "case_hash": "1bed981b5b8e3ef3",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T21:44:27+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01_arm_one_base_yaw\",\n      \"name\": \"Rotate ARM ONE base_yaw to 0.02 rad\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.02,\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base yaw to 0.02 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    },\n    {\n      \"id\": \"task_02_arm_two_base_yaw\",\n      \"name\": \"Rotate ARM TWO base_yaw to -0.02 rad\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_02\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": -0.02,\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM TWO base yaw to -0.02 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": []\n}\n```\n\nThis JSON represents a plan with two tasks, each corresponding to rotating the base yaw of ARM ONE and ARM TWO independently. The tasks are designed to be executed concurrently as they do not share any dependencies or resources. Each task is assigned a unique ID, specifies the robot it applies to, and includes all necessary details such as operation type, command specifics, and metadata like authorship and binding status.",
+     "model": "phi4:14b",
+     "duration_seconds": 69.403,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4371,
+      "completion_tokens": 572
+     },
+     "load_seconds": 0.023
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.02,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to rotate the base yaw of ARM ONE to 0.02 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw`.\n   - It accepts a value in radians, which aligns with the task's specification.\n   - The range for `base_yaw` is from -3.14 to 3.14 radians, and 0.02 falls within this range.\n\n3. **Binding**:\n   - The function `set_base_yaw` is bound with the argument `value: 0.02` in radians.\n\n4. **Execution**: \n   - The JSON output specifies a single call to `set_base_yaw` with the required arguments, ensuring the task is completed as specified.",
+     "model": "phi4:14b",
+     "duration_seconds": 18.654,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1069,
+      "completion_tokens": 221
+     },
+     "load_seconds": 0.025
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": -0.02,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to rotate the base yaw of ARM TWO to -0.02 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw` with a control mode of position and accepts values in radians.\n   - The value range for `set_base_yaw` is from -3.14 to 3.14 radians, which includes -0.02 radians.\n\n3. **Binding**:\n   - The task specifies rotating the base yaw to -0.02 radians, which directly maps to using the `set_base_yaw` function with the argument `value: -0.02`.\n\n4. **Execution**:\n   - The JSON response contains a single call to `set_base_yaw` with the specified value and unit.\n\nThis solution ensures that the task is fully bound and executable according to the provided function catalog.",
+     "model": "phi4:14b",
+     "duration_seconds": 19.065,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1069,
+      "completion_tokens": 241
+     },
+     "load_seconds": 0.021
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:46:16+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01_arm_one_base_yaw\",\n      \"name\": \"Rotate ARM ONE base_yaw to 0.02 rad\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.02,\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base yaw to 0.02 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    },\n    {\n      \"id\": \"task_02_arm_two_base_yaw\",\n      \"name\": \"Rotate ARM TWO base_yaw to -0.02 rad\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_02\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": -0.02,\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM TWO base yaw to -0.02 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": []\n}\n```\n\nThis JSON represents a plan with two tasks, each corresponding to rotating the base yaw of ARM ONE and ARM TWO independently. The tasks are designed to be executed concurrently as they do not share any dependencies or resources. Each task is assigned a unique ID, specifies the robot it applies to, and includes all necessary details such as operation type, command specifics, and metadata like authorship and binding status.",
+     "model": "phi4:14b",
+     "duration_seconds": 69.725,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4371,
+      "completion_tokens": 572
+     },
+     "load_seconds": 0.021
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.02,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to rotate the base yaw of ARM ONE to 0.02 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw`.\n   - It accepts a value in radians, which aligns with the task's specification.\n   - The range for `base_yaw` is from -3.14 to 3.14 radians, and 0.02 falls within this range.\n\n3. **Binding**:\n   - The function `set_base_yaw` is bound with the argument `value: 0.02` in radians.\n\n4. **Execution**: \n   - The JSON output specifies a single call to `set_base_yaw` with the required arguments, ensuring the task is completed as specified.",
+     "model": "phi4:14b",
+     "duration_seconds": 18.672,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1069,
+      "completion_tokens": 221
+     },
+     "load_seconds": 0.024
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": -0.02,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to rotate the base yaw of ARM TWO to -0.02 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw` with a control mode of position and accepts values in radians.\n   - The value range for `set_base_yaw` is from -3.14 to 3.14 radians, which includes -0.02 radians.\n\n3. **Binding**:\n   - The task specifies rotating the base yaw to -0.02 radians, which directly maps to using the `set_base_yaw` function with the argument `value: -0.02`.\n\n4. **Execution**:\n   - The JSON response contains a single call to `set_base_yaw` with the specified value and unit.\n\nThis solution ensures that the task is fully bound and executable according to the provided function catalog.",
+     "model": "phi4:14b",
+     "duration_seconds": 19.146,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1069,
+      "completion_tokens": 241
+     },
+     "load_seconds": 0.021
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:48:06+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01_arm_one_base_yaw\",\n      \"name\": \"Rotate ARM ONE base_yaw to 0.02 rad\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.02,\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base yaw to 0.02 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    },\n    {\n      \"id\": \"task_02_arm_two_base_yaw\",\n      \"name\": \"Rotate ARM TWO base_yaw to -0.02 rad\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_02\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": -0.02,\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM TWO base yaw to -0.02 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": []\n}\n```\n\nThis JSON represents a plan with two tasks, each corresponding to rotating the base yaw of ARM ONE and ARM TWO independently. The tasks are designed to be executed concurrently as they do not share resources or dependencies. Each task is assigned a unique ID, specifies the robot it applies to, and includes an intent describing its purpose. The binding status is set to unresolved, indicating that further clarification may be needed before execution.",
+     "model": "phi4:14b",
+     "duration_seconds": 70.397,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4371,
+      "completion_tokens": 575
+     },
+     "load_seconds": 0.022
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.02,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to rotate the base yaw of ARM ONE to 0.02 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw`.\n   - It accepts a value in radians, which aligns with the task's specification.\n   - The range for `base_yaw` is from -3.14 to 3.14 radians, and 0.02 falls within this range.\n\n3. **Binding**:\n   - The function `set_base_yaw` is bound with the argument `value: 0.02` in radians.\n\n4. **Execution**: \n   - The JSON output specifies a single call to `set_base_yaw` with the required arguments, ensuring the task is completed as specified.",
+     "model": "phi4:14b",
+     "duration_seconds": 18.917,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1069,
+      "completion_tokens": 221
+     },
+     "load_seconds": 0.025
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": -0.02,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to rotate the base yaw of ARM TWO to -0.02 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw` with a control mode of position and accepts values in radians.\n   - The value range for `set_base_yaw` is from -3.14 to 3.14 radians, which includes -0.02 radians.\n\n3. **Binding**:\n   - The task specifies rotating the base yaw to -0.02 radians, which directly maps to using the `set_base_yaw` function with the argument `value: -0.02`.\n\n4. **Execution**:\n   - The JSON response contains a single call to `set_base_yaw` with the specified value and unit.\n\nThis solution ensures that the task is fully bound and executable according to the provided function catalog.",
+     "model": "phi4:14b",
+     "duration_seconds": 19.361,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1069,
+      "completion_tokens": 241
+     },
+     "load_seconds": 0.021
+    }
+   ]
+  }
+ ]
+}

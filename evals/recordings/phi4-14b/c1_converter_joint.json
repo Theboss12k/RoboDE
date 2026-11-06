@@ -1,0 +1,58 @@
+{
+ "case": "c1_converter_joint",
+ "case_hash": "600905c10663c385",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T20:53:30+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.04,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\nThis JSON response indicates that the task is to set the base yaw of ARM ONE to 0.04 radians, using the `set_base_yaw` function from the approved catalog. The value is within the specified range for this actuator (-3.14 to 3.14 radians), and no other actuators or robots are affected by this command.",
+     "model": "phi4:14b",
+     "duration_seconds": 17.344,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1065,
+      "completion_tokens": 122
+     },
+     "load_seconds": 3.705
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T20:53:37+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.04,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\nThis JSON response indicates that the task is to set the base yaw of ARM ONE to 0.04 radians, using the `set_base_yaw` function from the approved catalog. The value is within the specified range for this actuator (-3.14 to 3.14 radians), and no other actuators or robots are affected by this command.",
+     "model": "phi4:14b",
+     "duration_seconds": 6.586,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1065,
+      "completion_tokens": 122
+     },
+     "load_seconds": 0.037
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T20:53:45+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.04,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\nThis JSON response indicates that the task is to set the base yaw of ARM ONE to 0.04 radians, using the `set_base_yaw` function from the approved catalog. The value is within the specified range for this actuator (-3.14 to 3.14 radians), and no other actuators or robots are affected by this command.",
+     "model": "phi4:14b",
+     "duration_seconds": 6.524,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1065,
+      "completion_tokens": 122
+     },
+     "load_seconds": 0.023
+    }
+   ]
+  }
+ ]
+}

@@ -5,17 +5,14 @@ The relay stores final model answers and timings, not internal system prompt tex
 """
 import argparse
 import asyncio
-import copy
 import hashlib
 import json
 import os
 from pathlib import Path
-import shutil
 import tempfile
 import time
 import httpx
 import uvicorn
-import yaml
 
 
 async def main(args):
@@ -31,23 +28,11 @@ async def main(args):
         os.environ['ROBOT_IDE_DATA_DIR']=str(root)
         from services.api.main import create_app
         from services.api.storage import Storage,atomic_json
-        from services.validation.registry import ROOT
         from web.gateway import create_gateway
         from fastapi import FastAPI,Request,Response
+        from evals.fixtures import make_two_arm_project
         for pid in ('eval_desktop','eval_web','eval_business','eval_api'):
-            target=root/'projects'/pid;target.mkdir(parents=True)
-            for sub in ('robots','environment'):shutil.copytree(ROOT/'examples/projects/apple_transfer'/sub,target/sub)
-            initial=yaml.safe_load((ROOT/'robot_system/registry/models/demo_arm/instances/instance.yaml').read_text())
-            for n in (1,2):
-                instance=copy.deepcopy(initial);rid=f'arm_0{n}'
-                instance['instance']={'id':rid,'name':'ARM ONE' if n==1 else 'ARM TWO'}
-                instance['base_pose']={'x':0.,'y':0. if n==1 else 1.3,'z':0.,'yaw':0.}
-                folder=target/'robots'/rid;folder.mkdir(parents=True,exist_ok=True)
-                (folder/'instance.yaml').write_text(yaml.safe_dump(instance))
-            project=yaml.safe_load((ROOT/'examples/projects/apple_transfer/project.yaml').read_text())
-            project.update(id=pid,name='Evaluation · '+pid.removeprefix('eval_'),robots=['robots/arm_01/instance.yaml','robots/arm_02/instance.yaml'],simulation={'adapter':'mock'})
-            project.pop('default_goals',None);project.pop('workflow_tasks',None)
-            (target/'project.yaml').write_text(yaml.safe_dump(project))
+            make_two_arm_project(root,pid,'Evaluation · '+pid.removeprefix('eval_'))
         store=Storage(root)
         # The evaluation deliberately uses built-in motion, not a GPU/cloud/physical worker.
         atomic_json(store.runtime/'connections/motion.json',{'url':'http://127.0.0.1:19129','token_env':'ROBOT_DE_EVALUATION_UNUSED_TOKEN'})

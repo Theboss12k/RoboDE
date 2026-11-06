@@ -532,3 +532,55 @@ non-blocking dependency deprecations and the Monaco bundle-size warning remain.
 
 **Limits:** No fresh dependency installation, Docker build, native robotics/GPU
 acceptance or physical hardware check was performed. No commit or push was made.
+
+## 5 November 2026 — Demo page hosted on GitHub Pages
+
+- Published the RoboDE Isaac Sim demo page at https://theboss12k.github.io/RoboDE/ from a new orphan `gh-pages` branch (one commit: `index.html`, `.nojekyll` and nine short MP4 clips with poster images, about 4 MB). GitHub Pages serves the branch root over HTTPS. The `main` branch and the application code are unchanged.
+- The page shows the GCP-hosted demo in pieces (choosing the Planner/Task LLM, the Nemotron plan, connecting Isaac, the live run, the recorded result and real-time joint control) plus the earlier Nemotron evaluation results. The clips are cut from the 30 October recordings of simulated runs in native Isaac Sim on a GCP GPU VM; they are not physical hardware tests.
+- Checks: the page was scanned for keys, tunnel URLs and private data before publishing; external requests go only to Google Fonts and the GitHub repository link. On the live site the page loaded without errors or horizontal overflow, and a clip played from GitHub Pages.
+- Set the repository's website link (About section) to the Pages URL.
+
+## 6 November 2026 — Eval suite for the Planner and Converter
+
+- **Affects:** shared Python runtime and development tooling only. Unchanged: the Electron, browser and Business apps, the planner and converter prompts, and the validation logic.
+- **Added:** a versioned eval suite ([`evals/`](../evals), [guide](EVALS.md)) with 15 YAML cases:
+  - the six earlier P1–P6 scenarios
+  - two converter-only cases
+  - seven edge cases: degrees, joint limit, unknown robot, unknown actuator, repeat count, a named second robot, pick and place
+
+  Each case runs through the real API (`decompose`, `bind-commands`, `compile`) and the mock simulator. Deterministic graders check:
+  - final joint states, untouched robots and forward-kinematics tool position
+  - required and forbidden calls
+  - refusals. A pipeline error doesn't count as a refusal.
+- **Also added:**
+  - record and replay of model answers, and repeat runs
+  - a token relay for Ollama
+  - per-model baselines with a regression gate: `npm run eval -- --baseline` exits 1 when a case's pass rate falls
+  - exit 2 when Ollama stops answering or can't serve the model
+  - recordings and baselines for `phi4:14b` and `nemotron-mini:4b` on Ollama 0.12.3, and for `nemotron-3-nano:4b-q4_K_M` on Ollama 0.40.13
+- **Changed:** `scripts/local_model_evaluation_server.py` now builds its two-arm projects with the shared `evals/fixtures.py`.
+- **Results:** real local inference, mock simulation, 15 cases × 3 runs. Details are in the [6 November eval report](EVAL_RESULTS_20261106.md).
+
+  | Model | Ollama 0.12.3 | Ollama 0.40.13 |
+  | --- | --- | --- |
+  | phi4 | 8/15 cases on every run | 10/15 |
+  | Nemotron Mini | 0/15 | 1/15 |
+  | Nemotron 3 Nano | can't load | 1/15 |
+
+  No model passed every case. The report documents 15 failures:
+  - **Two unsafe phi4 failures:** a missing joint replaced by the gripper (F8), and a missing robot replaced by ARM TWO (F13). Each happened on one runtime only.
+  - **Three suite bugs, fixed with tests:**
+    - refusal cases passing during an outage (F3)
+    - refusal cases passing when the planner crashed (F6)
+    - a model Ollama couldn't load being scored (F7)
+  - **Planner output problems:** phi4 setting `placement: null` (F1), and Mini and Nano answers that don't fit the planner schema (F12, F15)
+  - **Not run:** GCP models, because there was no L4 capacity (F5)
+- **Checks:**
+  - Repository tests: 386 passed, 4 skipped. That includes 17 offline eval-suite tests.
+  - Replay of the recordings passes its baselines.
+  - A tampered recording made the gate exit 1.
+- **Limits:**
+  - Mock simulation only. No Isaac physics, GPU worker or hardware.
+  - Pass rates over three runs describe this configuration, not general reliability.
+  - Results differ between Ollama runtimes for the same weights, so compare models only on the same runtime.
+  - No planner or converter fix is part of this change.

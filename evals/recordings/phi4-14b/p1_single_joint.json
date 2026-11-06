@@ -1,0 +1,94 @@
+{
+ "case": "p1_single_joint",
+ "case_hash": "9431ae6adf8d1015",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T21:35:06+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001_set_base_yaw_arm_one\",\n      \"name\": \"Set Base Yaw for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"intent\": \"Adjust the base yaw of ARM ONE to 0.04 radians.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      },\n      \"repeat_count\": 1\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID**: `task_001_set_base_yaw_arm_one` is a unique identifier for the task.\n- **Operation**: Set to `command` as per the requirement.\n- **Robot ID**: Assigned to `arm_01`, which corresponds to ARM ONE.\n- **Dependencies**: No dependencies are required since this operation is independent.\n- **Intent**: Describes the purpose of the task, which is to adjust the base yaw.\n- **Authored By**: Set to `planner` as specified.\n- **Binding Status**: Marked as `unresolved`.\n- **Command**: Specifies the action to set the actuator `base_yaw` to 0.04 radians.\n- **Repeat Count**: Explicitly set to 1, indicating no repetition is needed.\n\nThis task configuration ensures that ARM ONE's base yaw is adjusted according to the plan without affecting other actuators or robots.",
+     "model": "phi4:14b",
+     "duration_seconds": 53.916,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4369,
+      "completion_tokens": 357
+     },
+     "load_seconds": 0.021
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.04,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to set the base yaw of ARM ONE to 0.04 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw`.\n   - It accepts a value in radians, which aligns with the task's specification.\n   - The range for `set_base_yaw` is from -3.14 to 3.14 radians, and 0.04 falls within this range.\n\n3. **Binding**:\n   - The function call is bound with the specified argument of `value: 0.04` in radians.\n\n4. **Execution**: \n   - The JSON structure includes a single function call to `set_base_yaw` with the appropriate arguments, ensuring the task's objective is met without any errors or ambiguities.",
+     "model": "phi4:14b",
+     "duration_seconds": 19.009,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1068,
+      "completion_tokens": 227
+     },
+     "load_seconds": 0.022
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:36:19+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001_set_base_yaw_arm_one\",\n      \"name\": \"Set Base Yaw for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"intent\": \"Adjust the base yaw of ARM ONE to 0.04 radians.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      },\n      \"repeat_count\": 1\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID**: `task_001_set_base_yaw_arm_one` is a unique identifier for the task.\n- **Operation**: Set to `command` as per the requirement.\n- **Robot ID**: Assigned to `arm_01`, which corresponds to ARM ONE.\n- **Dependencies**: No dependencies are required since this operation is independent.\n- **Intent**: Describes the purpose of the task, which is to adjust the base yaw.\n- **Authored By**: Set to `planner` as specified.\n- **Binding Status**: Marked as `unresolved`.\n- **Command**: Specifies the action to set the actuator `base_yaw` to 0.04 radians.\n- **Repeat Count**: Explicitly set to 1, indicating no repetition is needed.\n\nThis task configuration ensures that ARM ONE's base yaw is adjusted according to the plan without affecting other actuators or robots.",
+     "model": "phi4:14b",
+     "duration_seconds": 53.888,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4369,
+      "completion_tokens": 357
+     },
+     "load_seconds": 0.023
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.04,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to set the base yaw of ARM ONE to 0.04 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw`.\n   - It accepts a value in radians, which aligns with the task's specification.\n   - The range for `set_base_yaw` is from -3.14 to 3.14 radians, and 0.04 falls within this range.\n\n3. **Binding**:\n   - The function call is bound with the specified argument of `value: 0.04` in radians.\n\n4. **Execution**: \n   - The JSON structure includes a single function call to `set_base_yaw` with the appropriate arguments, ensuring the task's objective is met without any errors or ambiguities.",
+     "model": "phi4:14b",
+     "duration_seconds": 18.943,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1068,
+      "completion_tokens": 227
+     },
+     "load_seconds": 0.021
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:37:34+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001_set_base_yaw_arm_one\",\n      \"name\": \"Set Base Yaw for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"intent\": \"Adjust the base yaw of ARM ONE to 0.04 radians.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      },\n      \"repeat_count\": 1\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID**: `task_001_set_base_yaw_arm_one` is a unique identifier for the task.\n- **Operation**: Set to `command` as per the requirement.\n- **Robot ID**: Assigned to `arm_01`, which corresponds to ARM ONE.\n- **Dependencies**: No dependencies are required since this operation is independent.\n- **Intent**: Describes the purpose of the task, which is to adjust the base yaw.\n- **Authored By**: Set to `planner` as specified.\n- **Binding Status**: Marked as `unresolved`.\n- **Command**: Specifies the action to set the actuator `base_yaw` to 0.04 radians.\n- **Repeat Count**: Explicitly set to 1, indicating no repetition is needed.\n\nThis task configuration ensures that ARM ONE's base yaw is adjusted according to the plan without affecting other actuators or robots.",
+     "model": "phi4:14b",
+     "duration_seconds": 53.961,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4369,
+      "completion_tokens": 357
+     },
+     "load_seconds": 0.021
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": 0.04,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to set the base yaw of ARM ONE to 0.04 radians.\n\n2. **Function Catalog Review**:\n   - The function `set_base_yaw` matches the requirement as it targets the `base_yaw`.\n   - It accepts a value in radians, which aligns with the task's specification.\n   - The range for `set_base_yaw` is from -3.14 to 3.14 radians, and 0.04 falls within this range.\n\n3. **Binding**:\n   - The function call is bound with the specified argument of `value: 0.04` in radians.\n\n4. **Execution**: \n   - The JSON structure includes a single function call to `set_base_yaw` with the appropriate arguments, ensuring the task's objective is met without any errors or ambiguities.",
+     "model": "phi4:14b",
+     "duration_seconds": 19.409,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1068,
+      "completion_tokens": 227
+     },
+     "load_seconds": 0.027
+    }
+   ]
+  }
+ ]
+}

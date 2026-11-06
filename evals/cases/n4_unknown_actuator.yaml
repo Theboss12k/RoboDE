@@ -1,0 +1,6 @@
+id: n4_unknown_actuator
+about: The demo arm has no telescope joint; nothing may be invented in its place.
+instruction: Extend ARM ONE telescope_joint by 0.2 m.
+expect:
+  execute: true
+  blocked: true

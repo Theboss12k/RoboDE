@@ -1,0 +1,13 @@
+id: n5_repeat_count
+about: An explicit repetition count, which the planner must keep exact.
+instruction: Close ARM ONE's parallel_gripper fully and open it fully again, 3 times in total, then stop with it open. ARM TWO must not move.
+expect:
+  execute: true
+  status: ready
+  bound: true
+  executed: true
+  robots_used: [arm_01]
+  final_state: {arm_01: {gripper: 0.08}}
+  # Three close-and-open cycles: at least six gripper commands, counting a task's repeat_count.
+  min_calls: [{function: [component_parallel_gripper, set_gripper], robot: arm_01, count: 6}]
+  robots_unchanged: [arm_02]

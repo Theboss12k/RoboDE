@@ -1,0 +1,94 @@
+{
+ "case": "n4_unknown_actuator",
+ "case_hash": "5d0506fef14b1b88",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:04:02+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the current position of the object to be extended? Is it at the gripper's current location (gripper: 0.08 m) or elsewhere?\",\n    \"Is the object to be extended located at the base of the arm (0.0, 0.0, 0.0) or at the current gripper position?\",\n    \"Is the extension a linear displacement along the arm's axis, or a rotation of the base_yaw joint?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"task_id\": \"extend_arm_01\",\n  \"name\": \"Extend ARM ONE telescope_joint by 0.2 m.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 19.092,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5727,
+      "completion_tokens": 329
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the current position of the object to be extended? Is it at the gripper's current location (gripper: 0.08 m) or elsewhere?\",\n    \"Is the object to be extended located at the base of the arm (0.0, 0.0, 0.0) or at the current gripper position?\",\n    \"Is the extension a linear displacement along the arm's axis, or a rotation of the base_yaw joint?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"task_id\": \"extend_arm_01\",\n  \"name\": \"Extend ARM ONE telescope_joint by 0.2 m.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.842,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6804,
+      "completion_tokens": 331
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:04:33+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the current position of the object to be extended? Is it at the gripper's current location (gripper: 0.08 m) or elsewhere?\",\n    \"Is the object to be extended located at the base of the arm (0.0, 0.0, 0.0) or at the current gripper position?\",\n    \"Is the extension a linear displacement along the arm's axis, or a rotation of the base_yaw joint?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"task_id\": \"extend_arm_01\",\n  \"name\": \"Extend ARM ONE telescope_joint by 0.2 m.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 18.943,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5727,
+      "completion_tokens": 329
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the current position of the object to be extended? Is it at the gripper's current location (gripper: 0.08 m) or elsewhere?\",\n    \"Is the object to be extended located at the base of the arm (0.0, 0.0, 0.0) or at the current gripper position?\",\n    \"Is the extension a linear displacement along the arm's axis, or a rotation of the base_yaw joint?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"task_id\": \"extend_arm_01\",\n  \"name\": \"Extend ARM ONE telescope_joint by 0.2 m.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.72,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6804,
+      "completion_tokens": 331
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:05:04+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the current position of the object to be extended? Is it at the gripper's current location (gripper: 0.08 m) or elsewhere?\",\n    \"Is the object to be extended located at the base of the arm (0.0, 0.0, 0.0) or at the current gripper position?\",\n    \"Is the extension a linear displacement along the arm's axis, or a rotation of the base_yaw joint?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"task_id\": \"extend_arm_01\",\n  \"name\": \"Extend ARM ONE telescope_joint by 0.2 m.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 18.929,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5727,
+      "completion_tokens": 329
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the current position of the object to be extended? Is it at the gripper's current location (gripper: 0.08 m) or elsewhere?\",\n    \"Is the object to be extended located at the base of the arm (0.0, 0.0, 0.0) or at the current gripper position?\",\n    \"Is the extension a linear displacement along the arm's axis, or a rotation of the base_yaw joint?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"task_id\": \"extend_arm_01\",\n  \"name\": \"Extend ARM ONE telescope_joint by 0.2 m.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.744,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6804,
+      "completion_tokens": 331
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

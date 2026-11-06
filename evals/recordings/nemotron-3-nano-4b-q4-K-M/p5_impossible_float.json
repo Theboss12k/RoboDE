@@ -1,0 +1,94 @@
+{
+ "case": "p5_impossible_float",
+ "case_hash": "f847e461981e3520",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:20:54+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"questions\": [\n    \"What is the table's position and orientation? The apple is currently at (0.34, -0.16, 0.065) and the basket is at (0.27, 0.27, 0.08). To float the apple unaided one metre above the table, we need to know the table's base pose (x, y, z) and orientation (yaw, pitch, roll) to define the target position.\",\n    \"Is the apple currently held or free? The description says 'Make the apple float unaided', implying it is not held. However, the apple's current pose is (0.34, -0.16, 0.065), which may be a simulated position. Confirm if this is the apple's current location and if it is free.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"id\": \"task_001\",\n  \"name\": \"Float Apple\",\n  \"operation\": \"command\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"target\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"completion_condition\": \"\",\n  \"dependencies\": [],\n  \"object_id\": \"apple\",\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 21.613,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5739,
+      "completion_tokens": 436
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"questions\": [\n    \"What is the table's position and orientation? The apple is currently at (0.34, -0.16, 0.065) and the basket is at (0.27, 0.27, 0.08). To float the apple unaided one metre above the table, we need to know the table's base pose (x, y, z) and orientation (yaw, pitch, roll) to define the target position.\",\n    \"Is the apple currently held or free? The description says 'Make the apple float unaided', implying it is not held. However, the apple's current pose is (0.34, -0.16, 0.065), which may be a simulated position. Confirm if this is the apple's current location and if it is free.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"id\": \"task_001\",\n  \"name\": \"Float Apple\",\n  \"operation\": \"command\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"target\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"completion_condition\": \"\",\n  \"dependencies\": [],\n  \"object_id\": \"apple\",\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 14.549,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6927,
+      "completion_tokens": 435
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:21:24+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the table's position and orientation? The apple must float one metre above it, but the table's pose is not provided.\",\n    \"Is the apple currently held or free-floating? The plan states 'Do not hold, throw or attach it to a robot,' implying it is free-floating, but we need confirmation of its current state.\",\n    \"What is the table's surface? Is it flat and horizontal? The apple's motion must be bounded and indefinite, but we need to ensure the environment supports this.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Make the apple float unaided one metre above the table indefinitely without holding, throwing, or attaching it to a robot.\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"object_id\": \"apple\",\n  \"target_id\": null,\n  \"command\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"function_calls\": [],\n  \"task_id\": \"task_001\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 18.481,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5739,
+      "completion_tokens": 302
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the table's position and orientation? The apple must float one metre above it, but the table's pose is not provided.\",\n    \"Is the apple currently held or free-floating? The plan states 'Do not hold, throw or attach it to a robot,' implying it is free-floating, but we need confirmation of its current state.\",\n    \"What is the table's surface? Is it flat and horizontal? The apple's motion must be bounded and indefinite, but we need to ensure the environment supports this.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Make the apple float unaided one metre above the table indefinitely without holding, throwing, or attaching it to a robot.\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"object_id\": \"apple\",\n  \"target_id\": null,\n  \"command\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"function_calls\": [],\n  \"task_id\": \"task_001\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.365,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6773,
+      "completion_tokens": 303
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:22:00+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"questions\": [\n    \"What is the table's position and orientation? The apple is currently at (0.34, -0.16, 0.065) and the basket is at (0.27, 0.27, 0.08). To float the apple unaided one metre above the table, we need to know the table's base pose (x, y, z) and orientation (yaw, pitch, roll) to define the target position.\",\n    \"Is the apple currently held or free? The description says 'Make the apple float unaided', implying it is not held. However, the apple's current pose is (0.34, -0.16, 0.065), which may be a simulated position. Confirm if this is the apple's current location and if it is free.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"id\": \"task_001\",\n  \"name\": \"Float Apple\",\n  \"operation\": \"command\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"target\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"completion_condition\": \"\",\n  \"dependencies\": [],\n  \"object_id\": \"apple\",\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 21.473,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5739,
+      "completion_tokens": 436
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"questions\": [\n    \"What is the table's position and orientation? The apple is currently at (0.34, -0.16, 0.065) and the basket is at (0.27, 0.27, 0.08). To float the apple unaided one metre above the table, we need to know the table's base pose (x, y, z) and orientation (yaw, pitch, roll) to define the target position.\",\n    \"Is the apple currently held or free? The description says 'Make the apple float unaided', implying it is not held. However, the apple's current pose is (0.34, -0.16, 0.065), which may be a simulated position. Confirm if this is the apple's current location and if it is free.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"id\": \"task_001\",\n  \"name\": \"Float Apple\",\n  \"operation\": \"command\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"target\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Position the apple one metre above the table without holding, throwing, or attaching it to a robot.\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"completion_condition\": \"\",\n  \"dependencies\": [],\n  \"object_id\": \"apple\",\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 14.538,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6927,
+      "completion_tokens": 435
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

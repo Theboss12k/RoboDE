@@ -1,0 +1,58 @@
+{
+ "case": "p5_impossible_float",
+ "case_hash": "f847e461981e3520",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T21:53:06+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"unsupported\",\n  \"error\": \"The task requires making an apple float unaided one metre above the table indefinitely without holding, throwing, or attaching it to a robot. This involves unsupported physical capabilities as no flight/throw capability is available for the robots described.\"\n}\n```\n\n### Explanation:\n\n- **Unsupported Physical Capabilities**: The plan requests that the apple floats unaided and indefinitely at a specific height without any direct interaction from the robots (no holding, throwing, or attaching). The robots provided do not have capabilities such as flight or throw mechanisms to achieve this task.\n  \n- **Constraints on Robot Actions**: The robots are limited to operations like pick_place and move_home. They cannot perform actions that would enable an object to float unaided.\n\n- **Conclusion**: Given the constraints and capabilities of the robots, the task is deemed unsupported due to the requirement for physical capabilities not present in the described robots.",
+     "model": "phi4:14b",
+     "duration_seconds": 43.405,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4366,
+      "completion_tokens": 194
+     },
+     "load_seconds": 0.021
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:53:30+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"unsupported\",\n  \"error\": \"The task requires making an apple float unaided one metre above the table indefinitely without holding, throwing, or attaching it to a robot. This involves unsupported physical capabilities as no flight/throw capability is available for the robots described.\"\n}\n```\n\n### Explanation:\n\n- **Unsupported Physical Capabilities**: The plan requests that the apple floats unaided and indefinitely at a specific height without any direct interaction from the robots (no holding, throwing, or attaching). The robots provided do not have capabilities such as flight or throw mechanisms to achieve this task.\n  \n- **Constraints on Robot Actions**: The robots are limited to operations like pick_place and move_home. They cannot perform actions that would enable an object to float unaided.\n\n- **Conclusion**: Given the constraints and capabilities of the robots, the task is deemed unsupported due to the requirement for physical capabilities not present in the described robots.",
+     "model": "phi4:14b",
+     "duration_seconds": 24.384,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4366,
+      "completion_tokens": 194
+     },
+     "load_seconds": 0.021
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:53:55+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"unsupported\",\n  \"error\": \"The task requires making an apple float unaided one metre above the table indefinitely without holding, throwing, or attaching it to a robot. This involves unsupported physical capabilities as no flight/throw capability is available for the robots described.\"\n}\n```\n\n### Explanation:\n\n- **Unsupported Physical Capabilities**: The plan requests that the apple floats unaided and indefinitely at a specific height without any direct interaction from the robots (no holding, throwing, or attaching). The robots provided do not have capabilities such as flight or throw mechanisms to achieve this task.\n  \n- **Constraints on Robot Actions**: The robots are limited to operations like pick_place and move_home. They cannot perform actions that would enable an object to float unaided.\n\n- **Conclusion**: Given the constraints and capabilities of the robots, the task is deemed unsupported due to the requirement for physical capabilities not present in the described robots.",
+     "model": "phi4:14b",
+     "duration_seconds": 24.346,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4366,
+      "completion_tokens": 194
+     },
+     "load_seconds": 0.021
+    }
+   ]
+  }
+ ]
+}

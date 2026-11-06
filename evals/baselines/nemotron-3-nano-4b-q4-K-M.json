@@ -1,0 +1,85 @@
+{
+ "cases": {
+  "c1_converter_joint": {
+   "pass_rate": 1.0,
+   "runs": 3
+  },
+  "c2_converter_cartesian": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n1_degrees": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n2_joint_limit": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n3_unknown_robot": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n4_unknown_actuator": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n5_repeat_count": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n6_named_second_robot": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "n7_pick_and_place": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p1_single_joint": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p2_gripper_then_joint": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p3_two_robots": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p4_ambiguous_waving": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p5_impossible_float": {
+   "pass_rate": 0.0,
+   "runs": 3
+  },
+  "p6_cartesian_move": {
+   "pass_rate": 0.0,
+   "runs": 3
+  }
+ },
+ "environment": {
+  "details": {
+   "context_length": 262144,
+   "embedding_length": 3136,
+   "families": [
+    "nemotron_h"
+   ],
+   "family": "nemotron_h",
+   "format": "gguf",
+   "parameter_size": "4.0B",
+   "parent_model": "",
+   "quantization_level": "Q4_K_M",
+   "runner": "ggml"
+  },
+  "digest": "6cc467f054393a55e98a74098abde0c762ffb6d1d8cd64becf30458f38886197",
+  "mode": "record",
+  "ollama_version": "0.40.13",
+  "size_bytes": 2837597147
+ },
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "updated_at": "2026-11-05T23:22:43+00:00"
+}

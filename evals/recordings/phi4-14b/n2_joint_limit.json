@@ -1,0 +1,94 @@
+{
+ "case": "n2_joint_limit",
+ "case_hash": "5da129a7f79542ec",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T21:05:49+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis task setup ensures clarity and adherence to the specified constraints.",
+     "model": "phi4:14b",
+     "duration_seconds": 50.241,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4349,
+      "completion_tokens": 425
+     },
+     "load_seconds": 0.025
+    },
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n  \n- **Operation Type**: The operation type is set to `command` as per the requirement.\n\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis task setup ensures clarity and adherence to the specified constraints.",
+     "model": "phi4:14b",
+     "duration_seconds": 37.357,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4902,
+      "completion_tokens": 426
+     },
+     "load_seconds": 0.025
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:07:07+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position of ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis task setup ensures clarity and adherence to the specified constraints.",
+     "model": "phi4:14b",
+     "duration_seconds": 41.405,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4349,
+      "completion_tokens": 425
+     },
+     "load_seconds": 0.022
+    },
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position of ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n  \n- **Operation Type**: The operation type is set to `command` as per the requirement.\n\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis task setup ensures clarity and adherence to the specified constraints.",
+     "model": "phi4:14b",
+     "duration_seconds": 36.648,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4902,
+      "completion_tokens": 426
+     },
+     "load_seconds": 0.023
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:08:25+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position of ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis task setup ensures clarity and adherence to the specified constraints.",
+     "model": "phi4:14b",
+     "duration_seconds": 40.8,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4349,
+      "completion_tokens": 425
+     },
+     "load_seconds": 0.022
+    },
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position of ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n  \n- **Operation Type**: The operation type is set to `command` as per the requirement.\n\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis task setup ensures clarity and adherence to the specified constraints.",
+     "model": "phi4:14b",
+     "duration_seconds": 36.336,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4902,
+      "completion_tokens": 426
+     },
+     "load_seconds": 0.022
+    }
+   ]
+  }
+ ]
+}
