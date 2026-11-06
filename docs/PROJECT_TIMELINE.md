@@ -710,7 +710,20 @@ acceptance or physical hardware check was performed. No commit or push was made.
   - The MOVE test passed in the worker.
   - The robot was saved: published, with actuator and MOVE evidence, and "Saved · simulation ready" in the library.
 - **Also changed:** **Resume setup** buttons now show the robot ID, because two drafts named after the same adapter couldn't be told apart.
-- **Limits:**
-  - Earlier test robots remain in the local library (the unsuffixed rover, `_2`, `_3`, `gantry_rover_simulator_check` and `gantry_geometry_check`) until the user removes them.
-  - Simulation only.
+- **Limits:** simulation only.
+
+## 7 November 2026 — Add robot with AI removes its URDF import draft
+
+- **Affects:** the shared IDE.
+- **Problem:** the AI setup screen never removed its URDF import draft, so every run left a copy of the URDF package in `runtime/urdf_imports`. Seven had built up. The manual URDF form already removes its draft when the form is closed.
+- **Change:** the AI setup screen now removes its draft in each of these cases:
+  - once the robot is saved, because saving copies the URDF source into the robot
+  - when the setup is cancelled or the screen is closed
+  - when a new file is configured
+
+  A retried **Accept** no longer validates against the removed draft, because the robot is already saved.
+- **Checks:**
+  - Client typecheck and production build pass.
+  - Live in the IDE (no-documentation path): the draft count went 0 → 1 at the review page → 0 after **Cancel**. A second run went → 0 after **Accept**, and the saved robot kept its URDF source and all 28 geometry shapes.
+- **Local cleanup:** the five test robots from 6–7 November and the check robot from this test were removed from the local library at the user's request. Their mappings, adapters and setup drafts went too. The saved TR-GR40 gantry rover is unchanged: published, current, and with its actuator and MOVE evidence. These were local runtime files, not repository changes.
 

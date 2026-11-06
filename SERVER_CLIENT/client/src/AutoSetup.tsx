@@ -65,6 +65,10 @@ export default function AutoSetup({ disabled, onDone, onCancel, onBusyChange }: 
     void api<LLMConfiguration>("/llm/adapters").then(setProviders).catch(e => setError(e.message));
     void api<RoleSettings>("/llm/roles").then(r => setProvider(r.setup_adapter_id || r.binding_adapter_id || "")).catch(() => {});
   }, []);
+  // The URDF import draft is only needed until the robot is saved; like the manual import, it is removed on leaving.
+  const importDraft = useRef<string | null>(null);
+  const dropDraft = () => { const id = importDraft.current; importDraft.current = null; if (id) void api(`/registry/urdf/drafts/${id}`, { method: "DELETE" }).catch(() => {}); };
+  useEffect(() => dropDraft, []);
   const work = async (label: string, fn: () => Promise<void>) => {
     setBusy(label); setError(""); setNotice("");
     try { await fn(); } catch (e) { setError((e as Error).message); } finally { setBusy(""); }
@@ -75,8 +79,9 @@ export default function AutoSetup({ disabled, onDone, onCancel, onBusyChange }: 
   const configure = () => work("Configuring…", async () => {
     if (!file) throw Error("Choose the robot's URDF or ZIP file");
     if (category === "physical" && !docs.trim()) throw Error("A physical robot needs its vendor documentation to generate the control adapter");
+    dropDraft();
     const d = await api<Draft>(`/registry/urdf/drafts?filename=${encodeURIComponent(file.name)}`, { method: "POST", headers: { "Content-Type": "application/octet-stream" }, body: file });
-    setDraft(d);
+    importDraft.current = d.id; setDraft(d);
     let j = await post<Job>("/library/auto-setup", { draft_id: d.id, documentation: docs, category, adapter_id: provider || null });
     setJob(j); setPhase("working");
     while (j.status === "running") { await new Promise(r => setTimeout(r, 1000)); j = await api<Job>(`/library/auto-setup/${j.id}`); setJob(j); }
@@ -116,7 +121,7 @@ export default function AutoSetup({ disabled, onDone, onCancel, onBusyChange }: 
   const accept = () => work("Building the robot…", async () => {
     if (!draft || !review) return;
     setErrors({});
-    try { await post(`/registry/urdf/drafts/${draft.id}/validate`, review); }
+    if (!savedModel) try { await post(`/registry/urdf/drafts/${draft.id}/validate`, review); }
     catch (e) {
       if (e instanceof ApiError && e.errors.length) {
         setErrors(Object.fromEntries(e.errors.map(x => [x.field, x.message])));
@@ -126,7 +131,8 @@ export default function AutoSetup({ disabled, onDone, onCancel, onBusyChange }: 
     }
     // Each finished step is kept, so retrying after a failure continues instead of saving the robot twice.
     const saved = savedModel ?? await post<Model>(`/registry/urdf/drafts/${draft.id}/commit`, { ...review, reviewed: true });
-    setSavedModel(saved);
+    // Saving copied the URDF source into the robot, so the draft is no longer needed.
+    setSavedModel(saved); dropDraft();
     let d = driver, mapping = rows;
     if (!d && generated?.status === "needs_information") throw Error("Complete the control adapter table first");
     if (!d) {
