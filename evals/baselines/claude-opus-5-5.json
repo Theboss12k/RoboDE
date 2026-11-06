@@ -1,0 +1,76 @@
+{
+ "cases": {
+  "c1_converter_joint": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "c2_converter_cartesian": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "n1_degrees": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "n2_joint_limit": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "n3_unknown_robot": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "n4_unknown_actuator": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "n5_repeat_count": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "n6_named_second_robot": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "n7_pick_and_place": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "p1_single_joint": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "p2_gripper_then_joint": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "p3_two_robots": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "p4_ambiguous_waving": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "p5_impossible_float": {
+   "pass_rate": 1.0,
+   "runs": 1
+  },
+  "p6_cartesian_move": {
+   "pass_rate": 1.0,
+   "runs": 1
+  }
+ },
+ "environment": {
+  "ollama_version": "2.1.309 (Claude Code)",
+  "digest": null,
+  "size_bytes": null,
+  "details": {
+   "provider": "Claude Code CLI via evals/claude_bridge.py",
+   "effort": "CLI default"
+  },
+  "mode": "record"
+ },
+ "model": "claude-opus-5-5",
+ "updated_at": "2026-11-06T11:31:13+00:00"
+}

@@ -1,0 +1,89 @@
+{
+ "case": "n5_repeat_count",
+ "case_hash": "216372a6a9e36ac3",
+ "model": "claude-opus-5-5",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T09:43:21+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\"status\":\"ready\",\"tasks\":[{\"id\":\"arm01_close_1\",\"name\":\"ARM ONE close gripper (cycle 1)\",\"operation\":\"command\",\"robot_id\":\"arm_01\",\"dependencies\":[],\"intent\":\"Close ARM ONE's parallel_gripper fully: gripper actuator to 0.0 m (0 percent open). Cycle 1 of 3.\",\"authored_by\":\"planner\",\"binding_status\":\"unresolved\",\"command\":null,\"function_calls\":[],\"repeat_count\":1,\"completion_condition\":\"ARM ONE gripper reaches 0.0 m\"},{\"id\":\"arm01_open_1\",\"name\":\"ARM ONE open gripper (cycle 1)\",\"operation\":\"command\",\"robot_id\":\"arm_01\",\"dependencies\":[\"arm01_close_1\"],\"intent\":\"Open ARM ONE's parallel_gripper fully: gripper actuator to 0.08 m (100 percent open). Cycle 1 of 3.\",\"authored_by\":\"planner\",\"binding_status\":\"unresolved\",\"command\":null,\"function_calls\":[],\"repeat_count\":1,\"completion_condition\":\"ARM ONE gripper reaches 0.08 m\"},{\"id\":\"arm01_close_2\",\"name\":\"ARM ONE close gripper (cycle 2)\",\"operation\":\"command\",\"robot_id\":\"arm_01\",\"dependencies\":[\"arm01_open_1\"],\"intent\":\"Close ARM ONE's parallel_gripper fully: gripper actuator to 0.0 m (0 percent open). Cycle 2 of 3.\",\"authored_by\":\"planner\",\"binding_status\":\"unresolved\",\"command\":null,\"function_calls\":[],\"repeat_count\":1,\"completion_condition\":\"ARM ONE gripper reaches 0.0 m\"},{\"id\":\"arm01_open_2\",\"name\":\"ARM ONE open gripper (cycle 2)\",\"operation\":\"command\",\"robot_id\":\"arm_01\",\"dependencies\":[\"arm01_close_2\"],\"intent\":\"Open ARM ONE's parallel_gripper fully: gripper actuator to 0.08 m (100 percent open). Cycle 2 of 3.\",\"authored_by\":\"planner\",\"binding_status\":\"unresolved\",\"command\":null,\"function_calls\":[],\"repeat_count\":1,\"completion_condition\":\"ARM ONE gripper reaches 0.08 m\"},{\"id\":\"arm01_close_3\",\"name\":\"ARM ONE close gripper (cycle 3)\",\"operation\":\"command\",\"robot_id\":\"arm_01\",\"dependencies\":[\"arm01_open_2\"],\"intent\":\"Close ARM ONE's parallel_gripper fully: gripper actuator to 0.0 m (0 percent open). Cycle 3 of 3.\",\"authored_by\":\"planner\",\"binding_status\":\"unresolved\",\"command\":null,\"function_calls\":[],\"repeat_count\":1,\"completion_condition\":\"ARM ONE gripper reaches 0.0 m\"},{\"id\":\"arm01_open_3\",\"name\":\"ARM ONE open gripper (cycle 3, final)\",\"operation\":\"command\",\"robot_id\":\"arm_01\",\"dependencies\":[\"arm01_close_3\"],\"intent\":\"Open ARM ONE's parallel_gripper fully: gripper actuator to 0.08 m (100 percent open). Cycle 3 of 3; then stop with the gripper open.\",\"authored_by\":\"planner\",\"binding_status\":\"unresolved\",\"command\":null,\"function_calls\":[],\"repeat_count\":1,\"completion_condition\":\"ARM ONE gripper reaches 0.08 m and ARM ONE stops\"}],\"questions\":[],\"error\":null}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 12.467,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6831,
+      "completion_tokens": 1328
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"set_gripper\",\"arguments\":{\"value\":0.0,\"unit\":\"m\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.373,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2053,
+      "completion_tokens": 154
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"set_gripper\",\"arguments\":{\"value\":0.08}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.358,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2062,
+      "completion_tokens": 129
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"set_gripper\",\"arguments\":{\"value\":0.0,\"unit\":\"m\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.032,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2061,
+      "completion_tokens": 42
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"set_gripper\",\"arguments\":{\"value\":0.08}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.91,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2061,
+      "completion_tokens": 142
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\"calls\":[{\"function\":\"set_gripper\",\"arguments\":{\"value\":0.0,\"unit\":\"m\"}}]}\n```",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.259,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2061,
+      "completion_tokens": 131
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"set_gripper\",\"arguments\":{\"value\":0.08,\"unit\":\"m\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.785,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2083,
+      "completion_tokens": 146
+     }
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "case": "c2_converter_cartesian",
+ "case_hash": "008d4f5654c81ac4",
+ "model": "claude-opus-5-5",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T09:42:10+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"MOVE\",\"arguments\":{\"target\":\"parallel_gripper\",\"position\":[0.30,-0.10,0.30],\"frame\":\"world\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.727,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2017,
+      "completion_tokens": 62
+     }
+    }
+   ]
+  }
+ ]
+}
