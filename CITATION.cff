@@ -1,0 +1,30 @@
+cff-version: 1.2.0
+message: "If you use RoboDE in your work, please cite it as below."
+type: software
+title: "RoboDE"
+abstract: >-
+  RoboDE is a robotics IDE for setting up robots, building scenes and running
+  task plans. A task described in plain English is split into tasks for one or
+  more robots, converted into calls from each robot's own function catalog, and
+  checked for units, joint limits, reach, inverse kinematics and collisions
+  before it runs in simulation: a built-in simulator, or NVIDIA Isaac Sim.
+  It runs in a browser or an Electron desktop window.
+authors:
+  - given-names: Paramesh
+    family-names: Sriram
+version: 0.4.0
+date-released: 2026-10-29
+license: Apache-2.0
+repository-code: "https://github.com/Theboss12k/RoboDE"
+url: "https://theboss12k.github.io/RoboDE/"
+keywords:
+  - robotics
+  - robotics IDE
+  - task planning
+  - multi-robot systems
+  - large language models
+  - simulation
+  - NVIDIA Isaac Sim
+  - ROS 2
+  - URDF
+  - motion planning
