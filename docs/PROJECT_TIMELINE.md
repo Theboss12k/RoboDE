@@ -660,3 +660,37 @@ acceptance or physical hardware check was performed. No commit or push was made.
   - Reach is a distance shell. Joint limits, the table and obstacles can still make a target inside it unreachable.
   - The existing GCP deployment was not updated.
 
+## 6 November 2026 — Add a robot with AI: URDF and documentation to a reviewable robot
+
+- **Branch:** `ai-robot-setup`, from `eval-suite`. Not merged.
+- **Affects:** the shared IDE (browser, Electron and NVIDIA editions) and the shared Python backend. The Business App only uses configured robots.
+- **Problem:** importing the gantry rover needed about 18 values typed by hand, and errors arrived one at a time. A continuous wheel's control window was unexplained, so it was set to 2–3 rad. Setup then took five separate steps: model, adapter, mapping, tests and save.
+- **Change:**
+  - **Configuration → Robot library → Add robot with AI** takes a URDF and the vendor documentation. One job (`POST /api/library/auto-setup`) prefills every review value with its source, generates the control adapter and maps joints to functions. The user reviews one page, accepts, tries each function in simulation (**Try every function**), marks it Works or Wrong, and saves.
+  - **Value checks:** code checks every documented value against its quote, converts its unit and compares it with the URDF.
+  - **Mapping scale:** comes from the units, not the AI model.
+  - **Existing rules kept:** the review, simulated tests and publish rules are unchanged, and nothing reaches hardware.
+  - **Smaller fixes:**
+    - The review now reports every problem at once, marked next to its field.
+    - The manual URDF form gained **Fill in missing values**.
+    - The documentation limit for URDF assistance rose from 20,000 to 60,000 characters.
+    - A free robot ID is proposed, and a taken one is flagged during review.
+    - The simulator adapter now drives continuous joints by speed even with a finite control window.
+- **Sample:** a fictional gantry rover is added as `examples/robots/gantry_rover.urdf` (differential drive, three-axis gantry, three-joint arm, jaw) with `gantry_rover_sdk_manual.md`, a 42 KB vendor manual. The manual uses millimetre and degree units and includes deprecated and non-actuator setters as traps.
+- **Results:** real inference with Claude Opus 5.5 through the Claude Code CLI bridge, mock simulation.
+  - **Prefill:** 15 values came from the documentation, including all nine joint accelerations, payload, manufacturer and drive speeds. Each was converted correctly. No values were rejected after the rounding tolerance fix.
+  - **Adapter:** exactly the nine documented setters. The deprecated inch setter, speed scale and jaw force setter were left out.
+  - **Mapping:** the first run timed out at the 120 s connection limit while sending the whole manual again, so the mapping now sends only the functions and their quotes. The second run mapped 9 of 9, with scales of 1000 and 57.2958.
+  - **Trying functions:** all nine ran through the generated adapter and were marked Works. For example, `set_jaw_opening(22.5 mm)` read back as 0.0225 m.
+  - **Without documentation:** a simulator adapter and mapping were built, and all nine functions were tried and marked.
+  - **Not done:** the MOVE test, and so saving the robot, because Docker and the robotics worker were not running.
+- **Checks:**
+  - Python tests: 7 new in `tests/integration/test_auto_setup.py`, covering the URDF-only prefill, quote and unit checks, unit-derived mapping scale, all errors at once, the full job with an adapter test call, ID clashes and the simulator path.
+  - Client typecheck and production build pass.
+  - Browser tests: the robotics-v2, simple-mode, URDF and library specs pass, updated for the renamed **Manual setup** button and for all errors at once.
+- **Limits:**
+  - The AI model can mislabel the description; it is marked for review.
+  - Defaults (control windows, accelerations, starting positions, drive area) need the user's judgement.
+  - Function marks are observations, not test evidence.
+  - Not tested on hardware or Isaac physics.
+

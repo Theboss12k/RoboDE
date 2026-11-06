@@ -135,7 +135,8 @@ def create_app(storage: Storage | None = None, speed: float = 1.0):
 
     @app.exception_handler(ValueError)
     async def value_error(request, error):
-        return JSONResponse({"detail": str(error)}, status_code=422)
+        # A review with several problems also lists them per field, so the form can mark each one.
+        return JSONResponse({"detail": str(error), **({"errors": error.errors} if isinstance(getattr(error, "errors", None), list) else {})}, status_code=422)
 
     @app.exception_handler(FileNotFoundError)
     async def not_found(request, error):

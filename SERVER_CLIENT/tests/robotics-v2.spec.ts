@@ -3,7 +3,7 @@ async function signIn(page:any){await page.goto('/');await page.getByLabel('Work
 test('reviewed robot setup preserves draft target and never contacts hardware',async({page})=>{
  const errors:string[]=[];page.on('pageerror',e=>errors.push(e.message));let live=0;page.on('request',r=>{if(r.url().includes('physical-connect'))live++});
  await signIn(page);await page.getByRole('button',{name:'Open configuration',exact:true}).click();
- await page.getByRole('button',{name:'Add robot · guided setup',exact:true}).click();await expect(page.getByRole('heading',{name:'Choose the robot'})).toBeVisible();
+ await page.getByRole('button',{name:'Manual setup',exact:true}).click();await expect(page.getByRole('heading',{name:'Choose the robot'})).toBeVisible();
  await page.getByRole('button',{name:'Physical · robot hardware',exact:true}).click();
  await expect(page.getByRole('button',{name:'Continue · Controls',exact:true})).toBeDisabled();
  await page.getByLabel('Setup robot model',{exact:true}).selectOption('demo_arm');await page.getByRole('button',{name:'Continue · Controls',exact:true}).click();
@@ -25,7 +25,7 @@ test('global LLM role selectors and typed task editor are visible',async({page})
 test('virtual wizard tests actual generated code and publishes a complete robot pairing',async({page})=>{
  test.setTimeout(60000);await signIn(page);
  await page.getByRole('button',{name:'Open configuration',exact:true}).click();
- await page.getByRole('button',{name:'Add robot · guided setup',exact:true}).click();
+ await page.getByRole('button',{name:'Manual setup',exact:true}).click();
  await page.getByLabel('Setup robot model',{exact:true}).selectOption('demo_arm');
  await page.getByRole('button',{name:'Continue · Controls',exact:true}).click();
  await page.getByRole('button',{name:'Use stationary arm template',exact:true}).click();

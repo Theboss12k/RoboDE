@@ -1,0 +1,33 @@
+.auto-setup{display:grid;gap:14px}
+.auto-setup .stage-list{list-style:none;padding:0;margin:0;display:grid;gap:6px}
+.auto-setup .stage-list li{display:flex;gap:10px;align-items:baseline;font-size:13px}
+.auto-setup .stage-list li>span:first-child{min-width:150px;font-weight:600}
+.auto-setup .stage-list li.running>span:first-child::after{content:" …"}
+.auto-setup .stage-list li.done>span:first-child{color:var(--ok,#4ade80)}
+.auto-setup .stage-list li.failed>span:first-child,.auto-setup .stage-list li.needs_information>span:first-child{color:var(--warn,#fbbf24)}
+.auto-setup .issue-list{border:1px solid var(--warn,#fbbf24);border-radius:8px;padding:10px 14px;margin:0}
+.auto-setup .issue-list li{margin:4px 0 4px 16px;font-size:12px}
+.auto-setup .review-table{width:100%;border-collapse:collapse;font-size:12px}
+.auto-setup .review-table th,.auto-setup .review-table td{padding:6px;border-bottom:1px solid var(--line,#2b394b);vertical-align:top;text-align:left}
+.auto-setup .review-table input{width:100%;min-width:72px}
+.auto-setup .review-table td.has-error input{border-color:var(--bad,#f87171)}
+.auto-setup .review-table td small{display:block;margin-top:3px}
+.source-badge{display:inline-block;font-size:10px;line-height:1.5;padding:0 6px;border-radius:9px;border:1px solid currentColor;margin-top:3px;cursor:help;white-space:nowrap}
+.source-badge.urdf{color:#93c5fd}
+.source-badge.documentation{color:#4ade80}
+.source-badge.derived{color:#c4b5fd}
+.source-badge.ai{color:#f0abfc}
+.source-badge.default{color:#fbbf24}
+.auto-setup .function-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.auto-setup .function-card{border:1px solid var(--line,#2b394b);border-radius:8px;padding:10px 12px;display:grid;gap:6px}
+.auto-setup .function-card.works{border-color:var(--ok,#4ade80)}
+.auto-setup .function-card.wrong{border-color:var(--bad,#f87171)}
+.auto-setup .function-card h4{margin:0;font-size:13px}
+.auto-setup .function-card .section-toolbar{margin:0;gap:6px;flex-wrap:wrap}
+.auto-setup .function-card button{font-size:11px;padding:5px 9px}
+.auto-setup .function-card button[aria-pressed="true"]{outline:2px solid currentColor}
+.auto-setup .try-layout{display:grid;grid-template-columns:minmax(260px,420px) 1fr;gap:14px;align-items:start}
+@media(max-width:900px){.auto-setup .try-layout{grid-template-columns:1fr}}
+.urdf-joint-table td.has-error input{border-color:var(--bad,#f87171)}
+.urdf-joint-table td .field-issue{display:block;margin-top:3px}
+.source-badge{align-self:flex-start;justify-self:start;width:max-content;max-width:100%}

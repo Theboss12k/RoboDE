@@ -10,7 +10,7 @@ test('new user sets up the sample robot, tests it and simulates a plan without e
  await page.getByRole('button',{name:'Open configuration',exact:true}).click();
  for(const name of ['Robot library','Control adapters','AI Models','Workspace'])await expect(page.getByRole('button',{name,exact:true})).toBeVisible();
  await expect(page.getByText('Legacy robot definitions & adapters',{exact:true})).toBeHidden();
- await page.getByRole('button',{name:'Add robot · guided setup',exact:true}).click();
+ await page.getByRole('button',{name:'Manual setup',exact:true}).click();
  for(const step of ['Robot','Controls','Mapping','Test','Save'])await expect(page.getByLabel('Setup steps',{exact:true}).getByRole('button',{name:new RegExp(`^\\d\\s*${step}$`)})).toBeVisible();
  await page.getByLabel('Setup robot model',{exact:true}).selectOption('demo_arm');
  await page.getByRole('button',{name:'Continue · Controls',exact:true}).click();
