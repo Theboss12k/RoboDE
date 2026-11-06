@@ -660,3 +660,70 @@ acceptance or physical hardware check was performed. No commit or push was made.
   - Reach is a distance shell. Joint limits, the table and obstacles can still make a target inside it unreachable.
   - The existing GCP deployment was not updated.
 
+## 6 November 2026 — Add a robot with AI: URDF and documentation to a reviewable robot
+
+- **Branch:** `ai-robot-setup`, from `eval-suite`. Not merged.
+- **Affects:** the shared IDE (browser, Electron and NVIDIA editions) and the shared Python backend. The Business App only uses configured robots.
+- **Problem:** importing the gantry rover needed about 18 values typed by hand, and errors arrived one at a time. A continuous wheel's control window was unexplained, so it was set to 2–3 rad. Setup then took five separate steps: model, adapter, mapping, tests and save.
+- **Change:**
+  - **Configuration → Robot library → Add robot with AI** takes a URDF and the vendor documentation. One job (`POST /api/library/auto-setup`) prefills every review value with its source, generates the control adapter and maps joints to functions. The user reviews one page, accepts, tries each function in simulation (**Try every function**), marks it Works or Wrong, and saves.
+  - **Value checks:** code checks every documented value against its quote, converts its unit and compares it with the URDF.
+  - **Mapping scale:** comes from the units, not the AI model.
+  - **Existing rules kept:** the review, simulated tests and publish rules are unchanged, and nothing reaches hardware.
+  - **Smaller fixes:**
+    - The review now reports every problem at once, marked next to its field.
+    - The manual URDF form gained **Fill in missing values**.
+    - The documentation limit for URDF assistance rose from 20,000 to 60,000 characters.
+    - A free robot ID is proposed, and a taken one is flagged during review.
+    - The simulator adapter now drives continuous joints by speed even with a finite control window.
+- **Sample:** a fictional gantry rover is added as `examples/robots/gantry_rover.urdf` (differential drive, three-axis gantry, three-joint arm, jaw) with `gantry_rover_sdk_manual.md`, a 42 KB vendor manual. The manual uses millimetre and degree units and includes deprecated and non-actuator setters as traps.
+- **Results:** real inference with Claude Opus 5.5 through the Claude Code CLI bridge, mock simulation.
+  - **Prefill:** 15 values came from the documentation, including all nine joint accelerations, payload, manufacturer and drive speeds. Each was converted correctly. No values were rejected after the rounding tolerance fix.
+  - **Adapter:** exactly the nine documented setters. The deprecated inch setter, speed scale and jaw force setter were left out.
+  - **Mapping:** the first run timed out at the 120 s connection limit while sending the whole manual again, so the mapping now sends only the functions and their quotes. The second run mapped 9 of 9, with scales of 1000 and 57.2958.
+  - **Trying functions:** all nine ran through the generated adapter and were marked Works. For example, `set_jaw_opening(22.5 mm)` read back as 0.0225 m.
+  - **Without documentation:** a simulator adapter and mapping were built, and all nine functions were tried and marked.
+  - **Not done:** the MOVE test, and so saving the robot, because Docker and the robotics worker were not running.
+- **Checks:**
+  - Python tests: 7 new in `tests/integration/test_auto_setup.py`, covering the URDF-only prefill, quote and unit checks, unit-derived mapping scale, all errors at once, the full job with an adapter test call, ID clashes and the simulator path.
+  - Client typecheck and production build pass.
+  - Browser tests: the robotics-v2, simple-mode, URDF and library specs pass, updated for the renamed **Manual setup** button and for all errors at once.
+- **Limits:**
+  - The AI model can mislabel the description; it is marked for review.
+  - Defaults (control windows, accelerations, starting positions, drive area) need the user's judgement.
+  - Function marks are observations, not test evidence.
+  - Not tested on hardware or Isaac physics.
+
+## 7 November 2026 — Gantry rover saved through Add robot with AI; sample collision geometry fixed
+
+- **Branch:** `ai-robot-setup`. Follows the 6 November entry above.
+- **Robotics worker:** OrbStack and the local robotics worker (`robode-robotics:local`, MoveIt and Nav2) were started. No image build was needed, and no cloud VM was started.
+- **Problem found:** the MOVE test on the first saved rover failed with "Transit/hold configuration is in collision". The sample URDF gave the gantry frame one solid collision box between its posts, and the Y carriage, lift and arm base sat inside it. The worker allows contact only between directly connected links, so every pose collided. This was a defect in the sample file, not in RoboDE.
+- **Fix:**
+  - `gantry_rover.urdf` now has two separate post collision boxes, a beam that rides on top of them, and a shorter lift box that hangs clear of the beam.
+  - The manual's height of the J1 axis was corrected to 585 mm.
+  - With the corrected geometry, a check robot set up without AI passed MOVE. MoveIt/OMPL reached (0.55, 0.05, 0.45) m with the rail at -0.06 m, the beam at +0.05 m and the lift lowered 0.132 m.
+- **Result:** real inference with Claude Opus 5.5, mock simulation.
+  - Add robot with AI ran on the corrected URDF and manual. It found 15 documented values, generated the nine vendor setters, and mapped 9 of 9 joints with scales of 1000 and 57.2958.
+  - The free ID `tarnwick_tr_gr40_kestrel_gantry_rover_4` was proposed.
+  - All nine functions were tried and marked Works.
+  - The MOVE test passed in the worker.
+  - The robot was saved: published, with actuator and MOVE evidence, and "Saved · simulation ready" in the library.
+- **Also changed:** **Resume setup** buttons now show the robot ID, because two drafts named after the same adapter couldn't be told apart.
+- **Limits:** simulation only.
+
+## 7 November 2026 — Add robot with AI removes its URDF import draft
+
+- **Affects:** the shared IDE.
+- **Problem:** the AI setup screen never removed its URDF import draft, so every run left a copy of the URDF package in `runtime/urdf_imports`. Seven had built up. The manual URDF form already removes its draft when the form is closed.
+- **Change:** the AI setup screen now removes its draft in each of these cases:
+  - once the robot is saved, because saving copies the URDF source into the robot
+  - when the setup is cancelled or the screen is closed
+  - when a new file is configured
+
+  A retried **Accept** no longer validates against the removed draft, because the robot is already saved.
+- **Checks:**
+  - Client typecheck and production build pass.
+  - Live in the IDE (no-documentation path): the draft count went 0 → 1 at the review page → 0 after **Cancel**. A second run went → 0 after **Accept**, and the saved robot kept its URDF source and all 28 geometry shapes.
+- **Local cleanup:** the five test robots from 6–7 November and the check robot from this test were removed from the local library at the user's request. Their mappings, adapters and setup drafts went too. The saved TR-GR40 gantry rover is unchanged: published, current, and with its actuator and MOVE evidence. These were local runtime files, not repository changes.
+

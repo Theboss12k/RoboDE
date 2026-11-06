@@ -25,9 +25,11 @@ def simulator_for(model):
     """A virtual adapter with one function per reviewed actuator, using the model's own limits."""
     import math
     functions=[];quotes=[]
+    # A URDF continuous joint keeps a finite control window in RoboDE, so its type, not its limits, marks it as a wheel.
+    continuous={j['name'] for j in model.get('urdf_joint_metadata') or [] if j.get('type')=='continuous'}|set(model.get('continuous_joints') or [])
     for joint,spec in model['actuators']['actuators'].items():
         unit,minimum,maximum,mode=spec['unit'],float(spec['min']),float(spec['max']),'position'
-        if not (math.isfinite(minimum) and math.isfinite(maximum) and minimum<maximum):
+        if joint in continuous or not (math.isfinite(minimum) and math.isfinite(maximum) and minimum<maximum):
             # Continuous joints (wheels) are commanded by velocity within their rated speed.
             unit,minimum,maximum,mode=spec['unit']+'/s',-float(spec['velocity']),float(spec['velocity']),'velocity'
         fid=function_id(joint)

@@ -25,7 +25,9 @@ test('URDF robot is reviewed, imported globally, controlled with IK and source r
   await expect(page.getByLabel('URDF slide_x min',{exact:true})).toHaveValue('-0.5');
   await expect(page.getByRole('button',{name:'Save global robot & continue',exact:true})).toBeDisabled();
   await page.getByRole('button',{name:'Validate robot definition',exact:true}).click();
-  await expect(page.getByRole('alert')).toContainText('acceleration needs configuration');
+  // Every missing value is reported at once, next to its field.
+  await expect(page.getByRole('alert')).toContainText('3 values need attention');
+  for(const joint of ['slide_x','slide_y','slide_z'])await expect(page.getByText(`${joint}: acceleration needs configuration`,{exact:true})).toBeVisible();
   for(const joint of ['slide_x','slide_y','slide_z'])await page.getByLabel(`URDF ${joint} acceleration`,{exact:true}).fill('0.8');
   await page.getByRole('button',{name:'Validate robot definition',exact:true}).click();
   await expect(page.getByText('Definition validated · serial-chain IK available',{exact:true})).toBeVisible();

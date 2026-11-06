@@ -1,8 +1,9 @@
 import { useEffect, useRef, useState } from "react";
 import { Upload, Sparkles, Check, Download } from "lucide-react";
-import { api, post, download } from "./api";
+import { api, post, download, ApiError } from "./api";
 import type { LLMConfiguration, Model } from "./types";
 import Feedback from "./ui/Feedback";
+import "./ui/auto-setup.css";
 
 type Joint = { name: string; type: string; parent: string; child: string; axis: number[];
   origin: { xyz: number[]; rpy: number[] }; min: number | null; max: number | null;
@@ -32,6 +33,7 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
     [reviewed, setReviewed] = useState(false), [validated, setValidated] = useState<Validation | null>(null),
     [validatedInput, setValidatedInput] = useState("");
   const [coupling,setCoupling]=useState(false);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({}), [filled, setFilled] = useState("");
   const currentDraft = useRef<string | null>(null);
   useEffect(() => {
     void api<LLMConfiguration>("/llm/adapters").then(setProviders).catch(e => setError(e.message));
@@ -54,6 +56,25 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
   const signature = JSON.stringify({ ...settings, reviewed: false });
   const valid = !!validated && signature === validatedInput;
   const changed = () => setReviewed(false);
+  /** Fills every empty value from the URDF and, if pasted below, the documentation; extracted URDF values stay as they are. */
+  const fill = () => void work("Filling in values…", async () => {
+    if (!draft) return;
+    type Filled = { review: { name: string; manufacturer: string; description: string; tool_link: string | null; payload_kg: number | null;
+      gripper_actuator: string | null; gripper_closed: number | null; gripper_open: number | null; joints: Record<string, Record<keyof Settings, number | null>> };
+      provenance: Record<string, { source: string }>; notes: string[] };
+    const r = await post<Filled>(`/registry/urdf/drafts/${draft.id}/autofill`, { adapter_id: provider || null, documentation });
+    const text = (v: number | null) => (v === null ? "" : String(v));
+    setJoints(prev => Object.fromEntries(Object.entries(prev).map(([joint, values]) => [joint, Object.fromEntries(Object.entries(values).map(([field, value]) =>
+      [field, value.trim() === "" ? text(r.review.joints[joint]?.[field as keyof Settings] ?? null) : value])) as Settings])));
+    if (!tool && r.review.tool_link) setTool(r.review.tool_link);
+    if (!description && r.review.description) setDescription(r.review.description);
+    if (!manufacturer && r.review.manufacturer) setManufacturer(r.review.manufacturer);
+    if (!payload && r.review.payload_kg !== null) setPayload(String(r.review.payload_kg));
+    if (!gripper && r.review.gripper_actuator) { setGripper(r.review.gripper_actuator); setClosed(text(r.review.gripper_closed)); setOpen(text(r.review.gripper_open)); }
+    const defaults = Object.values(r.provenance).filter(p => p.source === "default").length, documented = Object.values(r.provenance).filter(p => p.source === "documentation").length;
+    setFilled(`Filled in from the URDF${documented ? ` and ${documented} documented values` : ""}. ${defaults} defaults need review: continuous-joint windows (±1000 rad), accelerations (full speed in 0.5 s) and starting positions.`);
+    setFieldErrors({}); changed();
+  });
   if (!draft) return <section className="config-card urdf-import">
     <h3>1. Import URDF and meshes</h3>
     <p>Upload an expanded <strong>.urdf</strong> or a <strong>.zip</strong> containing the URDF and its meshes.
@@ -100,17 +121,20 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
         <option value="">Select a link</option>{draft.parsed.links.map(link => <option key={link}>{link}</option>)}</select></label>
     </div>
     <label className="field">Description<textarea aria-label="URDF description" value={description} disabled={locked} onChange={e => { setDescription(e.target.value); changed(); }} /></label>
-    <h4>Joint configuration</h4>
+    <div className="section-toolbar"><h4>Joint configuration</h4><button disabled={locked} onClick={fill}><Sparkles size={14} /> Fill in missing values</button></div>
+    {filled && <p className="inline-note" role="status">{filled}</p>}
     <div className="urdf-joint-table"><table><thead><tr><th>Joint</th>{Object.entries(titles).map(([key, title]) => <th key={key}>{title}</th>)}</tr></thead>
       <tbody>{moving.map(joint => <tr key={joint.name}><th scope="row"><strong>{joint.name}</strong><small>{joint.type} · {joint.type === "prismatic" ? "m" : "rad"}</small>
-        {joint.type === "continuous" && <small>Set a finite control window</small>}</th>
+        {joint.type === "continuous" && <small>Wheel: a rotation window, not a stop (for example -1000 to 1000, start 0)</small>}</th>
         {(Object.keys(titles) as (keyof Settings)[]).map(field => {
           const extracted = field !== "initial" && joint[field] !== null;
-          return <td key={field}><input aria-label={`URDF ${joint.name} ${field}`} type="number" step="any" value={joints[joint.name]?.[field] ?? ""}
+          const issue = fieldErrors[`joints.${joint.name}.${field}`];
+          return <td key={field} className={issue ? "has-error" : ""}><input aria-label={`URDF ${joint.name} ${field}`} type="number" step="any" min={field === "velocity" || field === "acceleration" ? 0 : undefined} value={joints[joint.name]?.[field] ?? ""}
             readOnly={extracted} disabled={locked} placeholder="Required" onChange={e => {
               const value=e.currentTarget.value;
               setJoints(prev => ({ ...prev, [joint.name]: { ...prev[joint.name], [field]: value } })); changed();
-            }} /><small>{joint.type === "prismatic" ? "m" : "rad"}{field === "velocity" ? "/s" : field === "acceleration" ? "/s²" : ""}</small><small>{extracted ? (field === "acceleration" ? "URDF extension" : "Extracted from URDF") : field === "initial" ? "Review starting value" : (joints[joint.name]?.[field] ? "User configured" : "Needs configuration")}</small></td>;
+              setFieldErrors(e => { const n = { ...e }; delete n[`joints.${joint.name}.${field}`]; return n; });
+            }} /><small>{joint.type === "prismatic" ? "m" : "rad"}{field === "velocity" ? "/s" : field === "acceleration" ? "/s²" : ""}</small><small>{extracted ? (field === "acceleration" ? "URDF extension" : "Extracted from URDF") : field === "initial" ? "Review starting value" : (joints[joint.name]?.[field] ? "User configured" : "Needs configuration")}</small>{issue && <small className="field-issue">{issue}</small>}</td>;
         })}</tr>)}</tbody></table></div>
     <details><summary>Extracted frames, axes and source values</summary><pre className="urdf-extracted" aria-label="Extracted URDF structure">{JSON.stringify(draft.parsed.joints, null, 2)}</pre></details>
     <details><summary>Optional payload and gripper configuration</summary>
@@ -132,7 +156,7 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
         <option value="">{providers.default_id ? "Workspace default" : "Choose an AI model"}</option>
         {providers.adapters.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}</select></label>
       {!providers.adapters.length && <p className="inline-note">Add an AI model in Configuration → AI Models for suggestions. Manual URDF conversion remains available.</p>}
-      <label className="field">Vendor documentation · optional<textarea aria-label="URDF vendor documentation" maxLength={20000} value={documentation} disabled={locked}
+      <label className="field">Vendor documentation · optional<textarea aria-label="URDF vendor documentation" maxLength={60000} value={documentation} disabled={locked}
         onChange={e => setDocumentation(e.target.value)} /></label>
       <button disabled={locked || (!provider && !providers.default_id)} onClick={() => void work("Requesting suggestions…", async () => {
         const next = await post<Draft>(`/registry/urdf/drafts/${draft.id}/suggest`, { adapter_id: provider || null, documentation });
@@ -162,7 +186,13 @@ export default function URDFImport({ disabled, onStage, onSaved, onBusy }: {
     </details>
     <label className="check-row"><input type="checkbox" checked={coupling} disabled={locked} onChange={e=>setCoupling(e.target.checked)}/>Review imported mimic joints as coupled joints in the mapping wizard; they must never receive independent setters.</label>
     <div className="section-toolbar"><button className="secondary" disabled={locked || draft.parsed.unsupported.some(reason=>!coupling||!reason.includes("mimic coupling"))} onClick={() => void work("Validating robot…", async () => {
-      setValidated(null); const result = await post<Validation>(`/registry/urdf/drafts/${draft.id}/validate`, settings);
+      setValidated(null); setFieldErrors({});
+      let result: Validation;
+      try { result = await post<Validation>(`/registry/urdf/drafts/${draft.id}/validate`, settings); }
+      catch (e) {
+        if (e instanceof ApiError && e.errors.length) { setFieldErrors(Object.fromEntries(e.errors.map(x => [x.field, x.message]))); throw new Error(`${e.errors.length} value${e.errors.length > 1 ? "s need" : " needs"} attention; each is marked in the table.`); }
+        throw e;
+      }
       setValidated(result); setValidatedInput(signature); setReviewed(false);
     })}><Check size={14} /> Validate robot definition</button>
       {valid && <button disabled={locked} onClick={() => download(`${id}.robot.json`, JSON.stringify(validated.bundle, null, 2))}><Download size={14} /> Export converted definition</button>}
