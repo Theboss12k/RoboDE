@@ -694,3 +694,23 @@ acceptance or physical hardware check was performed. No commit or push was made.
   - Function marks are observations, not test evidence.
   - Not tested on hardware or Isaac physics.
 
+## 7 November 2026 — Gantry rover saved through Add robot with AI; sample collision geometry fixed
+
+- **Branch:** `ai-robot-setup`. Follows the 6 November entry above.
+- **Robotics worker:** OrbStack and the local robotics worker (`robode-robotics:local`, MoveIt and Nav2) were started. No image build was needed, and no cloud VM was started.
+- **Problem found:** the MOVE test on the first saved rover failed with "Transit/hold configuration is in collision". The sample URDF gave the gantry frame one solid collision box between its posts, and the Y carriage, lift and arm base sat inside it. The worker allows contact only between directly connected links, so every pose collided. This was a defect in the sample file, not in RoboDE.
+- **Fix:**
+  - `gantry_rover.urdf` now has two separate post collision boxes, a beam that rides on top of them, and a shorter lift box that hangs clear of the beam.
+  - The manual's height of the J1 axis was corrected to 585 mm.
+  - With the corrected geometry, a check robot set up without AI passed MOVE. MoveIt/OMPL reached (0.55, 0.05, 0.45) m with the rail at -0.06 m, the beam at +0.05 m and the lift lowered 0.132 m.
+- **Result:** real inference with Claude Opus 5.5, mock simulation.
+  - Add robot with AI ran on the corrected URDF and manual. It found 15 documented values, generated the nine vendor setters, and mapped 9 of 9 joints with scales of 1000 and 57.2958.
+  - The free ID `tarnwick_tr_gr40_kestrel_gantry_rover_4` was proposed.
+  - All nine functions were tried and marked Works.
+  - The MOVE test passed in the worker.
+  - The robot was saved: published, with actuator and MOVE evidence, and "Saved · simulation ready" in the library.
+- **Also changed:** **Resume setup** buttons now show the robot ID, because two drafts named after the same adapter couldn't be told apart.
+- **Limits:**
+  - Earlier test robots remain in the local library (the unsuffixed rover, `_2`, `_3`, `gantry_rover_simulator_check` and `gantry_geometry_check`) until the user removes them.
+  - Simulation only.
+

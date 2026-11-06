@@ -262,7 +262,7 @@ The controller uses four frames:
 - **`base_link`:** on the floor directly below the midpoint between the drive wheels. X forward, Y left, Z up.
 - **`tool`:** at the tool tip between the jaw and fixed finger.
 
-The gantry frame origin is 220 mm above `base_link`. The rail shuttle's zero position puts the beam directly above the drive wheel axle. With all axes at zero, the J1 axis is 840 mm above the floor, and the tool tip points forward along X.
+The gantry posts stand on the chassis 220 mm above `base_link`, and the beam rides on top of them. The rail shuttle's zero position puts the beam directly above the drive wheel axle. With all axes at zero, the J1 axis is 585 mm above the floor, and the tool tip points forward along X.
 
 The SDK does not compute inverse kinematics. Commands set individual axes. A forward-kinematics helper, `tool_pose()`, returns the tool position in `base_link` for the current axis values. Customers who need Cartesian motion compute it in their own software.
 
