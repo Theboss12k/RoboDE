@@ -36,6 +36,9 @@ not production launchers.
 - `evaluate_local_llms.mjs`, `evaluate_local_converters.mjs`,
   `nemotron_benchmark.py` and `ollama_*` run model evaluations. Some call actual
   configured providers; check their endpoints and arguments before running them.
+  For repeatable, versioned Planner/Converter checks, use `npm run eval`
+  ([eval suite](../docs/EVALS.md)); `local_model_evaluation_server.py` shares its
+  two-arm project from `evals/fixtures.py`.
 - `validate_scene_recording.py` checks an already connected native Isaac worker.
 - `record_*.mjs` and `render_*.py` capture or render demonstrations.
 - `verify_installer_ui.mjs` checks an installed application's interface.

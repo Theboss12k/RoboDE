@@ -1,0 +1,94 @@
+{
+ "case": "n1_degrees",
+ "case_hash": "fb5f37e8ae575e5c",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T09:45:23+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Rotate ARM ONE base_yaw to 10 degrees\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.174533, // 10 degrees in radians\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base_yaw to 10 degrees.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` for ARM ONE.\n- **Command Details**: The command specifies setting the `base_yaw` actuator to 10 degrees, converted to radians (0.174533).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements for decomposing the plan into executable tasks.",
+     "model": "phi4:14b",
+     "duration_seconds": 60.971,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4478,
+      "completion_tokens": 433
+     },
+     "load_seconds": 0.028
+    },
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Rotate ARM ONE base_yaw to 10 degrees\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.174533, // 10 degrees in radians\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base_yaw to 10 degrees.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` for ARM ONE.\n- **Command Details**: The command specifies setting the `base_yaw` actuator to 10 degrees, converted to radians (0.174533).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements for decomposing the plan into executable tasks.",
+     "model": "phi4:14b",
+     "duration_seconds": 36.025,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4996,
+      "completion_tokens": 433
+     },
+     "load_seconds": 0.025
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T09:46:41+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Rotate ARM ONE base_yaw to 10 degrees\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.174533, // 10 degrees in radians\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base_yaw to 10 degrees.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` for ARM ONE.\n- **Command Details**: The command specifies setting the `base_yaw` actuator to 10 degrees, converted to radians (0.174533).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements for decomposing the plan into executable tasks.",
+     "model": "phi4:14b",
+     "duration_seconds": 41.012,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4478,
+      "completion_tokens": 433
+     },
+     "load_seconds": 0.022
+    },
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Rotate ARM ONE base_yaw to 10 degrees\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.174533, // 10 degrees in radians\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base_yaw to 10 degrees.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` for ARM ONE.\n- **Command Details**: The command specifies setting the `base_yaw` actuator to 10 degrees, converted to radians (0.174533).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements for decomposing the plan into executable tasks.",
+     "model": "phi4:14b",
+     "duration_seconds": 36.598,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4996,
+      "completion_tokens": 433
+     },
+     "load_seconds": 0.026
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T09:48:00+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Rotate ARM ONE base_yaw to 10 degrees\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.174533, // 10 degrees in radians\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base_yaw to 10 degrees.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` for ARM ONE.\n- **Command Details**: The command specifies setting the `base_yaw` actuator to 10 degrees, converted to radians (0.174533).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements for decomposing the plan into executable tasks.",
+     "model": "phi4:14b",
+     "duration_seconds": 41.194,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4478,
+      "completion_tokens": 433
+     },
+     "load_seconds": 0.023
+    },
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Rotate ARM ONE base_yaw to 10 degrees\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.174533, // 10 degrees in radians\n        \"unit\": \"rad\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate ARM ONE base_yaw to 10 degrees.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation Type**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` for ARM ONE.\n- **Command Details**: The command specifies setting the `base_yaw` actuator to 10 degrees, converted to radians (0.174533).\n- **Intent and Authorship**: The intent describes the action being performed, and it is authored by the planner with a binding status of unresolved.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements for decomposing the plan into executable tasks.",
+     "model": "phi4:14b",
+     "duration_seconds": 36.998,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4996,
+      "completion_tokens": 433
+     },
+     "load_seconds": 0.022
+    }
+   ]
+  }
+ ]
+}

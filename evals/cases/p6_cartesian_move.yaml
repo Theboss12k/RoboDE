@@ -1,0 +1,12 @@
+id: p6_cartesian_move
+about: A tool position in world coordinates, checked by independent forward kinematics.
+instruction: Move ARM ONE parallel_gripper to world position x=0.30 m, y=-0.10 m, z=0.30 m. Keep its gripper opening unchanged and do not specify orientation. ARM TWO must remain unchanged.
+expect:
+  execute: true
+  status: ready
+  bound: true
+  robots_used: [arm_01]
+  executed: true
+  tool_position: {arm_01: {position: [0.30, -0.10, 0.30], tol: 0.003}}
+  unchanged_joints: {arm_01: [gripper]}
+  robots_unchanged: [arm_02]

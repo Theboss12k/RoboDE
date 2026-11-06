@@ -1,0 +1,79 @@
+{
+ "case": "p4_ambiguous_waving",
+ "case_hash": "724a32ec6da359a0",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:19:07+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5724,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:19:37+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended duration for ARM TWO to wave? Is waving a continuous motion or a discrete sequence?\",\n    \"What is the exact pose for ARM TWO's waving motion? Provide X, Y, Z coordinates and orientation (yaw, pitch, roll) for the waving pose.\",\n    \"Is the waving motion to be repeated? If so, how many times?\",\n    \"Is the waving motion to be synchronized with ARM ONE's waiting state? Clarify the sequence: does ARM TWO wave while ARM ONE waits, or vice versa?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Keep ARM TWO waving while ARM ONE waits.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_02\",\n  \"target\": null,\n  \"command\": null,\n  \"placement\": \"inside\",\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": null,\n  \"completion_condition\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"llm_adapter_id\": null,\n  \"llm_input\": null,\n  \"llm_system_prompt\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 18.413,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5724,
+      "completion_tokens": 298
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended duration for ARM TWO to wave? Is waving a continuous motion or a discrete sequence?\",\n    \"What is the exact pose for ARM TWO's waving motion? Provide X, Y, Z coordinates and orientation (yaw, pitch, roll) for the waving pose.\",\n    \"Is the waving motion to be repeated? If so, how many times?\",\n    \"Is the waving motion to be synchronized with ARM ONE's waiting state? Clarify the sequence: does ARM TWO wave while ARM ONE waits, or vice versa?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Keep ARM TWO waving while ARM ONE waits.\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_02\",\n  \"target\": null,\n  \"command\": null,\n  \"placement\": \"inside\",\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": null,\n  \"completion_condition\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"llm_adapter_id\": null,\n  \"llm_input\": null,\n  \"llm_system_prompt\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.072,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6746,
+      "completion_tokens": 299
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:20:17+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended duration for ARM TWO to wave? Is waving a continuous motion or a discrete sequence?\",\n    \"What is the exact pose for ARM TWO's waving motion? Provide X, Y, Z coordinates and orientation (yaw, pitch, roll) for the waving pose.\",\n    \"Is the waving motion to be repeated? If so, how many times?\",\n    \"Is the waving motion to be synchronized with ARM ONE's waiting state? Clarify the sequence: does ARM TWO wave first, then stop, or both simultaneously?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Keep ARM TWO waving while ARM ONE waits.\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": null,\n  \"command\": null,\n  \"target\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_02\",\n  \"name\": \"ARM TWO waving\",\n  \"dependencies\": [],\n  \"id\": \"task_001\",\n  \"name\": \"ARM TWO waving\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_02\",\n  \"target\": null,\n  \"value\": null,\n  \"unit\": null,\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Keep ARM TWO waving while ARM ONE waits.\",\n  \"function_alls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": null,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 23.301,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5724,
+      "completion_tokens": 527
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended duration for ARM TWO to wave? Is waving a continuous motion or a discrete sequence?\",\n    \"What is the exact pose for ARM TWO's waving motion? Provide X, Y, Z coordinates and orientation (yaw, pitch, roll) for the waving pose.\",\n    \"Is the waving motion to be repeated? If so, how many times?\",\n    \"Is the waving motion to be synchronized with ARM ONE's waiting state? Clarify the sequence: does ARM TWO wave first, then stop, or both simultaneously?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Keep ARM TWO waving while ARM ONE waits.\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": null,\n  \"command\": null,\n  \"target\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"function_calls\": [],\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_02\",\n  \"name\": \"ARM TWO waving\",\n  \"dependencies\": [],\n  \"id\": \"task_001\",\n  \"name\": \"ARM TWO waving\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_02\",\n  \"target\": null,\n  \"value\": null,\n  \"unit\": null,\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Keep ARM TWO waving while ARM ONE waits.\",\n  \"function_calls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": null,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 16.755,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 7054,
+      "completion_tokens": 526
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

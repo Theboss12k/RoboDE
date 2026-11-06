@@ -1,0 +1,79 @@
+{
+ "case": "n7_pick_and_place",
+ "case_hash": "4079e0df554728a1",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:07:46+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact destination pose (x, y, z) for the basket?\",\n    \"Is the basket located at the same frame as the apple?\",\n    \"Does the basket have a defined target ID for verification?\"\n  ],\n  \"error\": null,\n  \"error_code\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.767,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5736,
+      "completion_tokens": 85
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact destination pose (x, y, z) for the basket?\",\n    \"Is the basket located at the same frame as the apple?\",\n    \"Does the basket have a defined target ID for verification?\"\n  ],\n  \"error\": null,\n  \"error_code\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 4.481,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5928,
+      "completion_tokens": 85
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:09:31+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5736,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:09:49+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact destination pose (x, y, z) for the basket?\",\n    \"Is the basket located at the same frame as the apple?\",\n    \"Does the basket have a defined target ID for verification?\"\n  ],\n  \"error\": null,\n  \"error_code\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.843,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5736,
+      "completion_tokens": 85
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact destination pose (x, y, z) for the basket?\",\n    \"Is the basket located at the same frame as the apple?\",\n    \"Does the basket have a defined target ID for verification?\"\n  ],\n  \"error\": null,\n  \"error_code\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 4.592,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5928,
+      "completion_tokens": 85
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

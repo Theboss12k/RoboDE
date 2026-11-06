@@ -16,6 +16,7 @@
     "start": "node scripts/dev.mjs --built",
     "start:nvidia": "node scripts/dev.mjs --built --edition=nvidia",
     "test": "node scripts/python.mjs -m pytest",
+    "eval": "node scripts/python.mjs -m evals.run",
     "test:e2e": "playwright test",
     "typecheck": "npm run typecheck --workspace SERVER_CLIENT/client",
     "setup": "node scripts/setup.mjs",

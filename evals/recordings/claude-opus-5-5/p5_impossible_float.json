@@ -1,0 +1,23 @@
+{
+ "case": "p5_impossible_float",
+ "case_hash": "f847e461981e3520",
+ "model": "claude-opus-5-5",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T11:17:53+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\"status\": \"unsupported\", \"tasks\": [], \"questions\": [], \"error\": \"Unsupported physical capability: the plan requires the apple to float unaided 1 m above the table indefinitely without being held, thrown or attached to a robot. Neither arm_01 nor arm_02 has a levitation, flight or support capability (capabilities: pick_place, move_home; 'throw' is explicitly unsupported), and no environment object provides a support at that height. An unsupported object falls under gravity, so this outcome cannot be produced. The requested duration is also unbounded ('indefinitely'), which violates the bounded-motion requirement. Supported alternatives include placing the apple in the basket (target 'basket') with GRASP/RELEASE/VERIFY, or having one arm hold the apple at a stated height for an explicit duration_seconds. Holding was excluded by the plan, so that option would require the user to change the plan.\"}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 6.253,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6821,
+      "completion_tokens": 303
+     }
+    }
+   ]
+  }
+ ]
+}

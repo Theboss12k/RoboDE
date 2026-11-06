@@ -532,3 +532,131 @@ non-blocking dependency deprecations and the Monaco bundle-size warning remain.
 
 **Limits:** No fresh dependency installation, Docker build, native robotics/GPU
 acceptance or physical hardware check was performed. No commit or push was made.
+
+## 5 November 2026 — Demo page hosted on GitHub Pages
+
+- Published the RoboDE Isaac Sim demo page at https://theboss12k.github.io/RoboDE/ from a new orphan `gh-pages` branch (one commit: `index.html`, `.nojekyll` and nine short MP4 clips with poster images, about 4 MB). GitHub Pages serves the branch root over HTTPS. The `main` branch and the application code are unchanged.
+- The page shows the GCP-hosted demo in pieces (choosing the Planner/Task LLM, the Nemotron plan, connecting Isaac, the live run, the recorded result and real-time joint control) plus the earlier Nemotron evaluation results. The clips are cut from the 30 October recordings of simulated runs in native Isaac Sim on a GCP GPU VM; they are not physical hardware tests.
+- Checks: the page was scanned for keys, tunnel URLs and private data before publishing; external requests go only to Google Fonts and the GitHub repository link. On the live site the page loaded without errors or horizontal overflow, and a clip played from GitHub Pages.
+- Set the repository's website link (About section) to the Pages URL.
+
+## 6 November 2026 — Eval suite for the Planner and Converter
+
+- **Affects:** shared Python runtime and development tooling only. Unchanged: the Electron, browser and Business apps, the planner and converter prompts, and the validation logic.
+- **Added:** a versioned eval suite ([`evals/`](../evals), [guide](EVALS.md)) with 15 YAML cases:
+  - the six earlier P1–P6 scenarios
+  - two converter-only cases
+  - seven edge cases: degrees, joint limit, unknown robot, unknown actuator, repeat count, a named second robot, pick and place
+
+  Each case runs through the real API (`decompose`, `bind-commands`, `compile`) and the mock simulator. Deterministic graders check:
+  - final joint states, untouched robots and forward-kinematics tool position
+  - required and forbidden calls
+  - refusals. A pipeline error doesn't count as a refusal.
+- **Also added:**
+  - record and replay of model answers, and repeat runs
+  - a token relay for Ollama
+  - per-model baselines with a regression gate: `npm run eval -- --baseline` exits 1 when a case's pass rate falls
+  - exit 2 when Ollama stops answering or can't serve the model
+  - recordings and baselines for `phi4:14b` and `nemotron-mini:4b` on Ollama 0.12.3, and for `nemotron-3-nano:4b-q4_K_M` on Ollama 0.40.13
+- **Changed:** `scripts/local_model_evaluation_server.py` now builds its two-arm projects with the shared `evals/fixtures.py`.
+- **Results:** real local inference, mock simulation, 15 cases × 3 runs. Details are in the [6 November eval report](EVAL_RESULTS_20261106.md).
+
+  | Model | Ollama 0.12.3 | Ollama 0.40.13 |
+  | --- | --- | --- |
+  | phi4 | 8/15 cases on every run | 10/15 |
+  | Nemotron Mini | 0/15 | 1/15 |
+  | Nemotron 3 Nano | can't load | 1/15 |
+
+  No model passed every case. The report documents 15 failures:
+  - **Two unsafe phi4 failures:** a missing joint replaced by the gripper (F8), and a missing robot replaced by ARM TWO (F13). Each happened on one runtime only.
+  - **Three suite bugs, fixed with tests:**
+    - refusal cases passing during an outage (F3)
+    - refusal cases passing when the planner crashed (F6)
+    - a model Ollama couldn't load being scored (F7)
+  - **Planner output problems:** phi4 setting `placement: null` (F1), and Mini and Nano answers that don't fit the planner schema (F12, F15)
+  - **Not run:** GCP models, because there was no L4 capacity (F5)
+- **Checks:**
+  - Repository tests: 386 passed, 4 skipped. That includes 17 offline eval-suite tests.
+  - Replay of the recordings passes its baselines.
+  - A tampered recording made the gate exit 1.
+- **Limits:**
+  - Mock simulation only. No Isaac physics, GPU worker or hardware.
+  - Pass rates over three runs describe this configuration, not general reliability.
+  - Results differ between Ollama runtimes for the same weights, so compare models only on the same runtime.
+  - No planner or converter fix is part of this change.
+
+## 6 November 2026 — Planner and Converter refuse unknown robots and identifiers
+
+- **Affects:** the shared Python planning runtime, so every edition that plans with an LLM. The prompts are unchanged.
+- **Fixes:** the two unsafe failures from the [6 November eval report](EVAL_RESULTS_20261106.md#fix-for-f8-and-f13-unknown-names):
+  - F8: a missing joint replaced by the gripper
+  - F13: a missing robot replaced by ARM TWO
+- **Behavior:**
+  - **Planner:** an instruction that names a robot or snake_case identifier the project doesn't have now gets a question back instead of tasks, even when the model returns a ready plan. Answering the question lets planning continue.
+  - **Converter:** a task naming one is refused before any model call.
+  - **Not detected:** prose names.
+- **Checks:**
+  - Repository tests: 390 passed, 4 skipped, including four new tests.
+  - Replay of all committed recordings passes its baselines. phi4's baseline was regraded for `n4` (0% → 100%).
+  - Live phi4:14b on Ollama 0.40.13, mock simulation: `n3` and `n4` passed 6 of 6 runs. The model still substituted on 5 of those runs, and the check stopped each one.
+- **Limits:**
+  - Mock simulation only. No Isaac physics, GPU worker or hardware.
+  - Nemotron Mini and Nano still fail these cases, at the planner schema.
+
+## 6 November 2026 — Claude Opus 5.5 run through the eval suite
+
+- **Affects:** development tooling only. No application or planner changes.
+- **Added:** [`evals/claude_bridge.py`](../evals/claude_bridge.py), a loopback server that answers Ollama's chat API with the Claude Code CLI. The eval suite can now grade Claude with the same cases, graders and adapter as the local models. Each call runs with Claude Code's tools, MCP servers, settings and project context turned off.
+- **Result:** real inference with `claude-opus-5-5`, one run per case, mock simulation. It passed 13/15, with a median model call of 5.5 s. The best phi4 result was 10/15. Details are in the [eval report](EVAL_RESULTS_20261106.md#claude-opus-5-5-comparison).
+- **Its two failures are pipeline gaps:**
+  - verification tasks for joint state, which the catalog can't bind (`p3`)
+  - a pick-and-place lift with no height (`n7`)
+- **Checks:**
+  - While the CLI was signed out, the bridge made the run stop with exit 2, so nothing was graded.
+  - Recordings are saved in `evals/recordings/claude-opus-5-5`.
+- **Limits:**
+  - One run per case, with no temperature control.
+  - The CLI may add some context of its own.
+  - No Isaac physics or hardware.
+
+## 6 November 2026 — Planner instructions for verification and carry height; null planner fields accepted
+
+- **Affects:** the shared Python planning runtime, so every edition that plans with an LLM.
+- **Changed:**
+  - The planner instructions no longer ask for verification tasks that only check joint positions, and they tell the planner not to command robots the plan doesn't ask to move.
+  - Each motion task must state its numeric target.
+  - Objects are carried at the height RoboDE's pick-and-place template uses: max(object z, destination z) + 0.18 m. That value is now one shared constant, `CARRY_CLEARANCE_M`.
+  - `null` fields in planner tasks now take their defaults instead of rejecting the plan (F1).
+- **Results:** real inference, mock simulation. Details are in the [eval report](EVAL_RESULTS_20261106.md#planner-instruction-fixes).
+  - **Claude Opus 5.5:** 15/15, with one run per case.
+  - **phi4 on Ollama 0.12.3:** 11/15, up from 9/15.
+  - **phi4 regression:** `n6` fell from 67% to 0%. phi4 adds a "hold ARM ONE" task, which the converter now refuses. The baseline was updated to accept this; it is noted for review.
+- **Checks:**
+  - Repository tests: 392 passed, 4 skipped.
+  - Replay of all four models against their baselines passes.
+  - The overload watchdog didn't stop any run.
+- **Limits:**
+  - Nemotron Mini and Nano were not re-measured with the new instructions.
+  - Replay can't detect prompt changes.
+  - Mock simulation only; no Isaac physics or hardware.
+
+## 6 November 2026 — Tool reach given to the Planner and Converter LLMs; installers rebuilt
+
+- **Affects:** the shared Python planning runtime. The browser IDE, Electron desktop, NVIDIA edition and Business App all use this one backend; the Business App reaches it through its gateway.
+- **Problem:** in the user's four-arm `apple_transfer` project, Claude Opus 5.5 planned a "mimed" handover between Atlas / Arm 2 and Atlas / Arm 3. Their shoulders are 1.39 m apart and each arm reaches 0.6 m. Motion planning then failed with "outside the demo arm workspace". The planner had been told each arm's base pose but not its reach.
+- **Change:** a new `tool_reach` function in `services/planning/kinematics.py` gives, per tool, a world-frame centre, `max_m` and `min_m`.
+  - **Demo arm:** the shoulder, 0.04 to 0.6 m, the same limit as inverse kinematics.
+  - **Serial chain:** an upper bound from the joint offsets and prismatic travel.
+  - **Mobile robots:** no reach.
+
+  The planner gets it for every robot and must return `unsupported` for targets out of range. The converter gets it for its robot and must refuse an out-of-range MOVE. Motion planning is unchanged and stays authoritative.
+- **Result:** the same instruction, "Atlast 2 should pick up the apple and lift it and then pass it to atlas 3", was rerun with Claude Opus 5.5 through the running app as a new plan named "Reach check (Claude)". It returned `unsupported`. The apple is 1.43 m from Arm 2, the arms are 1.39 m apart against a combined 1.2 m reach, and nothing was substituted. Mock simulation; no physical robot.
+- **Checks:**
+  - Repository tests: 395 passed, 4 skipped.
+  - New tests show that the demo-arm reach matches the inverse-kinematics limit 0.01 m either side, and that the serial-chain bound covers 300 random joint samples of the two-tool example.
+  - Another new test shows both LLMs receive the reach.
+- **Installers:** all 0.4.0 packages in `dist/releases/0.4.0-installers` (excluded from Git) were rebuilt with today's planner changes. That covers Desktop for macOS arm64 and x64 (ZIP and DMG), Linux and Windows; Server for Linux and Windows; and Business. Each Desktop and Server package carries the reach, unknown-name, null-field and carry-height changes, and every checksum verified. The 30 October packages were kept outside the repository as a backup. The installers were built but not installed or run on another machine.
+- **Limits:**
+  - Reach is a distance shell. Joint limits, the table and obstacles can still make a target inside it unreachable.
+  - The existing GCP deployment was not updated.
+

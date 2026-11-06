@@ -1,0 +1,58 @@
+{
+ "case": "c1_converter_joint",
+ "case_hash": "600905c10663c385",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T22:50:24+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": "{\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      }\n    }\n  ]\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 5.752,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1399,
+      "completion_tokens": 51
+     },
+     "load_seconds": 1.792
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:50:26+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": "{\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      }\n    }\n  ]\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 1.174,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1399,
+      "completion_tokens": 51
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:50:28+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": "{\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      }\n    }\n  ]\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 1.174,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1399,
+      "completion_tokens": 51
+     },
+     "load_seconds": 0.0
+    }
+   ]
+  }
+ ]
+}

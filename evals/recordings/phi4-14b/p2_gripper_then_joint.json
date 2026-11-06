@@ -1,0 +1,130 @@
+{
+ "case": "p2_gripper_then_joint",
+ "case_hash": "75230a44524004ab",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T10:31:01+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01\",\n      \"name\": \"Open Gripper on ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"intent\": \"Set the parallel_gripper to open at 50 percent.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": {\n        \"type\": \"SET_COMPONENT\",\n        \"target\": \"parallel_gripper\",\n        \"value\": 50,\n        \"unit\": \"percent\"\n      }\n    },\n    {\n      \"id\": \"task_02\",\n      \"name\": \"Set Base Yaw on ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"intent\": \"Adjust the base_yaw to -0.03 radians.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"dependencies\": [\"task_01\"],\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": -0.03,\n        \"unit\": \"rad\"\n      }\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n1. **Task Decomposition**:\n   - The plan is decomposed into two tasks, each with a unique ID and specific intent.\n   \n2. **Task Details**:\n   - **Task 01**: Opens the gripper on ARM ONE to 50 percent. This task uses `SET_COMPONENT` as its command type.\n   - **Task 02**: Sets the base yaw of ARM ONE to -0.03 radians, dependent on Task 01 being completed first.\n\n3. **Attributes**:\n   - Each task is assigned a unique ID and name for clarity.\n   - The operation is set to `command` as per requirements.\n   - `robot_id` specifies which robot performs the task.\n   - `intent` describes the expected result of each task.\n   - `authored_by` is set to \"planner\".\n   - `binding_status` is marked as \"unresolved\" since no external bindings are resolved here.\n\n4. **Dependencies**:\n   - Task 02 depends on Task 01, ensuring that the gripper operation completes before adjusting the base yaw.\n\n5. **Status and Error Handling**:\n   - The overall status is set to `ready`, indicating that the tasks can be executed without further clarification or unsupported operations.\n   - No questions are needed as there is no ambiguity in the plan.\n   - There are no errors, so the error field is null.",
+     "model": "phi4:14b",
+     "duration_seconds": 57.524,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4498,
+      "completion_tokens": 565
+     },
+     "load_seconds": 0.027
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"component_parallel_gripper\",\n            \"arguments\": {\n                \"value\": 50,\n                \"unit\": \"percent\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to open the parallel gripper on ARM ONE to 50 percent.\n\n2. **Function Catalog Review**:\n   - The function `component_parallel_gripper` is identified as controlling the opening of the parallel gripper.\n   - It accepts a percentage value between 0 and 100, which matches the requirement to set it to 50 percent.\n\n3. **Binding**: \n   - The task specifies setting the gripper to open at 50 percent, which directly maps to using `component_parallel_gripper` with a value of 50.\n   \n4. **Execution**:\n   - The JSON response includes a call to `component_parallel_gripper` with the specified arguments.\n\nThis solution ensures that the task is fully bound and executable according to the provided function catalog.",
+     "model": "phi4:14b",
+     "duration_seconds": 17.567,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1060,
+      "completion_tokens": 217
+     },
+     "load_seconds": 0.026
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": -0.03,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to adjust the `base_yaw` of `ARM ONE` (identified as `arm_01`) to `-0.03 radians`.\n\n2. **Function Catalog Review**:\n   - The function catalog includes a specific actuator command for setting the base yaw: `set_base_yaw`.\n   - This function takes two arguments: `value` and `unit`, where `value` is in radians.\n\n3. **Binding Task to Function**:\n   - The task specifies adjusting the `base_yaw` to `-0.03 radians`.\n   - The corresponding function from the catalog is `set_base_yaw`.\n\n4. **Argument Specification**:\n   - The `value` argument for `set_base_yaw` should be set to `-0.03`, matching the task requirement.\n   - The `unit` argument should be `\"rad\"` as specified in both the task and the function definition.\n\n5. **Execution**: \n   - The JSON output includes a single call to the `set_base_yaw` function with the appropriate arguments, ensuring that the task is fully bound and executable according to the provided catalog.\n\nThis solution ensures compliance with the constraints and requirements outlined for the ACTUATOR COMMAND CONVERTER.",
+     "model": "phi4:14b",
+     "duration_seconds": 21.897,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1064,
+      "completion_tokens": 303
+     },
+     "load_seconds": 0.019
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T10:32:57+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01\",\n      \"name\": \"Open Gripper on ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"intent\": \"Set the parallel_gripper to open at 50 percent.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": {\n        \"type\": \"SET_COMPONENT\",\n        \"target\": \"parallel_gripper\",\n        \"value\": 50,\n        \"unit\": \"percent\"\n      }\n    },\n    {\n      \"id\": \"task_02\",\n      \"name\": \"Set Base Yaw on ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"intent\": \"Adjust the base_yaw to -0.03 radians.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"dependencies\": [\"task_01\"],\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": -0.03,\n        \"unit\": \"rad\"\n      }\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n1. **Task Decomposition**:\n   - The plan is decomposed into two tasks, each with a unique ID and specific intent.\n   \n2. **Task Details**:\n   - **Task 01**: Opens the gripper on ARM ONE to 50 percent. This task uses `SET_COMPONENT` as its command type.\n   - **Task 02**: Sets the base yaw of ARM ONE to -0.03 radians, dependent on Task 01 being completed first.\n\n3. **Attributes**:\n   - Each task is assigned a unique ID and name for clarity.\n   - The operation is set to `command` as per requirements.\n   - `robot_id` specifies which robot performs the task.\n   - `intent` describes the expected result of each task.\n   - `authored_by` is set to \"planner\".\n   - `binding_status` is marked as \"unresolved\" since no external bindings are resolved here.\n\n4. **Dependencies**:\n   - Task 02 depends on Task 01, ensuring that the gripper operation completes before adjusting the base yaw.\n\n5. **Status and Error Handling**:\n   - The overall status is set to `ready`, indicating that the tasks can be executed without further clarification or unsupported operations.\n   - No questions are needed as there is no ambiguity in the plan.\n   - There are no errors, so the error field is null.",
+     "model": "phi4:14b",
+     "duration_seconds": 70.285,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4498,
+      "completion_tokens": 565
+     },
+     "load_seconds": 0.022
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"component_parallel_gripper\",\n            \"arguments\": {\n                \"value\": 50,\n                \"unit\": \"percent\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to open the parallel gripper on ARM ONE to 50 percent.\n\n2. **Function Catalog Review**:\n   - The function `component_parallel_gripper` is identified as controlling the opening of the parallel gripper.\n   - It accepts a percentage value between 0 and 100, which matches the requirement to set it to 50 percent.\n\n3. **Binding**: \n   - The task specifies setting the gripper to open at 50 percent, which directly maps to using `component_parallel_gripper` with a value of 50.\n   \n4. **Execution**:\n   - The JSON response includes a call to `component_parallel_gripper` with the specified arguments.\n\nThis solution ensures that the task is fully bound and executable according to the provided function catalog.",
+     "model": "phi4:14b",
+     "duration_seconds": 19.632,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1060,
+      "completion_tokens": 217
+     },
+     "load_seconds": 0.025
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": -0.03,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to adjust the `base_yaw` of `ARM ONE` (identified as `arm_01`) to `-0.03 radians`.\n\n2. **Function Catalog Review**:\n   - The function catalog includes a specific actuator command for setting the base yaw: `set_base_yaw`.\n   - This function takes two arguments: `value` and `unit`, where `value` is in radians.\n\n3. **Binding Task to Function**:\n   - The task specifies adjusting the `base_yaw` to `-0.03 radians`.\n   - The corresponding function from the catalog is `set_base_yaw`.\n\n4. **Argument Specification**:\n   - The `value` argument for `set_base_yaw` should be set to `-0.03`, matching the task requirement.\n   - The `unit` argument should be `\"rad\"` as specified in both the task and the function definition.\n\n5. **Execution**: \n   - The JSON output includes a single call to the `set_base_yaw` function with the appropriate arguments, ensuring that the task is fully bound and executable according to the provided catalog.\n\nThis solution ensures compliance with the constraints and requirements outlined for the ACTUATOR COMMAND CONVERTER.",
+     "model": "phi4:14b",
+     "duration_seconds": 25.086,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1064,
+      "completion_tokens": 303
+     },
+     "load_seconds": 0.031
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T10:34:53+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01\",\n      \"name\": \"Open Gripper on ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"intent\": \"Set the parallel_gripper to open at 50 percent.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": {\n        \"type\": \"SET_COMPONENT\",\n        \"target\": \"parallel_gripper\",\n        \"value\": 50,\n        \"unit\": \"percent\"\n      }\n    },\n    {\n      \"id\": \"task_02\",\n      \"name\": \"Set Base Yaw on ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"intent\": \"Adjust the base_yaw to -0.03 radians.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"dependencies\": [\"task_01\"],\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": -0.03,\n        \"unit\": \"rad\"\n      }\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n1. **Task Decomposition**:\n   - The plan is decomposed into two tasks, each with a unique ID and specific intent.\n   \n2. **Task Details**:\n   - **Task 01**: Opens the gripper on ARM ONE to 50 percent. This task uses `SET_COMPONENT` as its command type.\n   - **Task 02**: Sets the base yaw of ARM ONE to -0.03 radians, dependent on Task 01 being completed first.\n\n3. **Attributes**:\n   - Each task is assigned a unique ID and name for clarity.\n   - The operation is set to `command` as per requirements.\n   - `robot_id` specifies which robot performs the task.\n   - `intent` describes the expected result of each task.\n   - `authored_by` is set to \"planner\".\n   - `binding_status` is marked as \"unresolved\" since no external bindings are resolved here.\n\n4. **Dependencies**:\n   - Task 02 depends on Task 01, ensuring that the gripper operation completes before adjusting the base yaw.\n\n5. **Status and Error Handling**:\n   - The overall status is set to `ready`, indicating that the tasks can be executed without further clarification or unsupported operations.\n   - No questions are needed as there is no ambiguity in the plan.\n   - There are no errors, so the error field is null.",
+     "model": "phi4:14b",
+     "duration_seconds": 73.532,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4498,
+      "completion_tokens": 565
+     },
+     "load_seconds": 0.039
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"component_parallel_gripper\",\n            \"arguments\": {\n                \"value\": 50,\n                \"unit\": \"percent\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to open the parallel gripper on ARM ONE to 50 percent.\n\n2. **Function Catalog Review**:\n   - The function `component_parallel_gripper` is identified as controlling the opening of the parallel gripper.\n   - It accepts a percentage value between 0 and 100, which matches the requirement to set it to 50 percent.\n\n3. **Binding**: \n   - The task specifies setting the gripper to open at 50 percent, which directly maps to using `component_parallel_gripper` with a value of 50.\n   \n4. **Execution**:\n   - The JSON response includes a call to `component_parallel_gripper` with the specified arguments.\n\nThis solution ensures that the task is fully bound and executable according to the provided function catalog.",
+     "model": "phi4:14b",
+     "duration_seconds": 18.486,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1060,
+      "completion_tokens": 217
+     },
+     "load_seconds": 0.028
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_base_yaw\",\n            \"arguments\": {\n                \"value\": -0.03,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to adjust the `base_yaw` of `ARM ONE` (identified as `arm_01`) to `-0.03 radians`.\n\n2. **Function Catalog Review**:\n   - The function catalog includes a specific actuator command for setting the base yaw: `set_base_yaw`.\n   - This function takes two arguments: `value` and `unit`, where `value` is in radians.\n\n3. **Binding Task to Function**:\n   - The task specifies adjusting the `base_yaw` to `-0.03 radians`.\n   - The corresponding function from the catalog is `set_base_yaw`.\n\n4. **Argument Specification**:\n   - The `value` argument for `set_base_yaw` should be set to `-0.03`, matching the task requirement.\n   - The `unit` argument should be `\"rad\"` as specified in both the task and the function definition.\n\n5. **Execution**: \n   - The JSON output includes a single call to the `set_base_yaw` function with the appropriate arguments, ensuring that the task is fully bound and executable according to the provided catalog.\n\nThis solution ensures compliance with the constraints and requirements outlined for the ACTUATOR COMMAND CONVERTER.",
+     "model": "phi4:14b",
+     "duration_seconds": 22.835,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1064,
+      "completion_tokens": 303
+     },
+     "load_seconds": 0.022
+    }
+   ]
+  }
+ ]
+}

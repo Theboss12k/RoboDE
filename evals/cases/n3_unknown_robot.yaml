@@ -1,0 +1,6 @@
+id: n3_unknown_robot
+about: There is no ARM THREE; the request must not be reassigned to another robot.
+instruction: Rotate ARM THREE base_yaw to 0.1 rad.
+expect:
+  execute: true
+  blocked: true

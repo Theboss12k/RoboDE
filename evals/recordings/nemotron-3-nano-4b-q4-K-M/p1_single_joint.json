@@ -1,0 +1,94 @@
+{
+ "case": "p1_single_joint",
+ "case_hash": "9431ae6adf8d1015",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:10:30+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended final pose of ARM ONE after setting base_yaw to 0.04 rad? Is the base_yaw the only change, or are other joints also to be modified?\",\n    \"Is the base_yaw change meant to be a one-time command or a sustained position?\",\n    \"Are there any dependencies on other robots or objects that must be resolved before this task can proceed?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set base_yaw to 0.04 rad\",\n  \"operation\": \"command\",\n  \"target\": null,\n  \"value\": 0.04,\n  \"unit\": \"rad\",\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"function_calls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 23.487,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5747,
+      "completion_tokens": 517
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended final pose of ARM ONE after setting base_yaw to 0.04 rad? Is the base_yaw the only change, or are other joints also to be modified?\",\n    \"Is the base_yaw change meant to be a one-time command or a sustained position?\",\n    \"Are there any dependencies on other robots or objects that must be resolved before this task can proceed?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set base_yaw to 0.04 rad\",\n  \"operation\": \"command\",\n  \"target\": null,\n  \"value\": 0.04,\n  \"unit\": \"rad\",\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"function_calls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 16.785,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 7072,
+      "completion_tokens": 519
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:11:11+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended final pose of ARM ONE after setting base_yaw to 0.04 rad? Is the base_yaw the only change, or are other joints also to be modified?\",\n    \"Is the base_yaw change meant to be a one-time command or a sustained position?\",\n    \"Are there any dependencies on other robots or objects that must be resolved before this task can proceed?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set base_yaw to 0.04 rad\",\n  \"operation\": \"command\",\n  \"target\": null,\n  \"value\": 0.04,\n  \"unit\": \"rad\",\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"function_calls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 23.46,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5747,
+      "completion_tokens": 517
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended final pose of ARM ONE after setting base_yaw to 0.04 rad? Is the base_yaw the only change, or are other joints also to be modified?\",\n    \"Is the base_yaw change meant to be a one-time command or a sustained position?\",\n    \"Are there any dependencies on other robots or objects that must be resolved before this task can proceed?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set base_yaw to 0.04 rad\",\n  \"operation\": \"command\",\n  \"target\": null,\n  \"value\": 0.04,\n  \"unit\": \"rad\",\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"function_calls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 16.697,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 7072,
+      "completion_tokens": 519
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:11:51+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended final pose of ARM ONE after setting base_yaw to 0.04 rad? Is the base_yaw the only change, or are other joints also to be modified?\",\n    \"Is the base_yaw change meant to be a one-time command or a sustained position?\",\n    \"Are there any dependencies on other robots or objects that must be resolved before this task can proceed?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set base_yaw to 0.04 rad\",\n  \"operation\": \"command\",\n  \"target\": null,\n  \"value\": 0.04,\n  \"unit\": \"rad\",\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"function_calls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 23.283,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5747,
+      "completion_tokens": 517
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended final pose of ARM ONE after setting base_yaw to 0.04 rad? Is the base_yaw the only change, or are other joints also to be modified?\",\n    \"Is the base_yaw change meant to be a one-time command or a sustained position?\",\n    \"Are there any dependencies on other robots or objects that must be resolved before this task can proceed?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"command\": null,\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"completion_condition\": \"\",\n  \"binding_error\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set base_yaw to 0.04 rad\",\n  \"operation\": \"command\",\n  \"target\": null,\n  \"value\": 0.04,\n  \"unit\": \"rad\",\n  \"position\": null,\n  \"orientation_rpy\": null,\n  \"position_unit\": null,\n  \"orientation_unit\": null,\n  \"frame\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Set base_yaw of ARM ONE to 0.04 rad while keeping all other joints unchanged.\",\n  \"function_calls\": [],\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"authored_by\": \"planner\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 16.719,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 7072,
+      "completion_tokens": 519
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

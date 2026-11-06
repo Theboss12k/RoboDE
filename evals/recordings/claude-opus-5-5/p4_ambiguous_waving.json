@@ -1,0 +1,23 @@
+{
+ "case": "p4_ambiguous_waving",
+ "case_hash": "724a32ec6da359a0",
+ "model": "claude-opus-5-5",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T11:17:46+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\"status\":\"needs_clarification\",\"tasks\":[],\"questions\":[\"How should ARM TWO (arm_02) wave? Which joint should move (e.g., base_yaw, wrist, or elbow), and between which joint values in rad (e.g., wrist between 0.3 rad and 1.3 rad)? Alternatively, give the tool positions [x,y,z] in metres in the world frame.\",\"How long should ARM TWO keep waving? Give either a number of wave cycles (repeat_count, 1-100) or a duration in seconds (up to 3600).\",\"What should end the waving, and what pose should ARM TWO finish in (e.g., return to its current pose: base_yaw 0.0, shoulder 1.0, elbow -1.8, wrist 0.8 rad)?\",\"Should ARM ONE (arm_01) stay still in its current pose for the whole time, with no commands sent to it? If it should first move to a specific waiting pose, give the joint values in rad.\"],\"error\":null}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 6.184,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6803,
+      "completion_tokens": 325
+     }
+    }
+   ]
+  }
+ ]
+}
