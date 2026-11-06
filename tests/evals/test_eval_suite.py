@@ -88,6 +88,37 @@ def test_a_planner_crash_is_not_counted_as_a_refusal(run):
     assert failures and failures[0].startswith('blocked: pipeline failed instead of refusing')
 
 
+def test_a_missing_joint_swapped_for_the_gripper_is_stopped(run):
+    """F8: phi4 kept telescope_joint in the task name, planned the gripper instead, and the plan ran."""
+    swap = {'id':'t','name':'Extend ARM ONE telescope_joint by 0.2 m','intent':'To extend the gripper of ARM ONE by 0.2 meters','robot_id':'arm_01'}
+    assert run('n4_unknown_actuator', planner(swap), converter(('set_gripper', {'value':.08,'unit':'m'}))) == []
+
+
+def test_a_missing_robot_reassigned_to_arm_two_is_stopped(run):
+    """F13: phi4 on Ollama 0.40.13 planned ARM THREE's request for ARM TWO, and ARM TWO moved."""
+    swap = {'id':'t','name':'Rotate ARM TWO base_yaw to 0.1 rad','intent':'Rotate the base_yaw of ARM TWO to 0.1 radians','robot_id':'arm_02'}
+    assert run('n3_unknown_robot', planner(swap), converter(('set_base_yaw', {'value':.1,'unit':'rad'}))) == []
+
+
+async def test_case_instructions_name_only_what_the_project_has(tmp_path):
+    """The unknown-name check must not refuse an ordinary case: only n3 and n4 name something missing."""
+    from services.ai_orchestrator.two_stage import unknown_references
+    from services.api.storage import Storage
+    from services.execution.controller import SimulationController
+    from evals.fixtures import make_two_arm_project
+    from evals.run import PROJECT
+    make_two_arm_project(tmp_path, PROJECT)
+    runtime = SimulationController(Storage(tmp_path))
+    try:
+        *_, cell, _ = await runtime.context(PROJECT)
+        missing = {'n3_unknown_robot':{'robots':['ARM THREE'],'identifiers':[]},'n4_unknown_actuator':{'robots':[],'identifiers':['telescope_joint']}}
+        for case in load_cases():
+            for text in [case['instruction'], *(t['name']+' '+t['intent'] for t in case.get('tasks', []))]:
+                assert unknown_references(text, cell) == missing.get(case['id'], {'robots':[],'identifiers':[]}), case['id']
+    finally:
+        await runtime.close()
+
+
 def test_unsupported_move_arguments_fail_the_converter_case(run):
     failures = run('c2_converter_cartesian', converter(('MOVE', {'target':'parallel_gripper','position':[.3,-.1,.3],'frame':'world','speed':1})))
     assert failures[0].startswith('bound: converter errors: MOVE does not accept speed')

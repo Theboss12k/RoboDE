@@ -68,3 +68,24 @@ def test_intent_edit_clears_old_calls_while_manual_call_edits_survive_and_other_
         assert client.get(f"{root}/{other['id']}").json()==other
         assert store.get_plan('apple_transfer',revision['id']).definition_version==revision['definition_version']
         assert client.get(url).json()['allowed_robot_ids']==['arm_01']
+
+
+async def test_a_plan_naming_a_missing_robot_or_joint_asks_instead_of_substituting(store):
+    from services.ai_orchestrator.two_stage import bind_tasks
+    runtime=SimulationController(store)
+    try:
+        *_,cell,_=await runtime.context('apple_transfer');states=await runtime.states(cell)
+        substitute=TaskDefinition(id='t',name='Open',intent='Open the gripper',operation='command',robot_id='arm_01',binding_status='unresolved')
+        ready=json.dumps({'status':'ready','tasks':[substitute.model_dump()]})
+        for goal,missing in (('Extend telescope_joint by 0.2 m','telescope_joint'),('Rotate Atlas / Arm 02 base_yaw to 0.1 rad','Atlas / Arm 02')):
+            definition=PlanDefinition(id='p',project_id='apple_transfer',name='p',goal=goal)
+            proposal=await decompose(AnswerRegistry(store.runtime/'llm',[ready]),definition,cell,states,'snapshot')
+            assert proposal.status=='needs_clarification' and not proposal.tasks and missing in proposal.questions[0]
+            # The user's answer to that question lets the planner continue.
+            answered=await decompose(AnswerRegistry(store.runtime/'llm',[ready]),definition,cell,states,'snapshot',{proposal.questions[0]:'I meant the gripper'})
+            assert answered.status=='ready'
+        # A task written by hand is checked before any converter call.
+        definition=PlanDefinition(id='p',project_id='apple_transfer',name='p',goal='Extend',tasks=[substitute.model_copy(update={'name':'Extend telescope_joint','authored_by':'user'})])
+        errors=await bind_tasks(AnswerRegistry(store.runtime/'llm',[]),definition,cell,cell.objects)
+        assert 'telescope_joint' in errors[0]['error'] and definition.tasks[0].binding_status=='unresolved'
+    finally:await runtime.close()

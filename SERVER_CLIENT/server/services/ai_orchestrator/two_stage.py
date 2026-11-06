@@ -2,6 +2,7 @@
 import base64
 from datetime import datetime, timezone
 import json
+import re
 from pydantic import Field
 from typing import Literal
 from shared.models.domain import Contract, InferenceEvidence, TaskDefinition
@@ -88,6 +89,47 @@ def normalize_call(call,model):
     tools=effectors(model)
     if entry['kind'] in {'grasp','release'} and (len(tools)>1 and not a.get('end_effector') or a.get('end_effector') and a['end_effector'] not in tools):raise ValueError('Choose the exact end effector for this object task')
     return {'kind':entry['kind'],**a,**({'end_effector':a.get('end_effector') or next(iter(tools))} if entry['kind'] in {'grasp','release'} else {})}
+
+
+IDENTIFIER=re.compile(r'\b[A-Za-z][A-Za-z0-9]*(?:_[A-Za-z0-9]+)+\b')
+
+
+def project_names(cell):
+    """Every ID and name the project defines (robots, joints, links, frames, functions, objects), plus task field names."""
+    names=set(TaskDefinition.model_fields)
+    def walk(value):
+        if isinstance(value,dict):
+            for key,item in value.items():names.add(str(key));walk(item)
+        elif isinstance(value,(list,tuple)):
+            for item in value:walk(item)
+        elif isinstance(value,str):names.add(value)
+    walk([cell.instances,cell.models,[catalog(m) for m in cell.models.values()],[o.model_dump(mode='json') for o in cell.objects]])
+    return {n.lower() for n in names}
+
+
+def unknown_references(text,cell,answered=''):
+    """Robot names and snake_case identifiers in `text` that the project does not have.
+
+    Models replace a missing target with one that exists (the gripper for a missing joint, ARM TWO for ARM THREE),
+    so a request naming one must not become motion. A robot name counts when it repeats the start of an existing
+    name with a different last word in the same style, e.g. ARM THREE beside ARM ONE or Arm 3 beside Arm 1. Names the
+    user already answered a question about (`answered`) are skipped. Prose such as "the telescope" is not detected."""
+    robots={i['instance']['name'] for i in cell.instances.values()}
+    families={n.rsplit(' ',1)[0] for n in robots if ' ' in n and (n.rsplit(' ',1)[1].isupper() or n.rsplit(' ',1)[1].isdigit())}
+    found={'robots':[],'identifiers':[]}
+    for family in families:
+        for match in re.finditer(r'\b'+re.escape(family)+r' (?:[A-Z]{2,}|[0-9]+)\b',text):
+            if match[0] not in robots and match[0] not in found['robots']:found['robots'].append(match[0])
+    known=project_names(cell)
+    for name in IDENTIFIER.findall(text):
+        if name.lower() not in known and name not in found['identifiers']:found['identifiers'].append(name)
+    return {kind:[n for n in names if n.lower() not in answered.lower()] for kind,names in found.items()}
+
+
+def unknown_questions(found,cell):
+    robots=', '.join(sorted(i['instance']['name'] for i in cell.instances.values()))
+    return [*(f'This project has no robot named {n}. Its robots are {robots}. Which robot did you mean?' for n in found['robots']),
+        *(f'No robot in this project has a joint, component, function or object named {n}. Which did you mean?' for n in found['identifiers'])]
 
 
 UNIT_ALIASES={'radian':'rad','radians':'rad','degree':'deg','degrees':'deg','meter':'m','meters':'m','metre':'m','metres':'m',
@@ -242,6 +284,10 @@ async def decompose(registry,definition,cell,states,snapshot_id,clarifications=N
             payload.update(previous_response=answer['answer'][:8000],validation_error=str(error)[:2000])
     if proposed.status=='needs_clarification' and not proposed.questions:raise ValueError('Planner did not provide clarification questions')
     if proposed.status=='unsupported' and not proposed.error:raise ValueError('Planner did not explain the unsupported request')
+    found=unknown_references(definition.goal,cell,json.dumps(clarifications or {}))
+    if proposed.status=='ready' and any(found.values()):
+        # Checked after the model answers, so its substitution stays visible in the evidence and in evals; nothing runs.
+        return Proposal(status='needs_clarification',questions=unknown_questions(found,cell)[:12])
     if proposed.status=='ready':
         if not proposed.tasks:raise ValueError('Planner returned no tasks')
         for t in proposed.tasks:
@@ -268,6 +314,9 @@ async def bind_tasks(registry,definition,cell,objects,adapter_id=None):
             if task.authored_by=='user' and task.function_calls:
                 calls=task.function_calls
             else:
+                # A task naming a robot or identifier the project lacks would be bound to whatever is closest.
+                found=unknown_references(f'{task.name} {task.intent or ""}',cell)
+                if any(found.values()):raise ValueError('Task names '+', '.join(found['robots']+found['identifiers'])+', which this project does not have; edit the task')
                 request={'task':task.model_dump(exclude={'llm_system_prompt'}),'functions':catalog(model),'objects':[o.model_dump(mode='json') for o in objects]}
                 convert=registry.adapter(binder_choice(registry,definition,task,adapter_id)[0],json_object=True)
                 response=await convert(

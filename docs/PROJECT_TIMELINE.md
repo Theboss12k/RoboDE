@@ -584,3 +584,21 @@ acceptance or physical hardware check was performed. No commit or push was made.
   - Pass rates over three runs describe this configuration, not general reliability.
   - Results differ between Ollama runtimes for the same weights, so compare models only on the same runtime.
   - No planner or converter fix is part of this change.
+
+## 6 November 2026 — Planner and Converter refuse unknown robots and identifiers
+
+- **Affects:** the shared Python planning runtime, so every edition that plans with an LLM. The prompts are unchanged.
+- **Fixes:** the two unsafe failures from the [6 November eval report](EVAL_RESULTS_20261106.md#fix-for-f8-and-f13-unknown-names):
+  - F8: a missing joint replaced by the gripper
+  - F13: a missing robot replaced by ARM TWO
+- **Behavior:**
+  - **Planner:** an instruction that names a robot or snake_case identifier the project doesn't have now gets a question back instead of tasks, even when the model returns a ready plan. Answering the question lets planning continue.
+  - **Converter:** a task naming one is refused before any model call.
+  - **Not detected:** prose names.
+- **Checks:**
+  - Repository tests: 390 passed, 4 skipped, including four new tests.
+  - Replay of all committed recordings passes its baselines. phi4's baseline was regraded for `n4` (0% → 100%).
+  - Live phi4:14b on Ollama 0.40.13, mock simulation: `n3` and `n4` passed 6 of 6 runs. The model still substituted on 5 of those runs, and the check stopped each one.
+- **Limits:**
+  - Mock simulation only. No Isaac physics, GPU worker or hardware.
+  - Nemotron Mini and Nano still fail these cases, at the planner schema.

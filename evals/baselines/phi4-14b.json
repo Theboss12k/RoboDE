@@ -21,7 +21,7 @@
    "runs": 3
   },
   "n4_unknown_actuator": {
-   "pass_rate": 0.0,
+   "pass_rate": 1.0,
    "runs": 3
   },
   "n5_repeat_count": {
@@ -79,5 +79,5 @@
   "size_bytes": 9053116391
  },
  "model": "phi4:14b",
- "updated_at": "2026-11-05T22:48:23+00:00"
+ "updated_at": "2026-11-06T06:18:01+00:00"
 }
