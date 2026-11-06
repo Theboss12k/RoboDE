@@ -602,3 +602,61 @@ acceptance or physical hardware check was performed. No commit or push was made.
 - **Limits:**
   - Mock simulation only. No Isaac physics, GPU worker or hardware.
   - Nemotron Mini and Nano still fail these cases, at the planner schema.
+
+## 6 November 2026 — Claude Opus 5.5 run through the eval suite
+
+- **Affects:** development tooling only. No application or planner changes.
+- **Added:** [`evals/claude_bridge.py`](../evals/claude_bridge.py), a loopback server that answers Ollama's chat API with the Claude Code CLI. The eval suite can now grade Claude with the same cases, graders and adapter as the local models. Each call runs with Claude Code's tools, MCP servers, settings and project context turned off.
+- **Result:** real inference with `claude-opus-5-5`, one run per case, mock simulation. It passed 13/15, with a median model call of 5.5 s. The best phi4 result was 10/15. Details are in the [eval report](EVAL_RESULTS_20261106.md#claude-opus-5-5-comparison).
+- **Its two failures are pipeline gaps:**
+  - verification tasks for joint state, which the catalog can't bind (`p3`)
+  - a pick-and-place lift with no height (`n7`)
+- **Checks:**
+  - While the CLI was signed out, the bridge made the run stop with exit 2, so nothing was graded.
+  - Recordings are saved in `evals/recordings/claude-opus-5-5`.
+- **Limits:**
+  - One run per case, with no temperature control.
+  - The CLI may add some context of its own.
+  - No Isaac physics or hardware.
+
+## 6 November 2026 — Planner instructions for verification and carry height; null planner fields accepted
+
+- **Affects:** the shared Python planning runtime, so every edition that plans with an LLM.
+- **Changed:**
+  - The planner instructions no longer ask for verification tasks that only check joint positions, and they tell the planner not to command robots the plan doesn't ask to move.
+  - Each motion task must state its numeric target.
+  - Objects are carried at the height RoboDE's pick-and-place template uses: max(object z, destination z) + 0.18 m. That value is now one shared constant, `CARRY_CLEARANCE_M`.
+  - `null` fields in planner tasks now take their defaults instead of rejecting the plan (F1).
+- **Results:** real inference, mock simulation. Details are in the [eval report](EVAL_RESULTS_20261106.md#planner-instruction-fixes).
+  - **Claude Opus 5.5:** 15/15, with one run per case.
+  - **phi4 on Ollama 0.12.3:** 11/15, up from 9/15.
+  - **phi4 regression:** `n6` fell from 67% to 0%. phi4 adds a "hold ARM ONE" task, which the converter now refuses. The baseline was updated to accept this; it is noted for review.
+- **Checks:**
+  - Repository tests: 392 passed, 4 skipped.
+  - Replay of all four models against their baselines passes.
+  - The overload watchdog didn't stop any run.
+- **Limits:**
+  - Nemotron Mini and Nano were not re-measured with the new instructions.
+  - Replay can't detect prompt changes.
+  - Mock simulation only; no Isaac physics or hardware.
+
+## 6 November 2026 — Tool reach given to the Planner and Converter LLMs; installers rebuilt
+
+- **Affects:** the shared Python planning runtime. The browser IDE, Electron desktop, NVIDIA edition and Business App all use this one backend; the Business App reaches it through its gateway.
+- **Problem:** in the user's four-arm `apple_transfer` project, Claude Opus 5.5 planned a "mimed" handover between Atlas / Arm 2 and Atlas / Arm 3. Their shoulders are 1.39 m apart and each arm reaches 0.6 m. Motion planning then failed with "outside the demo arm workspace". The planner had been told each arm's base pose but not its reach.
+- **Change:** a new `tool_reach` function in `services/planning/kinematics.py` gives, per tool, a world-frame centre, `max_m` and `min_m`.
+  - **Demo arm:** the shoulder, 0.04 to 0.6 m, the same limit as inverse kinematics.
+  - **Serial chain:** an upper bound from the joint offsets and prismatic travel.
+  - **Mobile robots:** no reach.
+
+  The planner gets it for every robot and must return `unsupported` for targets out of range. The converter gets it for its robot and must refuse an out-of-range MOVE. Motion planning is unchanged and stays authoritative.
+- **Result:** the same instruction, "Atlast 2 should pick up the apple and lift it and then pass it to atlas 3", was rerun with Claude Opus 5.5 through the running app as a new plan named "Reach check (Claude)". It returned `unsupported`. The apple is 1.43 m from Arm 2, the arms are 1.39 m apart against a combined 1.2 m reach, and nothing was substituted. Mock simulation; no physical robot.
+- **Checks:**
+  - Repository tests: 395 passed, 4 skipped.
+  - New tests show that the demo-arm reach matches the inverse-kinematics limit 0.01 m either side, and that the serial-chain bound covers 300 random joint samples of the two-tool example.
+  - Another new test shows both LLMs receive the reach.
+- **Installers:** all 0.4.0 packages in `dist/releases/0.4.0-installers` (excluded from Git) were rebuilt with today's planner changes. That covers Desktop for macOS arm64 and x64 (ZIP and DMG), Linux and Windows; Server for Linux and Windows; and Business. Each Desktop and Server package carries the reach, unknown-name, null-field and carry-height changes, and every checksum verified. The 30 October packages were kept outside the repository as a backup. The installers were built but not installed or run on another machine.
+- **Limits:**
+  - Reach is a distance shell. Joint limits, the table and obstacles can still make a target inside it unreachable.
+  - The existing GCP deployment was not updated.
+

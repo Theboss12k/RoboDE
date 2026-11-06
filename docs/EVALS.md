@@ -17,6 +17,7 @@ npm run eval -- --model phi4:14b --update-baseline     # accept this run as the 
 - **Selected cases:** `--cases p1_single_joint,n2_joint_limit`.
 - **Another Ollama, such as a tunnel to a GPU VM:** `--ollama-url`.
 - **Live and record runs:** each case runs `--repeat` times (default 3).
+- **Claude, through the Claude Code CLI:** start `python -m evals.claude_bridge --claude <path to claude>`, then pass `--ollama-url http://127.0.0.1:11436 --model claude-opus-5-5`. The bridge runs each call with Claude Code's tools, settings and project context turned off. It uses the CLI's own login and has no temperature setting. A CLI error, such as not being signed in, stops the run with exit 2.
 
 Each run writes `results.json` and `summary.md` to `artifacts/evals/<timestamp>/`, or to `--output`. The summary shows:
 - cases passed on every run
@@ -78,7 +79,7 @@ To add a case:
 2. Run it live with `--record`.
 3. Commit the case and its recording.
 
-A recording is tied to the case's instruction and tasks. Changing either makes the replay stop with "stale" instead of grading old answers.
+A recording is tied to the case's instruction and tasks. Changing either makes the replay stop with "stale" instead of grading old answers. A recording isn't tied to the planner or converter prompts. After a prompt change, replay still grades the old answers, so measure the change with a live run.
 
 ## Recordings and baselines
 

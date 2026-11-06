@@ -89,3 +89,47 @@ async def test_a_plan_naming_a_missing_robot_or_joint_asks_instead_of_substituti
         errors=await bind_tasks(AnswerRegistry(store.runtime/'llm',[]),definition,cell,cell.objects)
         assert 'telescope_joint' in errors[0]['error'] and definition.tasks[0].binding_status=='unresolved'
     finally:await runtime.close()
+
+
+async def test_the_planner_is_told_the_template_carry_height_and_not_to_verify_joints(store):
+    from services.planning.planner import CARRY_CLEARANCE_M
+    runtime=SimulationController(store)
+    try:
+        *_,cell,_=await runtime.context('apple_transfer');states=await runtime.states(cell)
+        registry=AnswerRegistry(store.runtime/'llm',[json.dumps({'status':'unsupported','error':'Not needed for this check'})])
+        await decompose(registry,PlanDefinition(id='p',project_id='apple_transfer',name='p',goal='Put the apple in the basket'),cell,states,'snapshot')
+        system=registry.calls[0][2]
+        # The LLM planner and the pick-and-place template must carry objects at the same height.
+        assert f'+ {CARRY_CLEARANCE_M} m' in system and 'never add tasks that only check, verify or hold joint positions' in system
+    finally:await runtime.close()
+
+
+async def test_null_optional_task_fields_take_their_defaults(store):
+    """F1: phi4 wrote "placement": null on a joint task, and the whole plan was rejected."""
+    runtime=SimulationController(store)
+    try:
+        *_,cell,_=await runtime.context('apple_transfer');states=await runtime.states(cell)
+        task={'id':'yaw','name':'Set yaw','intent':'Set base_yaw to 0.04 rad','robot_id':'arm_01','operation':'command',
+              'placement':None,'llm_input':None,'duration_seconds':None,'object_id':None}
+        registry=AnswerRegistry(store.runtime/'llm',[json.dumps({'status':'ready','tasks':[task]})])
+        proposal=await decompose(registry,PlanDefinition(id='p',project_id='apple_transfer',name='p',goal='Set base_yaw to 0.04 rad'),cell,states,'snapshot')
+        assert proposal.status=='ready' and proposal.tasks[0].placement=='inside' and proposal.tasks[0].duration_seconds is None
+        assert len(registry.calls)==1, 'no formatting repair was needed'
+    finally:await runtime.close()
+
+
+async def test_planner_and_converter_are_given_each_tool_reach(store):
+    from services.ai_orchestrator.two_stage import bind_tasks
+    runtime=SimulationController(store)
+    try:
+        *_,cell,_=await runtime.context('apple_transfer');states=await runtime.states(cell)
+        task=TaskDefinition(id='t',name='Reach',intent='Move the gripper to [0.3, 0, 0.3] m in the world frame',operation='command',robot_id='arm_01',binding_status='unresolved')
+        registry=AnswerRegistry(store.runtime/'llm',[json.dumps({'status':'ready','tasks':[task.model_dump()]}),json.dumps({'error':'not needed'})])
+        definition=PlanDefinition(id='p',project_id='apple_transfer',name='p',goal='Reach a point')
+        definition.tasks=(await decompose(registry,definition,cell,states,'snapshot')).tasks
+        await bind_tasks(registry,definition,cell,cell.objects)
+        planner,converter=(json.loads(call[1]) for call in registry.calls)
+        assert planner['robots'][0]['reach']['parallel_gripper']['max_m']==.6
+        assert converter['reach']==planner['robots'][0]['reach']
+        assert 'status=unsupported naming the robot' in registry.calls[0][2] and 'within reach' in registry.calls[1][2]
+    finally:await runtime.close()

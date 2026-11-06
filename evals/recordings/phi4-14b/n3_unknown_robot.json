@@ -4,77 +4,53 @@
  "model": "phi4:14b",
  "runs": [
   {
-   "recorded_at": "2026-11-05T21:08:54+00:00",
+   "recorded_at": "2026-11-06T09:53:14+00:00",
    "calls": [
     {
      "stage": "planner",
-     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"Which robot should perform the task of rotating ARM THREE's base_yaw to 0.1 rad?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\nThe plan specifies a command for \"ARM THREE\" to rotate its `base_yaw` to 0.1 radians, but there is no robot named \"ARM THREE\" in the provided list of robots. The available robots are \"ARM ONE\" and \"ARM TWO\". Therefore, clarification is needed regarding which robot should perform this task.\n\nThe response indicates that the status is `needs_clarification`, with a question asking for clarification on which robot should be assigned to execute the command. No tasks can be generated until this ambiguity is resolved.",
+     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"The plan specifies 'Rotate ARM THREE base_yaw to 0.1 rad.' However, there is no robot named 'ARM THREE' in the provided environment. The available robots are 'ARM ONE' and 'ARM TWO'. Which robot should perform this task?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: `needs_clarification` because the plan references a robot (\"ARM THREE\") that does not exist in the given list of robots. The clarification is necessary to determine which available robot should execute the task.\n  \n- **Tasks**: No tasks are generated due to the ambiguity regarding which robot should perform the action.\n\n- **Questions**: A question is posed to clarify which robot (either \"ARM ONE\" or \"ARM TWO\") should be assigned to rotate its `base_yaw` to 0.1 rad, as per the plan's instruction.\n\n- **Error**: No error message is provided since this situation requires clarification rather than an error in execution logic.",
      "model": "phi4:14b",
-     "duration_seconds": 29.521,
+     "duration_seconds": 37.89,
      "finish_reason": null,
      "usage": {
-      "prompt_tokens": 4352,
-      "completion_tokens": 169
+      "prompt_tokens": 4475,
+      "completion_tokens": 228
      },
-     "load_seconds": 0.025
+     "load_seconds": 0.024
     }
    ]
   },
   {
-   "recorded_at": "2026-11-05T21:09:57+00:00",
+   "recorded_at": "2026-11-06T09:53:44+00:00",
    "calls": [
     {
      "stage": "planner",
-     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01_rotate_arm_three_base_yaw\",\n      \"name\": \"Rotate ARM THREE base_yaw to 0.1 rad.\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_02\",  // Assuming 'ARM TWO' corresponds to 'ARM THREE'\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.1,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate the base yaw of ARM THREE to 0.1 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: The task is uniquely identified as `task_01_rotate_arm_three_base_yaw` with a descriptive name.\n  \n- **Operation**: Set to `command`, indicating this task involves executing a command.\n\n- **Robot Assignment**: Assigned to `arm_02`, assuming it corresponds to \"ARM THREE\" based on the context provided.\n\n- **Command Details**: The command is of type `SET_ACTUATOR` targeting `base_yaw` with a value of `0.1 rad`.\n\n- **Intent and Authorship**: Clearly describes the intent of the task and specifies that it was authored by the planner.\n\n- **Binding Status**: Marked as `unresolved`, indicating dependencies or bindings need to be resolved before execution.\n\n- **No Questions or Errors**: Since all necessary information is provided, no clarification questions are needed, and there are no errors.",
+     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"The plan specifies 'Rotate ARM THREE base_yaw to 0.1 rad.' However, there is no robot named 'ARM THREE' in the provided environment. The available robots are 'ARM ONE' and 'ARM TWO'. Which robot should perform this task?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: `needs_clarification` because the plan references a robot (\"ARM THREE\") that does not exist in the given list of robots. The clarification is necessary to determine which available robot should execute the task.\n  \n- **Tasks**: No tasks are generated due to the ambiguity regarding which robot should perform the action.\n\n- **Questions**: A question is posed to clarify which robot (either \"ARM ONE\" or \"ARM TWO\") should be assigned to rotate its `base_yaw` to 0.1 rad, as per the plan's instruction.\n\n- **Error**: No error message is provided since this situation requires clarification rather than an error in execution logic.",
      "model": "phi4:14b",
-     "duration_seconds": 43.36,
+     "duration_seconds": 30.439,
      "finish_reason": null,
      "usage": {
-      "prompt_tokens": 4352,
-      "completion_tokens": 460
+      "prompt_tokens": 4475,
+      "completion_tokens": 228
      },
-     "load_seconds": 0.029
-    },
-    {
-     "stage": "planner",
-     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"Which robot corresponds to 'ARM THREE'?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: The status is set to `needs_clarification` because the plan specifies a robot named \"ARM THREE,\" but only two robots are listed: \"ARM ONE\" and \"ARM TWO.\" There is no explicit correspondence between these names, leading to ambiguity.\n\n- **Tasks**: No tasks are generated due to the lack of clarity regarding which robot should be assigned to perform the operation. Without resolving this ambiguity, task creation cannot proceed.\n\n- **Questions**: A question is posed to clarify which robot corresponds to \"ARM THREE.\" This information is necessary to assign a `robot_id` and create executable tasks.\n\n- **Error**: No error is present because the issue is one of clarification rather than an incorrect or unsupported operation.",
-     "model": "phi4:14b",
-     "duration_seconds": 19.241,
-     "finish_reason": null,
-     "usage": {
-      "prompt_tokens": 4906,
-      "completion_tokens": 197
-     },
-     "load_seconds": 0.022
+     "load_seconds": 0.026
     }
    ]
   },
   {
-   "recorded_at": "2026-11-05T21:11:04+00:00",
+   "recorded_at": "2026-11-06T09:54:16+00:00",
    "calls": [
     {
      "stage": "planner",
-     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_01_rotate_arm_three_base_yaw\",\n      \"name\": \"Rotate ARM THREE base_yaw to 0.1 rad.\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_02\",  // Assuming 'ARM TWO' corresponds to 'ARM THREE'\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"base_yaw\",\n        \"value\": 0.1,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Rotate the base yaw of ARM THREE to 0.1 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: The task is uniquely identified as `task_01_rotate_arm_three_base_yaw` with a descriptive name.\n  \n- **Operation**: Set to `command`, indicating this task involves executing a command.\n\n- **Robot Assignment**: Assigned to `arm_02`, assuming it corresponds to \"ARM THREE\" based on the context provided.\n\n- **Command Details**: The command is of type `SET_ACTUATOR` targeting `base_yaw` with a value of `0.1 rad`.\n\n- **Intent and Authorship**: Clearly describes the intent of the task and specifies that it was authored by the planner.\n\n- **Binding Status**: Marked as `unresolved`, indicating dependencies or bindings need to be resolved before execution.\n\n- **No Questions or Errors**: Since all necessary information is provided, no clarification questions are needed, and there are no errors.",
+     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"The plan specifies 'Rotate ARM THREE base_yaw to 0.1 rad.' However, there is no robot named 'ARM THREE' in the provided environment. The available robots are 'ARM ONE' and 'ARM TWO'. Which robot should perform this task?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: `needs_clarification` because the plan references a robot (\"ARM THREE\") that does not exist in the given list of robots. The clarification is necessary to determine which available robot should execute the task.\n  \n- **Tasks**: No tasks are generated due to the ambiguity regarding which robot should perform the action.\n\n- **Questions**: A question is posed to clarify which robot (either \"ARM ONE\" or \"ARM TWO\") should be assigned to rotate its `base_yaw` to 0.1 rad, as per the plan's instruction.\n\n- **Error**: No error message is provided since this situation requires clarification rather than an error in execution logic.",
      "model": "phi4:14b",
-     "duration_seconds": 45.751,
+     "duration_seconds": 30.674,
      "finish_reason": null,
      "usage": {
-      "prompt_tokens": 4352,
-      "completion_tokens": 460
+      "prompt_tokens": 4475,
+      "completion_tokens": 228
      },
-     "load_seconds": 0.022
-    },
-    {
-     "stage": "planner",
-     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"Which robot corresponds to 'ARM THREE'?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: The status is set to `needs_clarification` because the plan specifies a robot named \"ARM THREE,\" but only two robots are listed: \"ARM ONE\" and \"ARM TWO.\" There is no explicit correspondence between these names, leading to ambiguity.\n\n- **Tasks**: No tasks are generated due to the lack of clarity regarding which robot should be assigned to perform the operation. Without resolving this ambiguity, task creation cannot proceed.\n\n- **Questions**: A question is posed to clarify which robot corresponds to \"ARM THREE.\" This information is necessary to assign a `robot_id` and create executable tasks.\n\n- **Error**: No error is present because the issue is one of clarification rather than an incorrect or unsupported operation.",
-     "model": "phi4:14b",
-     "duration_seconds": 20.195,
-     "finish_reason": null,
-     "usage": {
-      "prompt_tokens": 4906,
-      "completion_tokens": 197
-     },
-     "load_seconds": 0.034
+     "load_seconds": 0.028
     }
    ]
   }

@@ -62,7 +62,7 @@ Each entry says what happened, how it was found, what it affected and its status
 
 | # | Failure | Kind | Status |
 | --- | --- | --- | --- |
-| F1 | phi4 planner output rejected: `"placement": null` | Model / schema | **Open:** reported, not fixed in this change |
+| F1 | phi4 planner output rejected: `"placement": null` | Model / schema | **Fixed** in the pipeline, with a test; confirmed live |
 | F2 | Ollama stopped during the first local run | Test environment | Run discarded and repeated |
 | F3 | Refusal cases passed while the model was down | Eval suite bug | **Fixed**, with a test |
 | F4 | A stale recording was graded as an ordinary failure | Eval suite bug | **Fixed**, with a test |
@@ -92,6 +92,7 @@ Each entry says what happened, how it was found, what it affected and its status
   - request Ollama's JSON-schema output mode
 
   The suite will show whether any of these works: rerun `p1`–`p6` and compare against the baseline.
+- **Fix (6 Nov, later the same day):** the first option. See [Planner instruction fixes](#planner-instruction-fixes).
 
 ### F2 — Ollama stopped during the first local run
 
@@ -278,4 +279,84 @@ Added later on 6 November, after the runs above. The results tables above are un
   | `n4_unknown_actuator` | `ready` on all 3 runs, with the same gripper substitution as F8 | The check asked about `telescope_joint` on all 3 runs. Nothing moved. |
 
   These answers weren't recorded. The watchdog ran for this run and never had to stop it: memory pressure reached the warning level on one check, swap stayed at 5.7 GB, and there were no thermal warnings.
+
+## Claude Opus 5.5 comparison
+
+Added later on 6 November, to test whether the model is the main limit. Real inference with `claude-opus-5-5` through the Claude Code CLI 2.1.309, on a Pro plan, with the CLI's default effort. Calls went through [`evals/claude_bridge.py`](../evals/claude_bridge.py), which answers Ollama's chat API, so the cases, graders and adapter are the same as for the local models.
+
+- **Isolation:** RoboDE's planner and converter prompts replaced Claude Code's own. Tools, MCP servers, settings and session history were off, and each call ran in an empty folder.
+- **Differences from the Ollama runs:**
+  - one run per case, not three
+  - no temperature setting
+  - the CLI may add a little context of its own
+  - the unknown-name check from the fix above was active
+- **Simulation:** mock simulation only.
+
+| Model | Runs per case | Cases passed | Run pass rate | Median model call |
+| --- | ---: | ---: | ---: | ---: |
+| Claude Opus 5.5 | 1 | 13/15 | 87% | 5.5 s |
+| phi4 on Ollama 0.40.13 | 3 | 10/15 on every run | 69% | about 35 s |
+| phi4 on Ollama 0.12.3 | 3 | 8/15 on every run | 58% | 34.9 s |
+
+**Passed:**
+- Every case phi4 failed except `n7`: the degrees conversion (`n1`), the joint limit (`n2`), the ambiguous waving request (`p4`), the planner's Cartesian move (`p6`), and leaving ARM ONE alone (`n6`).
+- **Unknown names:** Claude asked about ARM THREE (`n3`) and declared `telescope_joint` unsupported (`n4`) in its own answers. The unknown-name check didn't need to act.
+- **Formatting:** no planner formatting repair was needed.
+
+**Failed:**
+- **`p3_two_robots`:** the planner added a "verify base_yaw" task for each arm. The converter refused them, because the catalog has no function that reads joint state. `VERIFY` only checks an object against a destination. The same happened on `p1` in a one-case smoke test just before this run; `p1` passed in the full run. The planner prompt asks for verification tasks "when available", so this is a mismatch between the prompt and the catalog, not a model mistake.
+- **`n7_pick_and_place`:** the planner produced the full sequence: open, approach, descend, grasp, verify, lift, move, lower, release, retreat, verify. 10 of its 11 tasks bound. The converter refused "Lift apple" because it gave no height and the converter won't invent one. RoboDE has no default clearance height to supply.
+
+**Conclusion:** with this pipeline, the model was the main limit. Opus 5.5 passed the cases where phi4 and the Nemotron models failed on output format, judgement or substitution. Its two failures come from the pipeline:
+- the planner prompt asks for verification tasks that the catalog can't bind
+- pick and place needs a lift height that nothing supplies
+
+This is one run per case. Repeats would show how consistent it is.
+
+## Planner instruction fixes
+
+Added later on 6 November, to fix the two pipeline gaps found in the Claude comparison, and F1. The results tables above describe the pipeline before these changes.
+
+- **Changes** ([`two_stage.py`](../SERVER_CLIENT/server/services/ai_orchestrator/two_stage.py)):
+  - **Verification:** the planner instructions said "Include explicit grasp/release/verification tasks when available". They now say:
+    - `VERIFY` checks an object against its destination.
+    - Execution feedback already confirms joint and tool motion.
+    - Never add tasks that only check, verify or hold joint positions.
+    - Never command a robot the plan doesn't ask to move.
+  - **Numeric targets:** each motion task must state its numeric target.
+  - **Carry height:** objects are carried at max(object z, destination z) + 0.18 m. This is the height RoboDE's own pick-and-place template uses. The value is now one constant, `CARRY_CLEARANCE_M` in `services/planning/planner.py`, shared by the template, the deterministic planner and the LLM planner's instructions.
+  - **F1:** `null` fields in planner tasks are dropped before validation, so their defaults apply. A null optional field means the same as an omitted one.
+- **Tests:**
+  - One test checks the planner instructions carry the shared height and the verification rule.
+  - One test checks that null fields take their defaults without a formatting repair.
+  - Repository tests: 392 passed, 4 skipped.
+- **Live results:** real inference, mock simulation. The instruction change came first: phi4 on 0.12.3 then wrote `placement: null` on every run of `p1` and `n2`. That showed F1 was the bigger problem, and the null fix was added. phi4's `p1`, `n2` and `n4` were rerun after it. The other phi4 cases and all of Claude's cases come from the run before the null fix. Neither recording hit a null-field error.
+
+  | Model | Before these changes | After |
+  | --- | --- | --- |
+  | Claude Opus 5.5, 1 run per case | 13/15 | **15/15** |
+  | phi4 on Ollama 0.12.3, 3 runs per case | 9/15 (after the unknown-name fix) | **11/15**, run pass rate 73% |
+
+- **Claude:**
+  - `p3` now plans one task per arm, with no verify tasks.
+  - `n7` binds all 10 tasks and passes. It lifts and transfers at 0.26 m, which is max(0.065, 0.08) + 0.18.
+- **phi4:**
+  - **Improved:**
+    - `p6`: 0% → 100%, now that tasks state numeric targets
+    - `n2`: 0% → 100%, now that `placement: null` is accepted
+  - **Regressed:**
+    - `n6`: 67% → 0%. On all three runs phi4 still added "Maintain ARM ONE position". The converter now refuses that task instead of sending ARM ONE a hold command, so the plan isn't bound and nothing moves. Before, phi4 left the task out on two of three runs.
+
+    This is a model judgement failure. It is safe, but it fails the case. The phi4 baseline was updated to accept it, because the run as a whole improved; review it with the rest of this change.
+  - **Still failing:**
+    - `n1`: malformed JSON (F10)
+    - `p4`: no question on an ambiguous request (F9)
+    - `n7`: the converter refused a correct MOVE, and the plan used no explicit lift
+- **Baselines:**
+  - phi4 was updated from these recordings.
+  - A first Claude baseline was saved, recording the CLI version and default effort.
+  - Replay of all four models against their baselines exits 0.
+- **Not re-measured:** Nemotron Mini and Nano. Their recordings use the old instructions, and they failed at the planner schema anyway. Replay checks the pipeline code against saved answers; it doesn't detect a prompt change, so a prompt change needs a live run.
+- **Mac:** the watchdog ran for both phi4 runs and never had to stop one. Memory pressure stayed at the warning level for most of the full run. Swap peaked at 9.0 GB. No thermal warnings were recorded.
+- **Conclusion:** with these fixes, Claude passes every case. phi4 is now limited by its own output format and judgement (`n1`, `n4` on another runtime, `n6`, `p4`), not by the pipeline.
 
