@@ -65,6 +65,10 @@ def model_library_router(store,controller,controls):
     async def urdf_suggest(draft_id: str, data: SuggestRequest):
         return await importer.suggest(draft_id, data)
 
+    @router.post('/urdf/drafts/{draft_id}/autofill')
+    async def urdf_autofill(draft_id: str, data: SuggestRequest):
+        return await importer.autofill(draft_id, data)
+
     @router.post('/urdf/drafts/{draft_id}/validate')
     async def urdf_validate(draft_id: str, data: Review):
         bundle, provenance = importer.build(draft_id, data)
