@@ -10,6 +10,9 @@ from services.validation.trajectory import validate_trajectory
 from services.world_model.world import object_map
 from services.validation.registry import ROOT, read_yaml
 
+# Carrying height above the higher of object and destination; the LLM planner is given the same rule.
+CARRY_CLEARANCE_M = 0.18
+
 
 def build_plan(project_id: str, prompt: str, intent: Intent, provider: str, model: dict,
                instance: dict, objects: list[WorldObject], initial: dict, fingerprint: str) -> Plan:
@@ -31,7 +34,7 @@ def build_plan(project_id: str, prompt: str, intent: Intent, provider: str, mode
         item, target = by_id.get(intent.object_id), by_id.get(intent.target_id)
         if not item or item.kind != "object" or not target or target.kind != "region":
             raise ValueError("Task must reference a known object and a target region")
-        high = max(item.position.z, target.position.z) + 0.18
+        high = max(item.position.z, target.position.z) + CARRY_CLEARANCE_M
         add("approach", "Approach object", "move", item.position.model_copy(update={"z": high}))
         add("descend", "Align gripper", "move", item.position)
         add("grasp", "Grasp apple" if item.id == "apple" else f"Grasp {item.name}", "grasp", object_id=item.id)

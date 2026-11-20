@@ -1,0 +1,130 @@
+{
+ "case": "n2_joint_limit",
+ "case_hash": "5da129a7f79542ec",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T11:17:26+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n- **Intent**: Clearly states the intent of the task, specifying the numeric target for clarity.\n- **Binding Status and Authorship**: Set as `unresolved` and authored by `planner`.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements.",
+     "model": "phi4:14b",
+     "duration_seconds": 65.918,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4472,
+      "completion_tokens": 435
+     },
+     "load_seconds": 5.736
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_shoulder\",\n            \"arguments\": {\n                \"value\": 5,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n**Explanation:**\n\nThe task is to set the shoulder joint of ARM ONE to a position of 5 radians. The function catalog provides an actuator command `set_shoulder` specifically for this purpose, with arguments for value and unit.\n\n1. **Function Identification**: \n   - The appropriate function from the catalog is `set_shoulder`, which targets the \"shoulder\" joint.\n   \n2. **Argument Specification**:\n   - The task specifies a position of 5 radians. However, the `set_shoulder` function has constraints with a maximum value of 2.8 radians.\n\n3. **Constraint Handling**:\n   - Since 5 radians exceeds the maximum allowable value for the shoulder joint (2.8 radians), this results in an error due to constraint violation.\n\n4. **Error Reporting**:\n   - The task cannot be completed as specified because it requests a position outside the permissible range of the actuator.\n\nTherefore, the correct response should indicate that the task is impossible due to exceeding the maximum allowable joint position:\n\n```json\n{\n    \"error\": \"Requested shoulder position of 5 radians exceeds the maximum limit of 2.8 radians.\"\n}\n```",
+     "model": "phi4:14b",
+     "duration_seconds": 21.732,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1063,
+      "completion_tokens": 287
+     },
+     "load_seconds": 0.04
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"error\": \"Requested shoulder position of 5 radians exceeds the maximum limit of 2.8 radians.\"\n        }\n    ]\n}\n```\n\n**Explanation:**\n\nThe task requires setting the shoulder joint of ARM ONE to a position of 5 radians using the `set_shoulder` function from the approved actuator catalog. However, this function has defined constraints with a minimum value of -1.5 radians and a maximum value of 2.8 radians.\n\n- **Function Identification**: The appropriate function for setting the shoulder joint is `set_shoulder`, which accepts arguments for position (`value`) in radians.\n  \n- **Argument Specification**: The task specifies a target position of 5 radians, but this exceeds the allowable range defined by the actuator's constraints (maximum of 2.8 radians).\n\n- **Constraint Handling**: Since the requested position is outside the permissible range, it results in an error due to constraint violation.\n\n- **Error Reporting**: The task cannot be completed as specified because it requests a shoulder joint position that exceeds the maximum limit allowed by the actuator's design.\n\nTherefore, the response indicates that the task is impossible due to exceeding the maximum allowable joint position.",
+     "model": "phi4:14b",
+     "duration_seconds": 16.159,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1411,
+      "completion_tokens": 251
+     },
+     "load_seconds": 0.028
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T11:19:03+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n- **Intent**: Clearly states the intent of the task, specifying the numeric target for clarity.\n- **Binding Status and Authorship**: Set as `unresolved` and authored by `planner`.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements.",
+     "model": "phi4:14b",
+     "duration_seconds": 60.039,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4472,
+      "completion_tokens": 435
+     },
+     "load_seconds": 0.026
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_shoulder\",\n            \"arguments\": {\n                \"value\": 5,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n**Explanation:**\n\nThe task is to set the shoulder joint of ARM ONE to a position of 5 radians. The function catalog provides an actuator command `set_shoulder` specifically for this purpose, with arguments for value and unit.\n\n1. **Function Identification**: \n   - The appropriate function from the catalog is `set_shoulder`, which targets the \"shoulder\" joint.\n   \n2. **Argument Specification**:\n   - The task specifies a position of 5 radians. However, the `set_shoulder` function has constraints with a maximum value of 2.8 radians.\n\n3. **Constraint Handling**:\n   - Since 5 radians exceeds the maximum allowable value for the shoulder joint (2.8 radians), this results in an error due to constraint violation.\n\n4. **Error Reporting**:\n   - The task cannot be completed as specified because it requests a position outside the permissible range of the actuator.\n\nTherefore, the correct response should indicate that the task is impossible due to exceeding the maximum allowable joint position:\n\n```json\n{\n    \"error\": \"Requested shoulder position of 5 radians exceeds the maximum limit of 2.8 radians.\"\n}\n```",
+     "model": "phi4:14b",
+     "duration_seconds": 20.96,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1063,
+      "completion_tokens": 287
+     },
+     "load_seconds": 0.029
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"error\": \"Requested shoulder position of 5 radians exceeds the maximum limit of 2.8 radians.\"\n        }\n    ]\n}\n```\n\n**Explanation:**\n\nThe task requires setting the shoulder joint of ARM ONE to a position of 5 radians using the `set_shoulder` function from the approved actuator catalog. However, this function has defined constraints with a minimum value of -1.5 radians and a maximum value of 2.8 radians.\n\n- **Function Identification**: The appropriate function for setting the shoulder joint is `set_shoulder`, which accepts arguments for position (`value`) in radians.\n  \n- **Argument Specification**: The task specifies a target position of 5 radians, but this exceeds the allowable range defined by the actuator's constraints (maximum of 2.8 radians).\n\n- **Constraint Handling**: Since the requested position is outside the permissible range, it results in an error due to constraint violation.\n\n- **Error Reporting**: The task cannot be completed as specified because it requests a shoulder joint position that exceeds the maximum limit allowed by the actuator's design.\n\nTherefore, the response indicates that the task is impossible due to exceeding the maximum allowable joint position.",
+     "model": "phi4:14b",
+     "duration_seconds": 15.714,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1411,
+      "completion_tokens": 251
+     },
+     "load_seconds": 0.023
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T11:20:41+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Set Shoulder Position for ARM ONE\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": null,\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"SET_ACTUATOR\",\n        \"target\": \"shoulder\",\n        \"value\": 5.0,\n        \"unit\": \"rad\"\n      },\n      \"placement\": null,\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Set the shoulder joint of ARM ONE to a position of 5 radians.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": null,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n- **Operation**: The operation type is set to `command` as per the requirement.\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` which corresponds to ARM ONE.\n- **Command Details**: The command specifies setting the shoulder actuator of ARM ONE to 5 radians (`value: 5.0`, `unit: \"rad\"`).\n- **Intent**: Clearly states the intent of the task, specifying the numeric target for clarity.\n- **Binding Status and Authorship**: Set as `unresolved` and authored by `planner`.\n- **No Dependencies or Function Calls**: As per instructions, no dependencies or function calls are included.\n\nThis JSON structure adheres to the provided schema and requirements.",
+     "model": "phi4:14b",
+     "duration_seconds": 59.244,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4472,
+      "completion_tokens": 435
+     },
+     "load_seconds": 0.026
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"function\": \"set_shoulder\",\n            \"arguments\": {\n                \"value\": 5,\n                \"unit\": \"rad\"\n            }\n        }\n    ]\n}\n```\n\n**Explanation:**\n\nThe task is to set the shoulder joint of ARM ONE to a position of 5 radians. The function catalog provides an actuator command `set_shoulder` specifically for this purpose, with arguments for value and unit.\n\n1. **Function Identification**: \n   - The appropriate function from the catalog is `set_shoulder`, which targets the \"shoulder\" joint.\n   \n2. **Argument Specification**:\n   - The task specifies a position of 5 radians. However, the `set_shoulder` function has constraints with a maximum value of 2.8 radians.\n\n3. **Constraint Handling**:\n   - Since 5 radians exceeds the maximum allowable value for the shoulder joint (2.8 radians), this results in an error due to constraint violation.\n\n4. **Error Reporting**:\n   - The task cannot be completed as specified because it requests a position outside the permissible range of the actuator.\n\nTherefore, the correct response should indicate that the task is impossible due to exceeding the maximum allowable joint position:\n\n```json\n{\n    \"error\": \"Requested shoulder position of 5 radians exceeds the maximum limit of 2.8 radians.\"\n}\n```",
+     "model": "phi4:14b",
+     "duration_seconds": 21.497,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1063,
+      "completion_tokens": 287
+     },
+     "load_seconds": 0.027
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n    \"calls\": [\n        {\n            \"error\": \"Requested shoulder position of 5 radians exceeds the maximum limit of 2.8 radians.\"\n        }\n    ]\n}\n```\n\n**Explanation:**\n\nThe task requires setting the shoulder joint of ARM ONE to a position of 5 radians using the `set_shoulder` function from the approved actuator catalog. However, this function has defined constraints with a minimum value of -1.5 radians and a maximum value of 2.8 radians.\n\n- **Function Identification**: The appropriate function for setting the shoulder joint is `set_shoulder`, which accepts arguments for position (`value`) in radians.\n  \n- **Argument Specification**: The task specifies a target position of 5 radians, but this exceeds the allowable range defined by the actuator's constraints (maximum of 2.8 radians).\n\n- **Constraint Handling**: Since the requested position is outside the permissible range, it results in an error due to constraint violation.\n\n- **Error Reporting**: The task cannot be completed as specified because it requests a shoulder joint position that exceeds the maximum limit allowed by the actuator's design.\n\nTherefore, the response indicates that the task is impossible due to exceeding the maximum allowable joint position.",
+     "model": "phi4:14b",
+     "duration_seconds": 16.239,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1411,
+      "completion_tokens": 251
+     },
+     "load_seconds": 0.022
+    }
+   ]
+  }
+ ]
+}

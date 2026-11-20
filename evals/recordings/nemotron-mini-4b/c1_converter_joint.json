@@ -1,0 +1,58 @@
+{
+ "case": "c1_converter_joint",
+ "case_hash": "600905c10663c385",
+ "model": "nemotron-mini:4b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T21:59:11+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": " {\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      },\n      \"control_mode\": \"position\"\n    }\n  ]\n}",
+     "model": "nemotron-mini:4b",
+     "duration_seconds": 4.694,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1135,
+      "completion_tokens": 69
+     },
+     "load_seconds": 1.94
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:59:13+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": " {\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      },\n      \"control_mode\": \"position\"\n    }\n  ]\n}",
+     "model": "nemotron-mini:4b",
+     "duration_seconds": 1.362,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1135,
+      "completion_tokens": 69
+     },
+     "load_seconds": 0.037
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:59:15+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": " {\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\n        \"value\": 0.04,\n        \"unit\": \"rad\"\n      },\n      \"control_mode\": \"position\"\n    }\n  ]\n}",
+     "model": "nemotron-mini:4b",
+     "duration_seconds": 1.357,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1135,
+      "completion_tokens": 69
+     },
+     "load_seconds": 0.035
+    }
+   ]
+  }
+ ]
+}

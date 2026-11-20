@@ -1,0 +1,58 @@
+{
+ "case": "c2_converter_cartesian",
+ "case_hash": "008d4f5654c81ac4",
+ "model": "nemotron-mini:4b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T21:59:25+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": " {\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\"value\": 0.352, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_shoulder\",\n      \"arguments\": {\"value\": -1.497, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_elbow\",\n      \"arguments\": {\n        \"value\": 0.523,\n        \"unit\": \"rad\"\n      }\n    },\n    {\n      \"function\": \"set_wrist\",\n      \"arguments\": {\"value\": -1.497, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_gripper\",\n      \"arguments\": {\n        \"value\": 0.08,\n        \"unit\": \"m\"\n      }\n    },\n    {\n      \"function\": \"MOVE\",\n      \"arguments\": {\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.34, -0.16, 0.065],\n        \"frame\": \"world\"\n      }\n    },\n    {\n      \"function\": \"component_parallel_gripper\",\n      \"arguments\": {\n        \"value\": 80\n      }\n    },\n    {\n      \"function\": \"GRASP\",\n      \"arguments\": {\"object_id\": \"apple\", \"target_id\": null}\n    },\n    {\n      \"function\": \"RELEASE\",\n      \"arguments\": {\n        \"object_id\": \"apple\",\n        \"target_id\": null\n      }\n    },\n    {\n      \"function\": \"VERIFY\",\n      \"arguments\": {\"object_id\": \"apple\", \"target_id\": null}\n    }\n  ]\n}",
+     "model": "nemotron-mini:4b",
+     "duration_seconds": 9.395,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1148,
+      "completion_tokens": 432
+     },
+     "load_seconds": 0.034
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:59:34+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": " {\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\"value\": 0.352, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_shoulder\",\n      \"arguments\": {\"value\": -1.497, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_elbow\",\n      \"arguments\": {\n        \"value\": 0.523,\n        \"unit\": \"rad\"\n      }\n    },\n    {\n      \"function\": \"set_wrist\",\n      \"arguments\": {\"value\": -1.497, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_gripper\",\n      \"arguments\": {\n        \"value\": 0.08,\n        \"unit\": \"m\"\n      }\n    },\n    {\n      \"function\": \"MOVE\",\n      \"arguments\": {\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.34, -0.16, 0.065],\n        \"frame\": \"world\"\n      }\n    },\n    {\n      \"function\": \"component_parallel_gripper\",\n      \"arguments\": {\n        \"value\": 80\n      }\n    },\n    {\n      \"function\": \"GRASP\",\n      \"arguments\": {\"object_id\": \"apple\", \"target_id\": null}\n    },\n    {\n      \"function\": \"RELEASE\",\n      \"arguments\": {\n        \"object_id\": \"apple\",\n        \"target_id\": null\n      }\n    },\n    {\n      \"function\": \"VERIFY\",\n      \"arguments\": {\"object_id\": \"apple\", \"target_id\": null}\n    }\n  ]\n}",
+     "model": "nemotron-mini:4b",
+     "duration_seconds": 8.173,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1148,
+      "completion_tokens": 432
+     },
+     "load_seconds": 0.035
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T21:59:42+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "answer": " {\n  \"calls\": [\n    {\n      \"function\": \"set_base_yaw\",\n      \"arguments\": {\"value\": 0.352, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_shoulder\",\n      \"arguments\": {\"value\": -1.497, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_elbow\",\n      \"arguments\": {\n        \"value\": 0.523,\n        \"unit\": \"rad\"\n      }\n    },\n    {\n      \"function\": \"set_wrist\",\n      \"arguments\": {\"value\": -1.497, \"unit\": \"rad\"}\n    },\n    {\n      \"function\": \"set_gripper\",\n      \"arguments\": {\n        \"value\": 0.08,\n        \"unit\": \"m\"\n      }\n    },\n    {\n      \"function\": \"MOVE\",\n      \"arguments\": {\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.34, -0.16, 0.065],\n        \"frame\": \"world\"\n      }\n    },\n    {\n      \"function\": \"component_parallel_gripper\",\n      \"arguments\": {\n        \"value\": 80\n      }\n    },\n    {\n      \"function\": \"GRASP\",\n      \"arguments\": {\"object_id\": \"apple\", \"target_id\": null}\n    },\n    {\n      \"function\": \"RELEASE\",\n      \"arguments\": {\n        \"object_id\": \"apple\",\n        \"target_id\": null\n      }\n    },\n    {\n      \"function\": \"VERIFY\",\n      \"arguments\": {\"object_id\": \"apple\", \"target_id\": null}\n    }\n  ]\n}",
+     "model": "nemotron-mini:4b",
+     "duration_seconds": 8.17,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1148,
+      "completion_tokens": 432
+     },
+     "load_seconds": 0.035
+    }
+   ]
+  }
+ ]
+}

@@ -50,7 +50,14 @@ class Review(Contract):
 
 class SuggestRequest(Contract):
     adapter_id: str | None = None
-    documentation: str = Field(default='', max_length=20000)
+    documentation: str = Field(default='', max_length=60000)
+
+
+class ReviewErrors(ValueError):
+    """Every problem in a review at once, each keyed by the field it concerns (for example joints.left_wheel.initial)."""
+    def __init__(self, errors):
+        self.errors = errors
+        super().__init__('\n'.join(e['message'] for e in errors))
 
 
 class CommandSuggestion(Contract):
@@ -342,36 +349,63 @@ class URDFImports:
         atomic_json(self.folder(draft_id) / 'draft.json', draft)
         return draft
 
+    async def autofill(self, draft_id, request):
+        """Prefill the review from the URDF and, when given, the documentation; see services/imports/autofill.py."""
+        from services.imports.autofill import from_documentation
+        draft = self.read(draft_id)
+        result = await from_documentation(draft['parsed'], request.documentation, self.llm, request.adapter_id)
+        # Propose an ID no saved robot uses, so the first save doesn't fail on a clash.
+        base, n = result['review']['id'], 2
+        while self.store.model_folder(result['review']['id']).exists():
+            result['review']['id'] = f'{base[:76]}_{n}'; n += 1
+        draft['autofill'] = result
+        draft['documentation_sha256'] = hashlib.sha256(request.documentation.encode()).hexdigest()
+        atomic_json(self.folder(draft_id) / 'draft.json', draft)
+        return result
+
     def build(self, draft_id, review):
         draft = self.read(draft_id)
         p = draft['parsed']
         unsupported=[reason for reason in p['unsupported'] if not (review.review_coupling and 'mimic coupling' in reason)]
         if unsupported:
             raise ValueError('Unsupported URDF: ' + '; '.join(unsupported))
+        # Collect every problem, so the reviewer can fix them all in one pass.
+        errors = []
+        def fail(field, message):
+            errors.append({'field': field, 'message': message})
         if review.tool_link not in p['links']:
-            raise ValueError('Select an end-effector link from the URDF')
+            fail('tool_link', 'Select an end-effector link from the URDF')
         if not re.fullmatch(r'[a-z][a-z0-9_]*', review.id):
-            raise ValueError('Global robot ID must start with a lowercase letter and contain lowercase letters, digits or underscores')
+            fail('id', 'Global robot ID must start with a lowercase letter and contain lowercase letters, digits or underscores')
+        elif self.store.model_folder(review.id).exists():
+            fail('id', 'A saved robot already uses this ID; choose another')
         moving = [j for j in p['joints'] if j['type'] != 'fixed']
         if set(review.joints) != {j['name'] for j in moving}:
-            raise ValueError('Configure every moving URDF joint exactly once')
+            raise ReviewErrors([{'field': 'joints', 'message': 'Configure every moving URDF joint exactly once'}])
         actuators, positions, units, fields = {}, {}, {}, {}
         for joint in moving:
             jid = joint['name']; settings = review.joints[jid]
-            values = {}
+            values, complete = {}, True
             for key in ('min','max','velocity','acceleration'):
                 source, entered = joint[key], getattr(settings, key)
                 if source is not None and entered is not None and source != entered:
-                    raise ValueError(f'{jid} {key}: extracted URDF values cannot be changed during conversion')
+                    fail(f'joints.{jid}.{key}', f'{jid} {key}: extracted URDF values cannot be changed during conversion')
                 value = source if source is not None else entered
                 if value is None or not math.isfinite(value):
-                    raise ValueError(f'{jid}: {key} needs configuration')
+                    fail(f'joints.{jid}.{key}', f'{jid}: {key} needs configuration'); complete = False; continue
                 values[key] = value
                 fields[f'actuators.{jid}.{key}'] = 'urdf' if source is not None else 'user'
-            if values['min'] >= values['max'] or values['velocity'] <= 0 or values['acceleration'] <= 0:
-                raise ValueError(f'{jid}: invalid joint limits or rates')
+            if not complete:
+                continue
+            if values['min'] >= values['max']:
+                fail(f'joints.{jid}.max', f'{jid}: the maximum must be greater than the minimum'); continue
+            for key in ('velocity', 'acceleration'):
+                if values[key] <= 0:
+                    fail(f'joints.{jid}.{key}', f'{jid}: {key} must be positive')
             if settings.initial is None or not math.isfinite(settings.initial) or not values['min'] <= settings.initial <= values['max']:
-                raise ValueError(f'{jid}: configure an initial position inside its limits')
+                fail(f'joints.{jid}.initial', f'{jid}: configure an initial position inside its limits ({values["min"]:g} to {values["max"]:g})')
+            if any(e['field'].startswith(f'joints.{jid}.') for e in errors):
+                continue
             unit = 'm' if joint['type'] == 'prismatic' else 'rad'
             actuators[jid] = {**values, 'type': 'prismatic' if unit == 'm' else 'revolute', 'unit': unit}
             positions[jid], units[jid] = settings.initial, unit
@@ -389,16 +423,19 @@ class URDFImports:
             kinematic_joints.append(item)
         components = {}
         if review.gripper_actuator:
-            if review.gripper_actuator not in actuators:
-                raise ValueError('Choose a configured gripper actuator')
-            spec = actuators[review.gripper_actuator]
-            if any(v is None or not math.isfinite(v) or not spec['min'] <= v <= spec['max'] for v in (review.gripper_closed, review.gripper_open)) or review.gripper_closed == review.gripper_open:
-                raise ValueError('Gripper closed/open values must be distinct and inside its actuator limits')
-            components['gripper'] = {'actuator':review.gripper_actuator, 'closed':review.gripper_closed, 'open':review.gripper_open}
+            spec = actuators.get(review.gripper_actuator)
+            if review.gripper_actuator not in review.joints:
+                fail('gripper', 'Choose a configured gripper actuator')
+            elif spec and (any(v is None or not math.isfinite(v) or not spec['min'] <= v <= spec['max'] for v in (review.gripper_closed, review.gripper_open)) or review.gripper_closed == review.gripper_open):
+                fail('gripper', 'Gripper closed/open values must be distinct and inside its actuator limits')
+            elif spec:
+                components['gripper'] = {'actuator':review.gripper_actuator, 'closed':review.gripper_closed, 'open':review.gripper_open}
         if review.payload_kg is not None and not math.isfinite(review.payload_kg):
-            raise ValueError('Payload must be finite')
+            fail('payload_kg', 'Payload must be finite')
         if not review.name.strip():
-            raise ValueError('Robot name cannot be blank')
+            fail('name', 'Robot name cannot be blank')
+        if errors:
+            raise ReviewErrors(errors)
         bundle = {
             'robot': {'id':review.id, 'name':review.name.strip(), 'manufacturer':review.manufacturer.strip(),
                       'family':'URDF import', 'type':'articulated', 'version':'1.0.0', 'description':review.description.strip()},

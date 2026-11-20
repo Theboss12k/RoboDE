@@ -1,0 +1,23 @@
+{
+ "case": "n4_unknown_actuator",
+ "case_hash": "5d0506fef14b1b88",
+ "model": "claude-opus-5-5",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T09:42:40+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\"status\": \"unsupported\", \"tasks\": [], \"questions\": [], \"error\": \"ARM ONE (arm_01) has no actuator named telescope_joint. Its actuators are base_yaw, shoulder, elbow, wrist (revolute, rad) and gripper (prismatic, 0.0-0.08 m). It has no telescoping or extending link, and the only prismatic joint is the gripper, which has a maximum travel of 0.08 m. That is less than the requested 0.2 m. Extending a telescope_joint by 0.2 m is therefore not a supported capability. If you meant to move the tool 0.2 m in a particular direction, give the target tool position [x,y,z] in metres in the world frame, or give target joint values for the existing actuators.\"}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 5.621,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6807,
+      "completion_tokens": 251
+     }
+    }
+   ]
+  }
+ ]
+}

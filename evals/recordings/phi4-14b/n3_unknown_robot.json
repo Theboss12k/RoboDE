@@ -1,0 +1,58 @@
+{
+ "case": "n3_unknown_robot",
+ "case_hash": "49653fe91f55511c",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T09:53:14+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"The plan specifies 'Rotate ARM THREE base_yaw to 0.1 rad.' However, there is no robot named 'ARM THREE' in the provided environment. The available robots are 'ARM ONE' and 'ARM TWO'. Which robot should perform this task?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: `needs_clarification` because the plan references a robot (\"ARM THREE\") that does not exist in the given list of robots. The clarification is necessary to determine which available robot should execute the task.\n  \n- **Tasks**: No tasks are generated due to the ambiguity regarding which robot should perform the action.\n\n- **Questions**: A question is posed to clarify which robot (either \"ARM ONE\" or \"ARM TWO\") should be assigned to rotate its `base_yaw` to 0.1 rad, as per the plan's instruction.\n\n- **Error**: No error message is provided since this situation requires clarification rather than an error in execution logic.",
+     "model": "phi4:14b",
+     "duration_seconds": 37.89,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4475,
+      "completion_tokens": 228
+     },
+     "load_seconds": 0.024
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T09:53:44+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"The plan specifies 'Rotate ARM THREE base_yaw to 0.1 rad.' However, there is no robot named 'ARM THREE' in the provided environment. The available robots are 'ARM ONE' and 'ARM TWO'. Which robot should perform this task?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: `needs_clarification` because the plan references a robot (\"ARM THREE\") that does not exist in the given list of robots. The clarification is necessary to determine which available robot should execute the task.\n  \n- **Tasks**: No tasks are generated due to the ambiguity regarding which robot should perform the action.\n\n- **Questions**: A question is posed to clarify which robot (either \"ARM ONE\" or \"ARM TWO\") should be assigned to rotate its `base_yaw` to 0.1 rad, as per the plan's instruction.\n\n- **Error**: No error message is provided since this situation requires clarification rather than an error in execution logic.",
+     "model": "phi4:14b",
+     "duration_seconds": 30.439,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4475,
+      "completion_tokens": 228
+     },
+     "load_seconds": 0.026
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T09:54:16+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"The plan specifies 'Rotate ARM THREE base_yaw to 0.1 rad.' However, there is no robot named 'ARM THREE' in the provided environment. The available robots are 'ARM ONE' and 'ARM TWO'. Which robot should perform this task?\"\n  ],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Status**: `needs_clarification` because the plan references a robot (\"ARM THREE\") that does not exist in the given list of robots. The clarification is necessary to determine which available robot should execute the task.\n  \n- **Tasks**: No tasks are generated due to the ambiguity regarding which robot should perform the action.\n\n- **Questions**: A question is posed to clarify which robot (either \"ARM ONE\" or \"ARM TWO\") should be assigned to rotate its `base_yaw` to 0.1 rad, as per the plan's instruction.\n\n- **Error**: No error message is provided since this situation requires clarification rather than an error in execution logic.",
+     "model": "phi4:14b",
+     "duration_seconds": 30.674,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4475,
+      "completion_tokens": 228
+     },
+     "load_seconds": 0.028
+    }
+   ]
+  }
+ ]
+}

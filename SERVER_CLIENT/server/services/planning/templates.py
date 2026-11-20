@@ -6,6 +6,7 @@ Motion stays in StandardCommand; grasp/release/verify retain explicit task seman
 import copy
 from shared.models.domain import TaskDefinition
 from services.commands.standard import effectors
+from services.planning.planner import CARRY_CLEARANCE_M
 from services.planning.workflow import ordered_assignments
 from services.validation.registry import ROOT, read_yaml, validate_positions
 
@@ -36,7 +37,7 @@ def expand_template(template_id,model,instance,objects,object_id=None,target_id=
         if model['kinematics']['solver']!='analytic_yaw_two_link_v1' or len(names)!=1:
             raise ValueError('This offline grasp template requires the supported demo contact/effector model')
         values={'end_effector':names[0],'world_frame':model['kinematics']['world_frame'],
-            'clearance_z':max(item.position.z,target.position.z)+.18,
+            'clearance_z':max(item.position.z,target.position.z)+CARRY_CLEARANCE_M,
             'grasp_name':f'Grasp {item.name.lower()}' if item.id=='apple' else f'Grasp {item.name}',
             'transfer_name':f'Transfer to {target.name.lower()}' if target.id=='basket' else f'Transfer to {target.name}',
             **{f'object_{a}':getattr(item.position,a) for a in ('x','y','z')},

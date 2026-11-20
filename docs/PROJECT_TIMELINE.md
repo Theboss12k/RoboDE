@@ -532,3 +532,198 @@ non-blocking dependency deprecations and the Monaco bundle-size warning remain.
 
 **Limits:** No fresh dependency installation, Docker build, native robotics/GPU
 acceptance or physical hardware check was performed. No commit or push was made.
+
+## 5 November 2026 — Demo page hosted on GitHub Pages
+
+- Published the RoboDE Isaac Sim demo page at https://theboss12k.github.io/RoboDE/ from a new orphan `gh-pages` branch (one commit: `index.html`, `.nojekyll` and nine short MP4 clips with poster images, about 4 MB). GitHub Pages serves the branch root over HTTPS. The `main` branch and the application code are unchanged.
+- The page shows the GCP-hosted demo in pieces (choosing the Planner/Task LLM, the Nemotron plan, connecting Isaac, the live run, the recorded result and real-time joint control) plus the earlier Nemotron evaluation results. The clips are cut from the 30 October recordings of simulated runs in native Isaac Sim on a GCP GPU VM; they are not physical hardware tests.
+- Checks: the page was scanned for keys, tunnel URLs and private data before publishing; external requests go only to Google Fonts and the GitHub repository link. On the live site the page loaded without errors or horizontal overflow, and a clip played from GitHub Pages.
+- Set the repository's website link (About section) to the Pages URL.
+
+## 6 November 2026 — Eval suite for the Planner and Converter
+
+- **Affects:** shared Python runtime and development tooling only. Unchanged: the Electron, browser and Business apps, the planner and converter prompts, and the validation logic.
+- **Added:** a versioned eval suite ([`evals/`](../evals), [guide](EVALS.md)) with 15 YAML cases:
+  - the six earlier P1–P6 scenarios
+  - two converter-only cases
+  - seven edge cases: degrees, joint limit, unknown robot, unknown actuator, repeat count, a named second robot, pick and place
+
+  Each case runs through the real API (`decompose`, `bind-commands`, `compile`) and the mock simulator. Deterministic graders check:
+  - final joint states, untouched robots and forward-kinematics tool position
+  - required and forbidden calls
+  - refusals. A pipeline error doesn't count as a refusal.
+- **Also added:**
+  - record and replay of model answers, and repeat runs
+  - a token relay for Ollama
+  - per-model baselines with a regression gate: `npm run eval -- --baseline` exits 1 when a case's pass rate falls
+  - exit 2 when Ollama stops answering or can't serve the model
+  - recordings and baselines for `phi4:14b` and `nemotron-mini:4b` on Ollama 0.12.3, and for `nemotron-3-nano:4b-q4_K_M` on Ollama 0.40.13
+- **Changed:** `scripts/local_model_evaluation_server.py` now builds its two-arm projects with the shared `evals/fixtures.py`.
+- **Results:** real local inference, mock simulation, 15 cases × 3 runs. Details are in the [6 November eval report](EVAL_RESULTS_20261106.md).
+
+  | Model | Ollama 0.12.3 | Ollama 0.40.13 |
+  | --- | --- | --- |
+  | phi4 | 8/15 cases on every run | 10/15 |
+  | Nemotron Mini | 0/15 | 1/15 |
+  | Nemotron 3 Nano | can't load | 1/15 |
+
+  No model passed every case. The report documents 15 failures:
+  - **Two unsafe phi4 failures:** a missing joint replaced by the gripper (F8), and a missing robot replaced by ARM TWO (F13). Each happened on one runtime only.
+  - **Three suite bugs, fixed with tests:**
+    - refusal cases passing during an outage (F3)
+    - refusal cases passing when the planner crashed (F6)
+    - a model Ollama couldn't load being scored (F7)
+  - **Planner output problems:** phi4 setting `placement: null` (F1), and Mini and Nano answers that don't fit the planner schema (F12, F15)
+  - **Not run:** GCP models, because there was no L4 capacity (F5)
+- **Checks:**
+  - Repository tests: 386 passed, 4 skipped. That includes 17 offline eval-suite tests.
+  - Replay of the recordings passes its baselines.
+  - A tampered recording made the gate exit 1.
+- **Limits:**
+  - Mock simulation only. No Isaac physics, GPU worker or hardware.
+  - Pass rates over three runs describe this configuration, not general reliability.
+  - Results differ between Ollama runtimes for the same weights, so compare models only on the same runtime.
+  - No planner or converter fix is part of this change.
+
+## 6 November 2026 — Planner and Converter refuse unknown robots and identifiers
+
+- **Affects:** the shared Python planning runtime, so every edition that plans with an LLM. The prompts are unchanged.
+- **Fixes:** the two unsafe failures from the [6 November eval report](EVAL_RESULTS_20261106.md#fix-for-f8-and-f13-unknown-names):
+  - F8: a missing joint replaced by the gripper
+  - F13: a missing robot replaced by ARM TWO
+- **Behavior:**
+  - **Planner:** an instruction that names a robot or snake_case identifier the project doesn't have now gets a question back instead of tasks, even when the model returns a ready plan. Answering the question lets planning continue.
+  - **Converter:** a task naming one is refused before any model call.
+  - **Not detected:** prose names.
+- **Checks:**
+  - Repository tests: 390 passed, 4 skipped, including four new tests.
+  - Replay of all committed recordings passes its baselines. phi4's baseline was regraded for `n4` (0% → 100%).
+  - Live phi4:14b on Ollama 0.40.13, mock simulation: `n3` and `n4` passed 6 of 6 runs. The model still substituted on 5 of those runs, and the check stopped each one.
+- **Limits:**
+  - Mock simulation only. No Isaac physics, GPU worker or hardware.
+  - Nemotron Mini and Nano still fail these cases, at the planner schema.
+
+## 6 November 2026 — Claude Opus 5.5 run through the eval suite
+
+- **Affects:** development tooling only. No application or planner changes.
+- **Added:** [`evals/claude_bridge.py`](../evals/claude_bridge.py), a loopback server that answers Ollama's chat API with the Claude Code CLI. The eval suite can now grade Claude with the same cases, graders and adapter as the local models. Each call runs with Claude Code's tools, MCP servers, settings and project context turned off.
+- **Result:** real inference with `claude-opus-5-5`, one run per case, mock simulation. It passed 13/15, with a median model call of 5.5 s. The best phi4 result was 10/15. Details are in the [eval report](EVAL_RESULTS_20261106.md#claude-opus-5-5-comparison).
+- **Its two failures are pipeline gaps:**
+  - verification tasks for joint state, which the catalog can't bind (`p3`)
+  - a pick-and-place lift with no height (`n7`)
+- **Checks:**
+  - While the CLI was signed out, the bridge made the run stop with exit 2, so nothing was graded.
+  - Recordings are saved in `evals/recordings/claude-opus-5-5`.
+- **Limits:**
+  - One run per case, with no temperature control.
+  - The CLI may add some context of its own.
+  - No Isaac physics or hardware.
+
+## 6 November 2026 — Planner instructions for verification and carry height; null planner fields accepted
+
+- **Affects:** the shared Python planning runtime, so every edition that plans with an LLM.
+- **Changed:**
+  - The planner instructions no longer ask for verification tasks that only check joint positions, and they tell the planner not to command robots the plan doesn't ask to move.
+  - Each motion task must state its numeric target.
+  - Objects are carried at the height RoboDE's pick-and-place template uses: max(object z, destination z) + 0.18 m. That value is now one shared constant, `CARRY_CLEARANCE_M`.
+  - `null` fields in planner tasks now take their defaults instead of rejecting the plan (F1).
+- **Results:** real inference, mock simulation. Details are in the [eval report](EVAL_RESULTS_20261106.md#planner-instruction-fixes).
+  - **Claude Opus 5.5:** 15/15, with one run per case.
+  - **phi4 on Ollama 0.12.3:** 11/15, up from 9/15.
+  - **phi4 regression:** `n6` fell from 67% to 0%. phi4 adds a "hold ARM ONE" task, which the converter now refuses. The baseline was updated to accept this; it is noted for review.
+- **Checks:**
+  - Repository tests: 392 passed, 4 skipped.
+  - Replay of all four models against their baselines passes.
+  - The overload watchdog didn't stop any run.
+- **Limits:**
+  - Nemotron Mini and Nano were not re-measured with the new instructions.
+  - Replay can't detect prompt changes.
+  - Mock simulation only; no Isaac physics or hardware.
+
+## 6 November 2026 — Tool reach given to the Planner and Converter LLMs; installers rebuilt
+
+- **Affects:** the shared Python planning runtime. The browser IDE, Electron desktop, NVIDIA edition and Business App all use this one backend; the Business App reaches it through its gateway.
+- **Problem:** in the user's four-arm `apple_transfer` project, Claude Opus 5.5 planned a "mimed" handover between Atlas / Arm 2 and Atlas / Arm 3. Their shoulders are 1.39 m apart and each arm reaches 0.6 m. Motion planning then failed with "outside the demo arm workspace". The planner had been told each arm's base pose but not its reach.
+- **Change:** a new `tool_reach` function in `services/planning/kinematics.py` gives, per tool, a world-frame centre, `max_m` and `min_m`.
+  - **Demo arm:** the shoulder, 0.04 to 0.6 m, the same limit as inverse kinematics.
+  - **Serial chain:** an upper bound from the joint offsets and prismatic travel.
+  - **Mobile robots:** no reach.
+
+  The planner gets it for every robot and must return `unsupported` for targets out of range. The converter gets it for its robot and must refuse an out-of-range MOVE. Motion planning is unchanged and stays authoritative.
+- **Result:** the same instruction, "Atlast 2 should pick up the apple and lift it and then pass it to atlas 3", was rerun with Claude Opus 5.5 through the running app as a new plan named "Reach check (Claude)". It returned `unsupported`. The apple is 1.43 m from Arm 2, the arms are 1.39 m apart against a combined 1.2 m reach, and nothing was substituted. Mock simulation; no physical robot.
+- **Checks:**
+  - Repository tests: 395 passed, 4 skipped.
+  - New tests show that the demo-arm reach matches the inverse-kinematics limit 0.01 m either side, and that the serial-chain bound covers 300 random joint samples of the two-tool example.
+  - Another new test shows both LLMs receive the reach.
+- **Installers:** all 0.4.0 packages in `dist/releases/0.4.0-installers` (excluded from Git) were rebuilt with today's planner changes. That covers Desktop for macOS arm64 and x64 (ZIP and DMG), Linux and Windows; Server for Linux and Windows; and Business. Each Desktop and Server package carries the reach, unknown-name, null-field and carry-height changes, and every checksum verified. The 30 October packages were kept outside the repository as a backup. The installers were built but not installed or run on another machine.
+- **Limits:**
+  - Reach is a distance shell. Joint limits, the table and obstacles can still make a target inside it unreachable.
+  - The existing GCP deployment was not updated.
+
+## 6 November 2026 — Add a robot with AI: URDF and documentation to a reviewable robot
+
+- **Branch:** `ai-robot-setup`, from `eval-suite`. Not merged.
+- **Affects:** the shared IDE (browser, Electron and NVIDIA editions) and the shared Python backend. The Business App only uses configured robots.
+- **Problem:** importing the gantry rover needed about 18 values typed by hand, and errors arrived one at a time. A continuous wheel's control window was unexplained, so it was set to 2–3 rad. Setup then took five separate steps: model, adapter, mapping, tests and save.
+- **Change:**
+  - **Configuration → Robot library → Add robot with AI** takes a URDF and the vendor documentation. One job (`POST /api/library/auto-setup`) prefills every review value with its source, generates the control adapter and maps joints to functions. The user reviews one page, accepts, tries each function in simulation (**Try every function**), marks it Works or Wrong, and saves.
+  - **Value checks:** code checks every documented value against its quote, converts its unit and compares it with the URDF.
+  - **Mapping scale:** comes from the units, not the AI model.
+  - **Existing rules kept:** the review, simulated tests and publish rules are unchanged, and nothing reaches hardware.
+  - **Smaller fixes:**
+    - The review now reports every problem at once, marked next to its field.
+    - The manual URDF form gained **Fill in missing values**.
+    - The documentation limit for URDF assistance rose from 20,000 to 60,000 characters.
+    - A free robot ID is proposed, and a taken one is flagged during review.
+    - The simulator adapter now drives continuous joints by speed even with a finite control window.
+- **Sample:** a fictional gantry rover is added as `examples/robots/gantry_rover.urdf` (differential drive, three-axis gantry, three-joint arm, jaw) with `gantry_rover_sdk_manual.md`, a 42 KB vendor manual. The manual uses millimetre and degree units and includes deprecated and non-actuator setters as traps.
+- **Results:** real inference with Claude Opus 5.5 through the Claude Code CLI bridge, mock simulation.
+  - **Prefill:** 15 values came from the documentation, including all nine joint accelerations, payload, manufacturer and drive speeds. Each was converted correctly. No values were rejected after the rounding tolerance fix.
+  - **Adapter:** exactly the nine documented setters. The deprecated inch setter, speed scale and jaw force setter were left out.
+  - **Mapping:** the first run timed out at the 120 s connection limit while sending the whole manual again, so the mapping now sends only the functions and their quotes. The second run mapped 9 of 9, with scales of 1000 and 57.2958.
+  - **Trying functions:** all nine ran through the generated adapter and were marked Works. For example, `set_jaw_opening(22.5 mm)` read back as 0.0225 m.
+  - **Without documentation:** a simulator adapter and mapping were built, and all nine functions were tried and marked.
+  - **Not done:** the MOVE test, and so saving the robot, because Docker and the robotics worker were not running.
+- **Checks:**
+  - Python tests: 7 new in `tests/integration/test_auto_setup.py`, covering the URDF-only prefill, quote and unit checks, unit-derived mapping scale, all errors at once, the full job with an adapter test call, ID clashes and the simulator path.
+  - Client typecheck and production build pass.
+  - Browser tests: the robotics-v2, simple-mode, URDF and library specs pass, updated for the renamed **Manual setup** button and for all errors at once.
+- **Limits:**
+  - The AI model can mislabel the description; it is marked for review.
+  - Defaults (control windows, accelerations, starting positions, drive area) need the user's judgement.
+  - Function marks are observations, not test evidence.
+  - Not tested on hardware or Isaac physics.
+
+## 7 November 2026 — Gantry rover saved through Add robot with AI; sample collision geometry fixed
+
+- **Branch:** `ai-robot-setup`. Follows the 6 November entry above.
+- **Robotics worker:** OrbStack and the local robotics worker (`robode-robotics:local`, MoveIt and Nav2) were started. No image build was needed, and no cloud VM was started.
+- **Problem found:** the MOVE test on the first saved rover failed with "Transit/hold configuration is in collision". The sample URDF gave the gantry frame one solid collision box between its posts, and the Y carriage, lift and arm base sat inside it. The worker allows contact only between directly connected links, so every pose collided. This was a defect in the sample file, not in RoboDE.
+- **Fix:**
+  - `gantry_rover.urdf` now has two separate post collision boxes, a beam that rides on top of them, and a shorter lift box that hangs clear of the beam.
+  - The manual's height of the J1 axis was corrected to 585 mm.
+  - With the corrected geometry, a check robot set up without AI passed MOVE. MoveIt/OMPL reached (0.55, 0.05, 0.45) m with the rail at -0.06 m, the beam at +0.05 m and the lift lowered 0.132 m.
+- **Result:** real inference with Claude Opus 5.5, mock simulation.
+  - Add robot with AI ran on the corrected URDF and manual. It found 15 documented values, generated the nine vendor setters, and mapped 9 of 9 joints with scales of 1000 and 57.2958.
+  - The free ID `tarnwick_tr_gr40_kestrel_gantry_rover_4` was proposed.
+  - All nine functions were tried and marked Works.
+  - The MOVE test passed in the worker.
+  - The robot was saved: published, with actuator and MOVE evidence, and "Saved · simulation ready" in the library.
+- **Also changed:** **Resume setup** buttons now show the robot ID, because two drafts named after the same adapter couldn't be told apart.
+- **Limits:** simulation only.
+
+## 7 November 2026 — Add robot with AI removes its URDF import draft
+
+- **Affects:** the shared IDE.
+- **Problem:** the AI setup screen never removed its URDF import draft, so every run left a copy of the URDF package in `runtime/urdf_imports`. Seven had built up. The manual URDF form already removes its draft when the form is closed.
+- **Change:** the AI setup screen now removes its draft in each of these cases:
+  - once the robot is saved, because saving copies the URDF source into the robot
+  - when the setup is cancelled or the screen is closed
+  - when a new file is configured
+
+  A retried **Accept** no longer validates against the removed draft, because the robot is already saved.
+- **Checks:**
+  - Client typecheck and production build pass.
+  - Live in the IDE (no-documentation path): the draft count went 0 → 1 at the review page → 0 after **Cancel**. A second run went → 0 after **Accept**, and the saved robot kept its URDF source and all 28 geometry shapes.
+- **Local cleanup:** the five test robots from 6–7 November and the check robot from this test were removed from the local library at the user's request. Their mappings, adapters and setup drafts went too. The saved TR-GR40 gantry rover is unchanged: published, current, and with its actuator and MOVE evidence. These were local runtime files, not repository changes.
+

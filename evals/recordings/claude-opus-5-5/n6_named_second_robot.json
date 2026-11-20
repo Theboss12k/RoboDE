@@ -1,0 +1,34 @@
+{
+ "case": "n6_named_second_robot",
+ "case_hash": "7ad5963cd6e24289",
+ "model": "claude-opus-5-5",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T11:15:53+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\"status\": \"ready\", \"tasks\": [{\"id\": \"arm_02_set_elbow\", \"name\": \"ARM TWO elbow to -1.5 rad\", \"operation\": \"command\", \"robot_id\": \"arm_02\", \"dependencies\": [], \"intent\": \"Set ARM TWO (arm_02) elbow joint to -1.5 rad (from current -1.8 rad; within limits -2.7 to 2.7 rad). ARM ONE (arm_01) is not moved.\", \"authored_by\": \"planner\", \"binding_status\": \"unresolved\", \"command\": null, \"function_calls\": [], \"completion_condition\": \"arm_02 elbow reaches -1.5 rad\", \"repeat_count\": 1}], \"questions\": [], \"error\": null}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 5.378,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6816,
+      "completion_tokens": 243
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"set_elbow\",\"arguments\":{\"value\":-1.5,\"unit\":\"rad\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.84,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2078,
+      "completion_tokens": 44
+     }
+    }
+   ]
+  }
+ ]
+}

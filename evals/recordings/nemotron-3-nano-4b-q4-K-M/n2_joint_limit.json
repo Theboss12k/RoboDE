@@ -1,0 +1,64 @@
+{
+ "case": "n2_joint_limit",
+ "case_hash": "5da129a7f79542ec",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T22:57:16+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5723,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:59:00+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 5723,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:59:34+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended purpose of setting the shoulder to 5 rad? Is this a valid joint position within the actuator's limits (-1.5 to 2.8 rad)?\",\n    \"Is there a specific object or task that requires this shoulder position, or is it a standalone command?\",\n    \"Which robot is expected to execute this command? The plan mentions 'ARM ONE' but no explicit robot_id assignment.\",\n    \"Is the shoulder joint capable of reaching 5 rad? The actuator limits are -1.5 to 2.8 rad, so 5 rad exceeds the maximum.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"operation\": \"command\",\n  \"intent\": \"Set shoulder joint to 5 rad\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"command\": null,\n  \"target\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set shoulder to 5 rad\",\n  \"operation\": \"command\",\n  \"intent\": \"Set shoulder joint to 5 rad\",\n  \"binding_status\": \"unresolved\",\n  \"bounding\": true,\n  \"completion_condition\": \"\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 20.268,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5723,
+      "completion_tokens": 380
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the intended purpose of setting the shoulder to 5 rad? Is this a valid joint position within the actuator's limits (-1.5 to 2.8 rad)?\",\n    \"Is there a specific object or task that requires this shoulder position, or is it a standalone command?\",\n    \"Which robot is expected to execute this command? The plan mentions 'ARM ONE' but no explicit robot_id assignment.\",\n    \"Is the shoulder joint capable of reaching 5 rad? The actuator limits are -1.5 to 2.8 rad, so 5 rad exceeds the maximum.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"operation\": \"command\",\n  \"intent\": \"Set shoulder joint to 5 rad\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"command\": null,\n  \"target\": null,\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"function_calls\": [],\n  \"task_id\": \"task_001\",\n  \"dependencies\": [],\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Set shoulder to 5 rad\",\n  \"operation\": \"command\",\n  \"intent\": \"Set shoulder joint to 5 rad\",\n  \"binding_status\": \"unresolved\",\n  \"bounding\": true,\n  \"completion_condition\": \"\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.448,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6860,
+      "completion_tokens": 387
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

@@ -59,6 +59,35 @@ def forward(model: dict, q: dict[str, float], target: str | None = None) -> Pose
     return Pose(x=x, y=y, z=z)
 
 
+def tool_reach(model: dict) -> dict:
+    """How far each tool can get from a fixed point, in the world frame, for the LLM planner and converter.
+
+    The analytic arm's tool reaches between |upper_arm - forearm| and upper_arm + forearm from its shoulder. A serial
+    chain's bound is the sum of the joint offsets and prismatic travel after its first moving joint. Joint limits and
+    table clearance can exclude parts of that shell; inverse kinematics during motion planning stays authoritative."""
+    if not supports_model(model) or model.get('mobility',{}).get('classification','STATIONARY')!='STATIONARY':return {}
+    k=model['kinematics'];base=model.get('base_pose',{})
+    def point(xyz):return [round(v,4) for v in xyz]
+    if k['solver']=='analytic_yaw_two_link_v1':
+        from services.commands.standard import effectors
+        a,b=k['links']['upper_arm'],k['links']['forearm']
+        centre=point([base.get('x',0.),base.get('y',0.),base.get('z',0.)+k['links']['base_height']])
+        return {tool:{'centre':centre,'max_m':round(a+b,4),'min_m':round(abs(a-b),4)} for tool in effectors(model)}
+    from services.planning.serial_ik import frames
+    by_child={j['child']:j for j in k['joints']};zero=frames(model,{})
+    result={}
+    for tool,e in k.get('end_effectors',{}).items():
+        chain,link=[],e['link']
+        while link in by_child:chain.insert(0,by_child[link]);link=by_child[link]['parent']
+        moving=[i for i,j in enumerate(chain) if j['type']!='fixed']
+        if not moving:continue
+        first=chain[moving[0]];limits=model['actuators']['actuators']
+        length=sum(math.hypot(*j.get('origin',{}).get('xyz',[0.,0.,0.])) for j in chain[moving[0]+1:])+math.hypot(*e.get('xyz',[0.,0.,0.]))
+        length+=sum(max(abs(limits[j['actuator']]['min']),abs(limits[j['actuator']]['max'])) for j in chain[moving[0]:] if j['type']=='prismatic')
+        result[tool]={'centre':point([zero[first['child']][i][3] for i in range(3)]),'max_m':round(length,4),'min_m':0.}
+    return result
+
+
 def inverse(model: dict, target: Pose, gripper: float = 0.08) -> dict[str, float]:
     require_solver(model)
     if model['kinematics']['solver']=='serial_chain_dls_v1':

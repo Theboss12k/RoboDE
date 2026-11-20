@@ -8,6 +8,19 @@ The shared React IDE used by Desktop and Server now exposes a resumable global s
 
 Plans use separate `/decompose` and `/bind-commands` operations. The planner returns tasks, clarification questions or an unsupported result; the binder returns typed catalog calls. The dispatcher does not evaluate generated plan Python. Users can add typed tasks/calls without an LLM and repair dependencies before deleting prerequisites. Task changes invalidate revisions. Compiled calls remain readable as a JSON manifest.
 
+Before a planner result becomes tasks, and before the converter binds a task, RoboDE checks the text for names the project doesn't have. It looks for two kinds:
+- **Unknown robots:** a name like ARM THREE beside ARM ONE and ARM TWO.
+- **Unknown identifiers:** a snake_case ID such as `telescope_joint` that matches no robot, joint, link, frame, function or object.
+
+Either one makes the planner ask which was meant, and the converter refuses the task. This stops a model from quietly replacing a missing target with one that exists. The check needs no model. It doesn't detect prose such as "the telescope". The [6 November eval report](EVAL_RESULTS_20261106.md) describes the failures it addresses (F8, F13).
+
+Both LLMs are also told each tool's reach, under `reach` for each robot (`tool_reach` in [`kinematics.py`](../SERVER_CLIENT/server/services/planning/kinematics.py)). It gives a centre point in the world frame and how far (`max_m`) and how near (`min_m`) the tool can be from it.
+- **Demo arm:** the centre is the shoulder, at the base pose plus `base_height`. The range is |upper_arm − forearm| to upper_arm + forearm, which is 0.04 to 0.6 m: exactly the inverse-kinematics limit.
+- **Serial chain:** the centre is the first moving joint. `max_m` is an upper bound: the sum of the joint offsets and prismatic travel after that joint.
+- **Mobile robots:** they get no reach.
+
+The planner must return `unsupported` for a plan that needs a tool position out of range, and the converter must refuse a MOVE outside it. Joint limits and the table can still exclude parts of that shell, so motion planning stays the authoritative check.
+
 Global LLM role settings choose setup, planning and command-binding providers independently. Task selections override the binder. The existing two-argument text function is preserved; image-enabled functions also expose `invoke_multimodal(input, system_prompt, images)`. VLM mode requires a vision-capable provider, a matching scene fingerprint and an image less than 30 seconds old. JSON Schema output is opt-in for compatible chat-completions providers.
 
 ## Drivers and mappings

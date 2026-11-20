@@ -1,0 +1,94 @@
+{
+ "case": "p6_cartesian_move",
+ "case_hash": "0685475ce65c33dd",
+ "model": "phi4:14b",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T10:46:39+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Move ARM ONE to target position\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": {\n        \"x\": 0.30,\n        \"y\": -0.10,\n        \"z\": 0.30\n      },\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"MOVE_END_EFFECTOR\",\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.30, -0.10, 0.30],\n        \"frame\": \"world\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Move ARM ONE parallel_gripper to world position x=0.30 m, y=-0.10 m, z=0.30 m.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": 5.0,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n  \n- **Operation Type**: The operation type is set to `command` as per the requirement.\n\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` for ARM ONE, respecting the plan's instruction that ARM TWO remains unchanged.\n\n- **Target Position**: The target position `[x=0.30, y=-0.10, z=0.30]` is specified in meters within the world frame as required by the task description.\n\n- **Command Details**: A `MOVE_END_EFFECTOR` command is used to move ARM ONE's parallel gripper to the specified position without changing its orientation or gripper opening.\n\n- **Intent and Authorship**: The intent clearly states the movement target, and the task is authored by \"planner\" with a binding status of \"unresolved\".\n\n- **Duration and Repetition**: A `duration_seconds` of 5.0 seconds is specified to ensure bounded execution time, and `repeat_count` is set to 1 for single execution.\n\nThis JSON structure adheres to the provided schema and decomposes the plan into an executable task while respecting all constraints and requirements outlined in the prompt.",
+     "model": "phi4:14b",
+     "duration_seconds": 62.854,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4511,
+      "completion_tokens": 580
+     },
+     "load_seconds": 0.024
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n  \"calls\": [\n    {\n      \"function\": \"MOVE\",\n      \"arguments\": {\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.30, -0.10, 0.30],\n        \"frame\": \"world\"\n      }\n    }\n  ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to move ARM ONE's parallel gripper to a specified world position (x=0.30 m, y=-0.10 m, z=0.30 m).\n\n2. **Function Identification**: \n   - The `MOVE` function is identified as the appropriate actuator command for moving the arm to a specific target position in the world frame.\n\n3. **Argument Binding**:\n   - **Target**: The task specifies \"parallel_gripper\" as the target, which matches the `targets` field of the `MOVE` function.\n   - **Position**: The specified coordinates [0.30, -0.10, 0.30] are provided in metres, aligning with the expected input for a tool position in the world frame.\n   - **Frame**: The task specifies \"world\" as the frame, which matches the `frames` field of the `MOVE` function.\n\n4. **Validation**:\n   - All required arguments for the `MOVE` function are provided and correctly formatted according to the function catalog specifications.\n\n5. **Execution**: \n   - The JSON structure is constructed with a single call to the `MOVE` function, including all necessary arguments.\n\nThis solution ensures that the task is fully bound and executable as per the given constraints and requirements.",
+     "model": "phi4:14b",
+     "duration_seconds": 27.283,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1081,
+      "completion_tokens": 338
+     },
+     "load_seconds": 0.029
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T10:48:19+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Move ARM ONE to target position\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": {\n        \"x\": 0.30,\n        \"y\": -0.10,\n        \"z\": 0.30\n      },\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"MOVE_END_EFFECTOR\",\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.30, -0.10, 0.30],\n        \"frame\": \"world\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Move ARM ONE parallel_gripper to world position x=0.30 m, y=-0.10 m, z=0.30 m.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": 5.0,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n  \n- **Operation Type**: The operation type is set to `command` as per the requirement.\n\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` (ARM ONE).\n\n- **Target Position**: The target position for ARM ONE's end effector is specified in world coordinates `[x=0.30, y=-0.10, z=0.30]`.\n\n- **Command Details**: The command type is `MOVE_END_EFFECTOR`, targeting the `parallel_gripper` with the specified position and frame.\n\n- **Intent Description**: Clearly states the intent of moving ARM ONE to the given world coordinates.\n\n- **Binding Status**: Set as `unresolved` since no external bindings are resolved at this stage.\n\n- **Duration and Repeat Count**: Explicitly defined duration (`5.0 seconds`) and repeat count (`1`) ensure bounded execution.\n\nThis task setup respects all constraints and requirements outlined in the prompt, ensuring clarity and correctness for ARM ONE's movement operation.",
+     "model": "phi4:14b",
+     "duration_seconds": 72.083,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4511,
+      "completion_tokens": 546
+     },
+     "load_seconds": 0.025
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n  \"calls\": [\n    {\n      \"function\": \"MOVE\",\n      \"arguments\": {\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.30, -0.10, 0.30],\n        \"frame\": \"world\"\n      }\n    }\n  ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to move ARM ONE's parallel gripper to a specified world position (x=0.30 m, y=-0.10 m, z=0.30 m).\n\n2. **Function Identification**: \n   - The `MOVE` function is identified as the appropriate actuator command for moving the arm to a specific target position in the world frame.\n\n3. **Argument Binding**:\n   - **Target**: The task specifies \"parallel_gripper\" as the target, which matches the `targets` field of the `MOVE` function.\n   - **Position**: The specified coordinates [0.30, -0.10, 0.30] are provided in metres, aligning with the expected input for a tool position in the world frame.\n   - **Frame**: The task specifies \"world\" as the frame, which matches the `frames` field of the `MOVE` function.\n\n4. **Validation**:\n   - All required arguments for the `MOVE` function are provided and correctly formatted according to the function catalog specifications.\n\n5. **Execution**: \n   - The JSON structure is constructed with a single call to the `MOVE` function, including all necessary arguments.\n\nThis solution ensures that the task is fully bound and executable as per the given constraints and requirements.",
+     "model": "phi4:14b",
+     "duration_seconds": 27.079,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1081,
+      "completion_tokens": 338
+     },
+     "load_seconds": 0.035
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-06T10:49:59+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"task_001\",\n      \"name\": \"Move ARM ONE to target position\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"target\": {\n        \"x\": 0.30,\n        \"y\": -0.10,\n        \"z\": 0.30\n      },\n      \"joint_positions\": null,\n      \"object_id\": null,\n      \"target_id\": null,\n      \"command\": {\n        \"type\": \"MOVE_END_EFFECTOR\",\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.30, -0.10, 0.30],\n        \"frame\": \"world\"\n      },\n      \"placement\": \"inside\",\n      \"llm_adapter_id\": null,\n      \"llm_input\": \"\",\n      \"llm_system_prompt\": \"\",\n      \"intent\": \"Move ARM ONE parallel_gripper to world position x=0.30 m, y=-0.10 m, z=0.30 m.\",\n      \"function_calls\": [],\n      \"binding_status\": \"unresolved\",\n      \"binding_fingerprint\": null,\n      \"authored_by\": \"planner\",\n      \"completion_condition\": \"\",\n      \"duration_seconds\": 5.0,\n      \"repeat_count\": 1,\n      \"binding_error\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```\n\n### Explanation:\n\n- **Task ID and Name**: Each task is given a unique identifier (`task_001`) and a descriptive name.\n  \n- **Operation Type**: The operation type is set to `command` as per the requirement.\n\n- **Robot Assignment**: The task explicitly assigns `robot_id: \"arm_01\"` (ARM ONE).\n\n- **Target Position**: The target position for ARM ONE's end effector is specified in world coordinates `[x=0.30, y=-0.10, z=0.30]`.\n\n- **Command Details**: The command type is `MOVE_END_EFFECTOR`, targeting the `parallel_gripper` with the specified position and frame.\n\n- **Intent Description**: Clearly states the intent of moving ARM ONE to the given world coordinates.\n\n- **Binding Status**: Set as `unresolved` since no external bindings are resolved at this stage.\n\n- **Duration and Repeat Count**: Explicitly defined duration (`5.0 seconds`) and repeat count (`1`) ensure bounded execution.\n\nThis task setup respects all constraints and requirements outlined in the prompt, ensuring clarity and correctness for ARM ONE's movement operation.",
+     "model": "phi4:14b",
+     "duration_seconds": 73.677,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 4511,
+      "completion_tokens": 546
+     },
+     "load_seconds": 0.025
+    },
+    {
+     "stage": "converter",
+     "answer": "```json\n{\n  \"calls\": [\n    {\n      \"function\": \"MOVE\",\n      \"arguments\": {\n        \"target\": \"parallel_gripper\",\n        \"position\": [0.30, -0.10, 0.30],\n        \"frame\": \"world\"\n      }\n    }\n  ]\n}\n```\n\n### Explanation:\n\n1. **Task Analysis**: The task is to move ARM ONE's parallel gripper to a specified world position (x=0.30 m, y=-0.10 m, z=0.30 m).\n\n2. **Function Identification**: \n   - The `MOVE` function is identified as the appropriate actuator command for moving the arm to a specific target position in the world frame.\n\n3. **Argument Binding**:\n   - **Target**: The task specifies \"parallel_gripper\" as the target, which matches the `targets` field of the `MOVE` function.\n   - **Position**: The specified coordinates [0.30, -0.10, 0.30] are provided in metres, aligning with the expected input for a tool position in the world frame.\n   - **Frame**: The task specifies \"world\" as the frame, which matches the `frames` field of the `MOVE` function.\n\n4. **Validation**:\n   - All required arguments for the `MOVE` function are provided and correctly formatted according to the function catalog specifications.\n\n5. **Execution**: \n   - The JSON structure is constructed with a single call to the `MOVE` function, including all necessary arguments.\n\nThis solution ensures that the task is fully bound and executable as per the given constraints and requirements.",
+     "model": "phi4:14b",
+     "duration_seconds": 24.881,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 1081,
+      "completion_tokens": 338
+     },
+     "load_seconds": 0.027
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,133 @@
+{
+ "case": "n7_pick_and_place",
+ "case_hash": "4079e0df554728a1",
+ "model": "claude-opus-5-5",
+ "runs": [
+  {
+   "recorded_at": "2026-11-06T11:16:55+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "```json\n{\n  \"status\": \"ready\",\n  \"tasks\": [\n    {\n      \"id\": \"arm01_open_gripper\",\n      \"name\": \"Open gripper\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [],\n      \"intent\": \"ARM ONE opens parallel_gripper to 100 percent (gripper actuator 0.08 m) before approaching the apple.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_approach_apple\",\n      \"name\": \"Move above apple\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_open_gripper\"],\n      \"intent\": \"ARM ONE moves parallel_gripper to [0.34, -0.16, 0.26] m in the world frame, directly above the apple at carry height.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_descend_apple\",\n      \"name\": \"Descend to apple\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_approach_apple\"],\n      \"intent\": \"ARM ONE lowers parallel_gripper to [0.34, -0.16, 0.065] m in the world frame, at the apple's position.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_grasp_apple\",\n      \"name\": \"Grasp apple\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_descend_apple\"],\n      \"intent\": \"ARM ONE grasps object 'apple' using the GRASP function.\",\n      \"object_id\": \"apple\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_lift_apple\",\n      \"name\": \"Lift apple\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_grasp_apple\"],\n      \"intent\": \"ARM ONE lifts the apple by moving parallel_gripper to [0.34, -0.16, 0.26] m in the world frame.\",\n      \"object_id\": \"apple\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_transfer_to_basket\",\n      \"name\": \"Transfer above basket\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_lift_apple\"],\n      \"intent\": \"ARM ONE carries the apple by moving parallel_gripper to [0.27, 0.27, 0.26] m in the world frame, directly above the basket.\",\n      \"object_id\": \"apple\",\n      \"target_id\": \"basket\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_lower_into_basket\",\n      \"name\": \"Lower apple into basket\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_transfer_to_basket\"],\n      \"intent\": \"ARM ONE lowers parallel_gripper to [0.27, 0.27, 0.08] m in the world frame, placing the apple inside the basket.\",\n      \"object_id\": \"apple\",\n      \"target_id\": \"basket\",\n      \"placement\": \"inside\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_release_apple\",\n      \"name\": \"Release apple\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_lower_into_basket\"],\n      \"intent\": \"ARM ONE releases object 'apple' into destination 'basket' using the RELEASE function.\",\n      \"object_id\": \"apple\",\n      \"target_id\": \"basket\",\n      \"placement\": \"inside\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_retreat\",\n      \"name\": \"Retreat from basket\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_release_apple\"],\n      \"intent\": \"ARM ONE retreats by moving parallel_gripper to [0.27, 0.27, 0.26] m in the world frame, above the basket.\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    },\n    {\n      \"id\": \"arm01_verify_apple_in_basket\",\n      \"name\": \"Verify apple in basket\",\n      \"operation\": \"command\",\n      \"robot_id\": \"arm_01\",\n      \"dependencies\": [\"arm01_retreat\"],\n      \"intent\": \"ARM ONE uses the VERIFY function to confirm object 'apple' is inside destination 'basket'.\",\n      \"object_id\": \"apple\",\n      \"target_id\": \"basket\",\n      \"placement\": \"inside\",\n      \"authored_by\": \"planner\",\n      \"binding_status\": \"unresolved\",\n      \"command\": null\n    }\n  ],\n  \"questions\": [],\n  \"error\": null\n}\n```",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 20.338,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6816,
+      "completion_tokens": 2243
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"component_parallel_gripper\",\"arguments\":{\"value\":100}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.371,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2018,
+      "completion_tokens": 36
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"MOVE\",\"arguments\":{\"target\":\"parallel_gripper\",\"position\":[0.34,-0.16,0.26],\"frame\":\"world\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.042,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2035,
+      "completion_tokens": 62
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"MOVE\",\"arguments\":{\"target\":\"parallel_gripper\",\"position\":[0.34,-0.16,0.065],\"frame\":\"world\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.161,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2034,
+      "completion_tokens": 62
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"GRASP\",\"arguments\":{\"object_id\":\"apple\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 3.897,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2014,
+      "completion_tokens": 36
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"MOVE\",\"arguments\":{\"target\":\"parallel_gripper\",\"position\":[0.34,-0.16,0.26],\"frame\":\"world\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.273,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2034,
+      "completion_tokens": 62
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"MOVE\",\"arguments\":{\"target\":\"parallel_gripper\",\"position\":[0.27,0.27,0.26],\"frame\":\"world\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.742,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2046,
+      "completion_tokens": 61
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"MOVE\",\"arguments\":{\"target\":\"parallel_gripper\",\"position\":[0.27,0.27,0.08],\"frame\":\"world\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.234,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2049,
+      "completion_tokens": 129
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"RELEASE\",\"arguments\":{\"object_id\":\"apple\",\"target_id\":\"basket\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 3.947,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2022,
+      "completion_tokens": 45
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"MOVE\",\"arguments\":{\"target\":\"parallel_gripper\",\"position\":[0.27,0.27,0.26],\"frame\":\"world\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 4.145,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2032,
+      "completion_tokens": 61
+     }
+    },
+    {
+     "stage": "converter",
+     "answer": "{\"calls\":[{\"function\":\"VERIFY\",\"arguments\":{\"object_id\":\"apple\",\"target_id\":\"basket\"}}]}",
+     "model": "claude-opus-5-5",
+     "duration_seconds": 3.804,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 2032,
+      "completion_tokens": 45
+     }
+    }
+   ]
+  }
+ ]
+}

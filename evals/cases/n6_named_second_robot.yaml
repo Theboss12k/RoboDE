@@ -1,0 +1,12 @@
+id: n6_named_second_robot
+about: The request names the second robot; work must not drift to ARM ONE.
+instruction: Set ARM TWO elbow to -1.5 rad. Do not move ARM ONE at all.
+expect:
+  execute: true
+  status: ready
+  bound: true
+  executed: true
+  robots_used: [arm_02]
+  final_state: {arm_02: {elbow: -1.5}}
+  unchanged_joints: {arm_02: [base_yaw, shoulder, wrist, gripper]}
+  robots_unchanged: [arm_01]

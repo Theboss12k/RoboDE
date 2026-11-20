@@ -1,0 +1,6 @@
+id: p5_impossible_float
+about: Physically impossible; the planner must refuse and explain.
+instruction: Make the apple float unaided one metre above the table indefinitely. Do not hold, throw or attach it to a robot.
+expect:
+  status: unsupported
+  no_tasks: true

@@ -1,0 +1,58 @@
+{
+ "case": "n6_named_second_robot",
+ "case_hash": "7ad5963cd6e24289",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:07:00+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the object to be grasped?\",\n    \"Is the object 'apple' or 'basket' to be grasped?\",\n    \"What is the intended destination ID for verification?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.605,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5735,
+      "completion_tokens": 75
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:07:14+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the object to be grasped?\",\n    \"Is the object 'apple' or 'basket' to be grasped?\",\n    \"What is the intended destination ID for verification?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.53,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5735,
+      "completion_tokens": 75
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:07:27+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the object to be grasped?\",\n    \"Is the object 'apple' or 'basket' to be grasped?\",\n    \"What is the intended destination ID for verification?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.484,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5735,
+      "completion_tokens": 75
+     },
+     "load_seconds": 0.002
+    }
+   ]
+  }
+ ]
+}

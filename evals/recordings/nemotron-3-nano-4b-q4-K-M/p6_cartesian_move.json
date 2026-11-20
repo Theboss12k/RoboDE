@@ -1,0 +1,58 @@
+{
+ "case": "p6_cartesian_move",
+ "case_hash": "0685475ce65c33dd",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:22:15+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be moved?\",\n    \"What is the target ID for the basket to receive the Apple?\",\n    \"Is the gripper opening of ARM ONE to be kept unchanged, or should it be adjusted to grasp the Apple?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 14.032,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5768,
+      "completion_tokens": 86
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:22:29+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be moved?\",\n    \"What is the target ID for the basket to receive the Apple?\",\n    \"Is the gripper opening of ARM ONE to be kept unchanged, or should it be adjusted to grasp the Apple?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.799,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5768,
+      "completion_tokens": 86
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:22:43+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be moved?\",\n    \"What is the target ID for the basket to receive the Apple?\",\n    \"Is the gripper opening of ARM ONE to be kept unchanged, or should it be adjusted to grasp the Apple?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.806,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5768,
+      "completion_tokens": 86
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

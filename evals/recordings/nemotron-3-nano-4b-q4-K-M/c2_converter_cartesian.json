@@ -1,0 +1,49 @@
+{
+ "case": "c2_converter_cartesian",
+ "case_hash": "008d4f5654c81ac4",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T22:51:59+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 1414,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.0
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:53:27+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 1414,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.0
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:54:54+00:00",
+   "calls": [
+    {
+     "stage": "converter",
+     "error": "LLM adapter Evaluation \u00b7 nemotron-3-nano:4b-q4_K_M: request failed or returned an invalid answer; check endpoint, model, credentials and timeout",
+     "usage": {
+      "prompt_tokens": 1414,
+      "completion_tokens": 4096
+     },
+     "load_seconds": 0.0
+    }
+   ]
+  }
+ ]
+}

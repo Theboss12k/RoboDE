@@ -1,0 +1,58 @@
+{
+ "case": "n1_degrees",
+ "case_hash": "fb5f37e8ae575e5c",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T22:55:08+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the target frame for the base_yaway rotation? Is it 'world' or 'base'?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.103,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5732,
+      "completion_tokens": 57
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:55:21+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the target frame for the base_yaway rotation? Is it 'world' or 'base'?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.124,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5732,
+      "completion_tokens": 57
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T22:55:35+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the target frame for the base_yaway rotation? Is it 'world' or 'base'?\"\n  ],\n  \"error\": null\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.114,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5732,
+      "completion_tokens": 57
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

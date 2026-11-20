@@ -1,0 +1,12 @@
+id: p1_single_joint
+about: One named robot, one joint; everything else must stay put.
+instruction: Using ARM ONE only, set base_yaw to 0.04 rad. Keep shoulder, elbow, wrist, gripper and ARM TWO unchanged.
+expect:
+  execute: true
+  status: ready
+  bound: true
+  robots_used: [arm_01]
+  executed: true
+  final_state: {arm_01: {base_yaw: 0.04}}
+  unchanged_joints: {arm_01: [shoulder, elbow, wrist, gripper]}
+  robots_unchanged: [arm_02]

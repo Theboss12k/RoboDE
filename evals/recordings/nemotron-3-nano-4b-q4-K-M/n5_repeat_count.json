@@ -1,0 +1,94 @@
+{
+ "case": "n5_repeat_count",
+ "case_hash": "216372a6a9e36ac3",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:05:38+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the parallel_graspper on ARM ONE? The plan mentions 'ARM ONE' but no object ID is provided.\",\n    \"Is the gripper initially closed or open? The current state shows gripper at 0.08m (open), but the task says 'close fully' which implies it may be closed.\",\n    \"What is the intended final state of the gripper? The task says 'stop with it open', but the current state is already open at 0.08m.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Close ARM ONE's parallel_graspper fully and open it fully again, 3 times in total, then stop with it open. ARM TWO must not move.\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Close and open gripper 3 times\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 20.283,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5750,
+      "completion_tokens": 389
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the parallel_graspper on ARM ONE? The plan mentions 'ARM ONE' but no object ID is provided.\",\n    \"Is the gripper initially closed or open? The current state shows gripper at 0.08m (open), but the task says 'close fully' which implies it may be closed.\",\n    \"What is the intended final state of the gripper? The task says 'stop with it open', but the current state is already open at 0.08m.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Close ARM ONE's parallel_graspper fully and open it fully again, 3 times in total, then stop with it open. ARM TWO must not move.\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Close and open gripper 3 times\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.351,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6892,
+      "completion_tokens": 391
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:06:12+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the parallel_graspper on ARM ONE? The plan mentions 'ARM ONE' but no object ID is provided.\",\n    \"Is the gripper initially closed or open? The current state shows gripper at 0.08m (open), but the task says 'close fully' which implies it may be closed.\",\n    \"What is the intended final state of the gripper? The task says 'stop with it open', but the current state is already open at 0.08m.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Close ARM ONE's parallel_graspper fully and open it fully again, 3 times in total, then stop with it open. ARM TWO must not move.\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Close and open gripper 3 times\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 20.303,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5750,
+      "completion_tokens": 389
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the parallel_graspper on ARM ONE? The plan mentions 'ARM ONE' but no object ID is provided.\",\n    \"Is the gripper initially closed or open? The current state shows gripper at 0.08m (open), but the task says 'close fully' which implies it may be closed.\",\n    \"What is the intended final state of the gripper? The task says 'stop with it open', but the current state is already open at 0.08m.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Close ARM ONE's parallel_graspper fully and open it fully again, 3 times in total, then stop with it open. ARM TWO must not move.\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Close and open gripper 3 times\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.323,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6892,
+      "completion_tokens": 392
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:06:46+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the parallel_graspper on ARM ONE? The plan mentions 'ARM ONE' but no object ID is provided.\",\n    \"Is the gripper initially closed or open? The current state shows gripper at 0.08m (open), but the task says 'close fully' which implies it may be closed.\",\n    \"What is the intended final state of the gripper? The task says 'stop with it open', but the current state is already open at 0.08m.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Close ARM ONE's parallel_graspper fully and open it fully again, 3 times in total, then stop with it open. ARM TWO must not move.\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Close and open gripper 3 times\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 20.344,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5750,
+      "completion_tokens": 389
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the exact target ID for the parallel_graspper on ARM ONE? The plan mentions 'ARM ONE' but no object ID is provided.\",\n    \"Is the gripper initially closed or open? The current state shows gripper at 0.08m (open), but the task says 'close fully' which implies it may be closed.\",\n    \"What is the intended final state of the gripper? The task says 'stop with it open', but the current state is already open at 0.08m.\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Close ARM ONE's parallel_graspper fully and open it fully again, 3 times in total, then stop with it open. ARM TWO must not move.\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"placement\": \"inside\",\n  \"completion_condition\": \"\",\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"binding_error\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Close and open gripper 3 times\",\n  \"dependencies\": [],\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 13.38,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6892,
+      "completion_tokens": 392
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

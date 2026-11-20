@@ -21,6 +21,7 @@ checkout and environment tested at that time.
 - [Adapters and ROS bridge](ADAPTERS.md)
 - [AI models and adapters](LLM_ADAPTERS.md)
 - [Task pipeline](TASK_PIPELINE.md)
+- [Eval suite](EVALS.md) — versioned Planner/Converter cases, replay and regression baselines
 - [Local robotics worker, drivers and physical execution](ROBOTICS_V2_LOCAL.md)
 - [Isaac Sim](ISAAC_SIM.md), [scene assets](SCENE_ASSETS.md) and [scene recording](SCENE_RECORDING.md)
 - [Runnable examples and API clients](../SERVER_CLIENT/server/examples/README.md)
@@ -34,6 +35,10 @@ checkout and environment tested at that time.
 - [Contributing](../CONTRIBUTING.md) and [development scripts](../scripts/README.md)
 
 ## Validation and release records
+
+### 6 November 2026
+
+- [Eval suite results and failures](EVAL_RESULTS_20261106.md)
 
 ### 30 October 2026
 

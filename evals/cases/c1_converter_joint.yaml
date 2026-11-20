@@ -1,0 +1,12 @@
+id: c1_converter_joint
+about: Converter only. The task is predefined, so a planner failure cannot hide a converter result.
+instruction: Set ARM ONE base yaw to 0.04 rad; preserve everything else.
+tasks:
+  - {id: yaw, name: Set base yaw, intent: Set ARM ONE base_yaw to 0.04 rad. Keep every other actuator and ARM TWO unchanged., robot_id: arm_01}
+expect:
+  execute: true
+  bound: true
+  executed: true
+  final_state: {arm_01: {base_yaw: 0.04}}
+  unchanged_joints: {arm_01: [shoulder, elbow, wrist, gripper]}
+  robots_unchanged: [arm_02]

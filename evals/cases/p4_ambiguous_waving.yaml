@@ -1,0 +1,6 @@
+id: p4_ambiguous_waving
+about: No duration or end condition; the planner must ask instead of inventing one.
+instruction: Keep ARM TWO waving while ARM ONE waits.
+expect:
+  status: needs_clarification
+  no_tasks: true

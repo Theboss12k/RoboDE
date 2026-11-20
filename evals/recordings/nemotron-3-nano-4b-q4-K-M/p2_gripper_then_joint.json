@@ -1,0 +1,94 @@
+{
+ "case": "p2_gripper_then_joint",
+ "case_hash": "75230a44524004ab",
+ "model": "nemotron-3-nano:4b-q4_K_M",
+ "runs": [
+  {
+   "recorded_at": "2026-11-05T23:12:21+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be grasped?\",\n    \"What is the target ID for verification placement?\",\n    \"Is the parallel_graspper currently closed or open?\",\n    \"Are there any dependencies between arm_01 and arm_02 that must be resolved?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Open parallel_graspper to 50 percent and set base_yaw to -0.03 rad on arm_01; keep arm_02 stationary.\",\n  \"completion_condition\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"joint_positions\": null,\n  \"placement\": \"inside\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 18.745,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5757,
+      "completion_tokens": 306
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be grasped?\",\n    \"What is the target ID for verification placement?\",\n    \"Is the parallel_graspper currently closed or open?\",\n    \"Are there any dependencies between arm_01 and arm_02 that must be resolved?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Open parallel_graspper to 50 percent and set base_yaw to -0.03 rad on arm_01; keep arm_02 stationary.\",\n  \"completion_condition\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"joint_positions\": null,\n  \"placement\": \"inside\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.414,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 311
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:12:52+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be grasped?\",\n    \"What is the target ID for verification placement?\",\n    \"Is the parallel_graspper currently closed or open?\",\n    \"Are there any dependencies between arm_01 and arm_02 that must be resolved?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Open parallel_graspper to 50 percent and set base_yaw to -0.03 rad on arm_01; keep arm_02 stationary.\",\n  \"completion_condition\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"joint_positions\": null,\n  \"placement\": \"inside\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 18.615,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5757,
+      "completion_tokens": 306
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be grasped?\",\n    \"What is the target ID for verification placement?\",\n    \"Is the parallel_graspper currently closed or open?\",\n    \"Are there any dependencies between arm_01 and arm_02 that must be resolved?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Open parallel_graspper to 50 percent and set base_yaw to -0.03 rad on arm_01; keep arm_02 stationary.\",\n  \"completion_condition\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"task_id\": \"task_001\",\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"dependencies\": [],\n  \"joint_positions\": null,\n  \"placement\": \"inside\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.464,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6812,
+      "completion_tokens": 308
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  },
+  {
+   "recorded_at": "2026-11-05T23:13:23+00:00",
+   "calls": [
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be grasped?\",\n    \"What is the target ID for verification placement?\",\n    \"Is the parallel_graspper currently closed or open?\",\n    \"Are there any dependencies between arm_01 and arm_02 that must be resolved?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Open parallel_graspper to 50 percent and set base_yaw to -0.03 rad on arm_01; arm_02 must not move.\",\n  \"completion_condition\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Open gripper and yaw\",\n  \"id\": \"task_001\",\n  \"dependencies\": [],\n  \"placement\": \"inside\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 19.081,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 5757,
+      "completion_tokens": 323
+     },
+     "load_seconds": 0.001
+    },
+    {
+     "stage": "planner",
+     "answer": "{\n  \"status\": \"needs_clarification\",\n  \"tasks\": [],\n  \"questions\": [\n    \"What is the object ID of the Apple to be grasped?\",\n    \"What is the target ID for verification placement?\",\n    \"Is the parallel_graspper currently closed or open?\",\n    \"Are there any dependencies between arm_01 and arm_02 that must be resolved?\"\n  ],\n  \"error\": null,\n  \"authored_by\": \"planner\",\n  \"binding_status\": \"unresolved\",\n  \"binding_fingerprint\": null,\n  \"command\": null,\n  \"function_calls\": [],\n  \"duration_seconds\": null,\n  \"repeat_count\": 1,\n  \"placement\": \"inside\",\n  \"llm_adapter_id\": null,\n  \"llm_input\": \"\",\n  \"llm_system_prompt\": \"\",\n  \"intent\": \"Open parallel_graspper to 50 percent and set base_yaw to -0.03 rad on arm_01; arm_02 must not move.\",\n  \"completion_condition\": \"\",\n  \"object_id\": null,\n  \"target_id\": null,\n  \"target\": null,\n  \"joint_positions\": null,\n  \"operation\": \"command\",\n  \"robot_id\": \"arm_01\",\n  \"name\": \"Open gripper and yaw\",\n  \"id\": \"task_001\",\n  \"dependencies\": [],\n  \"placement\": \"inside\",\n  \"status\": \"needs_clarification\"\n}",
+     "model": "nemotron-3-nano:4b-q4_K_M",
+     "duration_seconds": 11.946,
+     "finish_reason": null,
+     "usage": {
+      "prompt_tokens": 6832,
+      "completion_tokens": 327
+     },
+     "load_seconds": 0.001
+    }
+   ]
+  }
+ ]
+}

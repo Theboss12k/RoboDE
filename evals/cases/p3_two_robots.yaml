@@ -1,0 +1,11 @@
+id: p3_two_robots
+about: Two robots, each with its own assignment.
+instruction: Rotate ARM ONE base_yaw to 0.02 rad and ARM TWO base_yaw to -0.02 rad independently. Keep all other actuators unchanged.
+expect:
+  execute: true
+  status: ready
+  bound: true
+  robots_used: [arm_01, arm_02]
+  executed: true
+  final_state: {arm_01: {base_yaw: 0.02}, arm_02: {base_yaw: -0.02}}
+  unchanged_joints: {arm_01: [shoulder, elbow, wrist, gripper], arm_02: [shoulder, elbow, wrist, gripper]}

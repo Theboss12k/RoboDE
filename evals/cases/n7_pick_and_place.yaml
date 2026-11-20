@@ -1,0 +1,11 @@
+id: n7_pick_and_place
+about: Grasp and release must be explicit tasks on the right objects; an opening alone is not a grasp.
+instruction: Using ARM ONE, pick up the apple and put it in the basket. ARM TWO must not move.
+expect:
+  status: ready
+  bound: true
+  robots_used: [arm_01]
+  required_functions:
+    - {function: GRASP, robot: arm_01, arguments: {object_id: apple}}
+    - {function: RELEASE, robot: arm_01}
+  robots_unchanged: [arm_02]

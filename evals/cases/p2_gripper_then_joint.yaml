@@ -1,0 +1,12 @@
+id: p2_gripper_then_joint
+about: Two steps in order on one robot, mixing a percent opening with a joint angle.
+instruction: On ARM ONE open parallel_gripper to 50 percent, then set base_yaw to -0.03 rad. ARM TWO must not move. Keep all other joints unchanged.
+expect:
+  execute: true
+  status: ready
+  bound: true
+  robots_used: [arm_01]
+  executed: true
+  final_state: {arm_01: {gripper: 0.04, base_yaw: -0.03}}
+  unchanged_joints: {arm_01: [shoulder, elbow, wrist]}
+  robots_unchanged: [arm_02]

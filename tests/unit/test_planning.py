@@ -65,3 +65,33 @@ def test_sampled_collision(model, instance):
     obstacle = WorldObject(id="block",name="block",kind="obstacle",position=Pose(x=0,y=0,z=.1),size=Pose(x=.2,y=.2,z=.3))
     with pytest.raises(ValueError, match="collision"):
         validate_trajectory(model,[Frame(time=0,step_id="a",positions=q,objects={}),Frame(time=1,step_id="a",positions=q,objects={})],[obstacle])
+
+
+def test_tool_reach_matches_the_analytic_solver(model):
+    """The LLMs are told the same limit inverse kinematics enforces: 0.6 m from the shoulder for the demo arm."""
+    from services.planning.kinematics import tool_reach
+    from copy import deepcopy
+    placed = deepcopy(model) | {'base_pose':{'x':-.05,'y':1.21,'z':0.,'yaw':0.}}
+    reach = tool_reach(placed)['parallel_gripper']
+    assert reach == {'centre':[-.05,1.21,.16],'max_m':.6,'min_m':.04}
+    x, y, z = reach['centre']
+    inverse(placed, Pose(x=x+reach['max_m']-.01, y=y, z=z))
+    with pytest.raises(ValueError, match='outside the demo arm workspace'):
+        inverse(placed, Pose(x=x+reach['max_m']+.01, y=y, z=z))
+
+
+def test_serial_chain_reach_bounds_every_sampled_tool_position():
+    import random
+    from services.planning.kinematics import tool_reach
+    from services.planning.serial_ik import effector_frame
+    from services.validation.registry import load_model
+    from simulation.scenario_runner.run import EXAMPLES
+    chain = load_model(EXAMPLES/'models/dual_cartesian')
+    reach = tool_reach(chain)
+    assert set(reach) == set(chain['kinematics']['end_effectors'])
+    limits, rng = chain['actuators']['actuators'], random.Random(7)
+    for _ in range(300):
+        q = {k:rng.uniform(a['min'], a['max']) for k, a in limits.items()}
+        for tool, r in reach.items():
+            position = [effector_frame(chain, q, tool)[i][3] for i in range(3)]
+            assert math.dist(position, r['centre']) <= r['max_m'] + 1e-9, tool
